@@ -1,0 +1,40 @@
+<!-- Public/Base.html -->
+<header>
+  <div class="nav wrap" style="padding-left:0;padding-right:0">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
+      </svg>
+      <span>MCML</span>
+    </div>
+    <div class="sp"></div>
+    <nav class="navlinks">
+      <a class="link" href="/#features">特長</a>
+      <a class="link" href="/#gallery">ギャラリー</a>
+      <a class="link" href="/#discord">Discord参加</a>
+      <a class="link" href="/#minecraft">接続情報</a>
+      <a class="link" href="/#faq">FAQ</a>
+    </nav>
+    <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
+    <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
+    <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
+  </div>
+</header>
+<script>
+  // ヘッダーだけで完結する軽量JS（/auth/me でログイン状態を確認）
+  (async ()=>{
+    try{
+      const res = await fetch("/auth/me", {credentials:"include"});
+      if(!res.ok) return;
+      const me = await res.json();
+      if(me && me.ok){
+        const name = me.global_name || me.username || "";
+        const w = document.getElementById("welcome");
+        w.textContent = name ? `ようこそ ${name} さん` : "ログイン中";
+        w.style.display = "inline-flex";
+        document.getElementById("loginBtn").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "inline-flex";
+      }
+    }catch(_e){}
+  })();
+</script>
