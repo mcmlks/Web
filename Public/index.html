@@ -140,7 +140,7 @@
         <span class="pill">マインクラフトマルチ連盟</span>
         <h1>マイクラ好きがつながる場所<br/>MCML</h1>
         <p class="lead">～初心者から上級さんまで歓迎～</p>
-        <p class="lead">Ver3.9</p>
+        <p class="lead">Ver4.0</p>
         <div class="cta">
           <a class="btn" href="#discord" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -415,35 +415,46 @@
   function safeHost(u){ try{ return new URL(u).hostname }catch{ return "" } }
 
   function makeCard(item, idx){
-    const card = document.createElement('article');
-    card.className = 'imgcard';
-    card.setAttribute('data-index', idx);
+  const card = document.createElement('article');
+  card.className = 'imgcard';
+  card.setAttribute('data-index', idx);
 
-    const wrap = document.createElement('div');
-    wrap.className = 'imgwrap';
+  const wrap = document.createElement('div');
+  wrap.className = 'imgwrap';
 
-    const ph = document.createElement('div');
-    ph.className = 'imgph';
-    ph.textContent = '読み込み中…';
-    wrap.appendChild(ph);
+  const img = new Image();
+  img.decoding = 'async';
+  // 横スク & 非表示切り替えがあるので eager 推奨（必要なら先頭数枚だけでもOK）
+  img.loading = 'eager';
+  img.alt = item.caption || 'MCML ギャラリー画像';
+  img.style.opacity = '0';
+  img.src = item.src;
 
-    const img = document.createElement('img');
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    img.alt = item.caption || 'MCML ギャラリー画像';
-    img.src = item.src;
-    img.addEventListener('load', ()=> wrap.replaceChildren(img));
-    img.addEventListener('error', ()=> { ph.textContent = '画像を表示できませんでした'; wrap.replaceChildren(ph); });
+  const ph = document.createElement('div');
+  ph.className = 'imgph';
+  ph.textContent = '読み込み中…';
 
-    const cap = document.createElement('div');
-    cap.className = 'imgcap';
-    cap.textContent = item.caption || safeHost(item.src) || '';
+  // ここが重要：まず DOM に入れてロードを開始させる
+  wrap.append(img, ph);
 
-    card.appendChild(wrap);
-    card.appendChild(cap);
-    card.addEventListener('click', ()=> openLightbox(idx));
-    return card;
-  }
+  img.addEventListener('load', () => {
+    ph.remove();
+    img.style.opacity = '1';
+  });
+  img.addEventListener('error', () => {
+    img.remove();
+    ph.textContent = '画像を表示できませんでした';
+  });
+
+  const cap = document.createElement('div');
+  cap.className = 'imgcap';
+  cap.textContent = item.caption || safeHost(item.src) || '';
+
+  card.append(wrap, cap);
+  card.addEventListener('click', () => openLightbox(idx));
+  return card;
+}
+
 
   function layoutAndMaybeScroll(items){
     if(!items.length){
