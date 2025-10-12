@@ -1,217 +1,169 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MCML | 公式ホームページ</title>
-  <meta name="description" content="MCMLの公式サイト。Discord参加、Minecraftテスト参加アドレス、運用方針など。">
-  <meta name="color-scheme" content="light dark" />
-  <style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCML | 公式サイト</title>
+<meta name="description" content="MCMLの公式サイト。Discord参加、Minecraftテスト接続情報、最新情報を発信。">
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --bg:#0e1117; --bg-soft:#111827; --card:#151a23; --line:#223;
+    --text:#e6edf3; --muted:#9aa7b4;
+    --brand:#5865f2; --accent:#22d3ee; --ok:#22c55e; --warn:#f59e0b;
+    --radius:18px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  @media (prefers-color-scheme: light){
     :root{
-      --bg: #0e1117;
-      --bg-soft: #111827;
-      --card: #151a23;
-      --muted: #93a4b7;
-      --text: #e6edf3;
-      --brand: #5865f2; /* Discord風ブルー */
-      --accent: #22d3ee;
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --danger:#ef4444;
-      --radius: 16px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --shadow-soft: 0 6px 20px rgba(0,0,0,.25);
-      --ring: 0 0 0 3px rgba(34,211,238,.3);
+      --bg:#f7fafc; --bg-soft:#f0f4f8; --card:#ffffff; --line:#e6ebf2;
+      --text:#0f172a; --muted:#475569; --shadow:0 8px 22px rgba(2,6,23,.10);
     }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg: #f7fafc;
-        --bg-soft:#f0f4f8;
-        --card: #ffffff;
-        --text:#0f172a;
-        --muted:#475569;
-        --shadow: 0 10px 30px rgba(2,6,23,.12);
-        --shadow-soft: 0 6px 20px rgba(2,6,23,.08);
-        --ring: 0 0 0 3px rgba(88,101,242,.2);
-      }
-    }
-    *{box-sizing: border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
-      background: radial-gradient(1200px 600px at 10% -20%, rgba(34,211,238,.15), transparent 60%),
-                  radial-gradient(1200px 600px at 90% -10%, rgba(88,101,242,.18), transparent 60%),
-                  var(--bg);
-      color:var(--text);
-    }
-    a{color:inherit; text-decoration: none}
-    .wrap{max-width:1100px; margin:0 auto; padding:24px}
-    header{
-      position: sticky; top:0; z-index:20;
-      backdrop-filter: blur(8px);
-      background: color-mix(in oklab, var(--bg) 70%, transparent);
-      border-bottom: 1px solid color-mix(in oklab, var(--text) 15%, transparent);
-    }
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:14px 24px;
-    }
-    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px}
-    .badge{font-size:12px; color:var(--muted)}
-    .spacer{flex:1}
-    .btn{
-      display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px;
-      background:var(--card); border:1px solid color-mix(in oklab, var(--text) 12%, transparent);
-      transition:.2s transform ease, .2s box-shadow ease, .2s background ease, .2s border-color ease;
-      box-shadow: var(--shadow-soft);
-      cursor:pointer; user-select:none; font-weight:600;
-    }
-    .btn:hover{transform: translateY(-1px)}
-    .btn:focus-visible{outline:none; box-shadow: var(--ring)}
-    .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 84%, #fff 6%), var(--brand)); color:#fff; border-color: transparent}
-    .btn.accent{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #fff 4%), var(--accent)); color:#002; border-color: transparent}
-    .btn.ghost{background:transparent}
-    .hero{
-      display:grid; grid-template-columns: 1.2fr 1fr; gap:28px; align-items:center;
-      padding:40px 24px 10px;
-    }
-    .card{
-      background:var(--card); border:1px solid color-mix(in oklab, var(--text) 12%, transparent);
-      border-radius: var(--radius); box-shadow: var(--shadow); padding:24px;
-    }
-    .h1{font-size: clamp(28px, 4.2vw, 44px); line-height:1.12; font-weight:900; letter-spacing:.2px; margin:0 0 12px}
-    .lead{color:var(--muted); font-size: clamp(14px, 1.9vw, 16px); margin:0 0 18px}
-    .grid{display:grid; gap:16px}
-    .grid.cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
-    .grid.cols-2{grid-template-columns: repeat(2, minmax(0,1fr))}
-    @media (max-width: 900px){ .hero{grid-template-columns:1fr} .grid.cols-3{grid-template-columns:1fr} .grid.cols-2{grid-template-columns:1fr} }
-    .kpi{display:flex; gap:12px; align-items:center; color:var(--muted); font-size:14px}
-    .kpi b{color:var(--text); font-size:18px}
-    .section{padding:28px 24px}
-    .pill{font:600 12px/1 ui-sans-serif; padding:8px 10px; border-radius:999px; background:color-mix(in oklab, var(--text) 10%, transparent); color:var(--muted); display:inline-flex; gap:8px; align-items:center}
-    .code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,"Liberation Mono","Courier New",monospace; background:color-mix(in oklab, var(--text) 10%, transparent); padding:6px 10px; border-radius:8px}
-    .list{display:grid; gap:12px}
-    footer{padding:32px 24px; color:var(--muted); border-top:1px dashed color-mix(in oklab, var(--text) 12%, transparent); margin-top:28px}
-    /* mini tooltip */
-    .tip{position:relative}
-    .tip:hover::after{
-      content: attr(data-tip); position:absolute; top:-36px; left:50%; transform:translateX(-50%);
-      background:#000; color:#fff; font-size:12px; padding:6px 10px; border-radius:8px; white-space:nowrap; box-shadow:var(--shadow);
-    }
-    .inline-note{font-size:12px; color:var(--muted)}
-    .discord-embed{border:0; border-radius:12px; width:100%; min-height:400px; background:var(--bg-soft)}
-    .link{color:var(--accent); text-decoration: underline; text-underline-offset: 3px}
-  </style>
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+    background:
+      radial-gradient(1000px 500px at 10% -15%, rgba(34,211,238,.12), transparent 60%),
+      radial-gradient(1100px 550px at 90% -10%, rgba(88,101,242,.14), transparent 60%),
+      var(--bg);
+    color:var(--text);
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
+  header{
+    position: sticky; top:0; z-index:50; backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+    background: color-mix(in oklab, var(--bg) 75%, transparent);
+  }
+  .nav{display:flex;align-items:center;gap:14px;padding:12px 24px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:900}
+  .brand svg{opacity:.9}
+  .sp{flex:1}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;
+    border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow); cursor:pointer;
+    transition:.18s transform ease, .18s filter ease, .18s background ease;
+    font-weight:700;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 86%, #fff 6%), var(--brand)); color:#fff; border-color:transparent}
+  .btn.accent{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #fff 4%), var(--accent)); color:#012; border-color:transparent}
+  .btn.ghost{background:transparent}
+  .hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;padding:34px 24px}
+  @media (max-width: 960px){ .hero{grid-template-columns:1fr} }
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+  .h1{font-size: clamp(28px, 4.4vw, 46px);line-height:1.1;margin:0 0 12px;font-weight:900;letter-spacing:.2px}
+  .lead{color:var(--muted);font-size:clamp(14px,1.9vw,17px);margin:0 0 18px}
+  .grid{display:grid;gap:14px}
+  .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width: 960px){ .grid.cols-3,.grid.cols-2{grid-template-columns:1fr} }
+  .pill{font:700 12px/1 ui-sans-serif;padding:8px 10px;border-radius:999px;background:color-mix(in oklab, var(--text) 10%, transparent);color:var(--muted);display:inline-block}
+  .code{font-family: ui-monospace, Menlo, Consolas, monospace;background:color-mix(in oklab, var(--text) 12%, transparent);padding:6px 10px;border-radius:8px}
+  .list{display:grid;gap:10px;padding-left:18px}
+  .list li{margin-left:8px}
+  .section{padding:18px 24px}
+  footer{padding:30px 24px;color:var(--muted);border-top:1px dashed var(--line);margin-top:28px}
+  .inline-note{font-size:12px;color:var(--muted)}
+  .link{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .kbd{display:inline-block;border:1px solid var(--line);border-bottom:3px solid var(--line);padding:2px 6px;border-radius:6px;background:var(--bg-soft)}
+</style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- ====== Header ====== -->
   <header>
-    <div class="nav">
+    <div class="nav wrap" style="padding-left:0;padding-right:0">
       <div class="brand">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".85"/>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".9"/>
         </svg>
         <span>MCML</span>
-        <span class="badge">公式</span>
       </div>
-      <nav class="spacer"></nav>
+      <div class="sp"></div>
       <a class="btn ghost" href="#join">参加</a>
       <a class="btn ghost" href="#minecraft">Minecraft</a>
-      <a class="btn ghost" href="/Admin/secret.html">Admin</a>
-      <a class="btn primary" href="/auth/discord/login" id="loginBtn">Discordでログイン</a>
+      <a class="btn ghost" href="#about">概要</a>
+      <a class="btn primary" href="/auth/discord/login">Discordでログイン</a>
     </div>
   </header>
 
-  <!-- Hero -->
+  <!-- ====== Hero / Landing ====== -->
   <section class="hero wrap">
     <div class="card">
-      <div class="pill">ようこそ</div>
-      <h1 class="h1">MCML へようこそ</h1>
-      <p class="lead">Discordでコミュニティに参加し、Minecraftテストサーバーに接続できます。サイトの内容はGitHubで編集され、プルリクエストで更新が反映されます。</p>
+      <div class="pill">公式サイト</div>
+      <h1 class="h1">ようこそ、MCMLへ</h1>
+      <p class="lead">コミュニティ参加はDiscordから。Minecraftテストサーバーの接続情報もこちらで案内します。サイトの内容はGitHubで編集し、プルリクで反映。</p>
       <div class="grid cols-2">
-        <button class="btn accent tip" data-tip="公式Discordに参加" onclick="openInvite()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3Z" fill="currentColor"/></svg>
-          Discord参加
-        </button>
-        <a class="btn" href="#minecraft">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z" fill="currentColor"/></svg>
-          接続情報を見る
-        </a>
+        <button class="btn accent" id="joinBtn">Discordに参加</button>
+        <a class="btn" href="#minecraft">接続情報を見る</a>
       </div>
-      <div class="kpi" style="margin-top:12px">
-        <span>最終更新: <span id="lastUpdated">読み込み中...</span></span>
-        <span class="spacer"></span>
-        <span class="inline-note">※ Adminページはログイン＆許可IDのみ</span>
-      </div>
+      <div class="inline-note" style="margin-top:10px">Adminページはログイン＆許可IDのみ。<span class="link" onclick="goAdmin()">/Admin/</span></div>
     </div>
-
     <div class="card">
-      <div class="pill">Discord</div>
-      <h2 style="margin:10px 0 8px">コミュニティに参加</h2>
-      <p class="lead">ルール・告知・サポートはDiscordで行います。下のボタンから参加、またはウィジェットからプレビュー可能です。</p>
-      <div class="grid">
-        <button class="btn primary" onclick="openInvite()">Discordに参加する</button>
-        <!-- ▼ Discordサーバー埋め込み（任意）：サーバーIDに置き換えてください -->
-        <!-- サーバー設定 > ウィジェット > サーバーID を有効化して取得 -->
-        <iframe class="discord-embed" allowtransparency="true" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-                src="https://discord.com/widget?id=YOUR_DISCORD_SERVER_ID&theme=dark">
-        </iframe>
-        <span class="inline-note">※ 表示されない場合はDiscordの「ウィジェット」を有効にし、<code>YOUR_DISCORD_SERVER_ID</code> を置き換えてください。</span>
-      </div>
+      <div class="pill">お知らせ</div>
+      <h3 style="margin:10px 0 8px">最新情報</h3>
+      <ul class="list">
+        <li><b>Discord参加</b>：下のボタンからどうぞ</li>
+        <li><b>サイト編集</b>：GitHub の <span class="code">Public/</span>／<span class="code">Admin/</span> に追加するだけ</li>
+        <li><b>反映</b>：アクセス毎にGitHubから取得（*後述の「反映が遅い」対策も参照*）</li>
+      </ul>
+      <div class="inline-note" style="margin-top:8px">最終表示: <span id="ts">…</span></div>
     </div>
   </section>
 
-  <!-- Join -->
-  <section class="section wrap" id="join">
+  <!-- ====== Join steps ====== -->
+  <section id="join" class="section wrap">
     <div class="grid cols-3">
       <div class="card">
-        <h3 style="margin:0 0 8px">1. Discordに参加</h3>
+        <h3 style="margin:0 0 8px">1. Discord参加</h3>
         <p class="lead">招待リンクから参加してください。</p>
         <div class="grid">
           <div class="code" id="inviteText">YOUR_DISCORD_INVITE_URL</div>
-          <button class="btn" onclick="copyInvite()">コピー</button>
+          <button class="btn" id="copyInvite">招待リンクをコピー</button>
         </div>
       </div>
       <div class="card">
         <h3 style="margin:0 0 8px">2. ログイン</h3>
-        <p class="lead">Adminページに入るにはDiscordログインが必要です。</p>
+        <p class="lead">AdminページはDiscordログイン＋許可IDが必要です。</p>
         <a class="btn primary" href="/auth/discord/login">Discordでログイン</a>
-        <span class="inline-note">ログイン後、<code>Account.txt</code> にあなたのDiscord IDが登録されていればAdminに入れます。</span>
+        <div class="inline-note">IDは <span class="code">Account.txt</span> に列挙</div>
       </div>
       <div class="card">
-        <h3 style="margin:0 0 8px">3. サイトの編集</h3>
-        <p class="lead">GitHubの <code>Public/</code> と <code>Admin/</code> にHTML等を追加すると自動反映（権限も自動付与）。</p>
+        <h3 style="margin:0 0 8px">3. サイト編集</h3>
+        <p class="lead">GitHubで <span class="code">Public/</span> と <span class="code">Admin/</span> を更新すると自動反映。</p>
         <ul class="list">
           <li>トップは <span class="code">Public/index.html</span></li>
-          <li>管理者専用は <span class="code">Admin/...</span></li>
-          <li>画像/JS/CSSもそのままOK</li>
+          <li>管理者専用は <span class="code">Admin/…</span></li>
+          <li>画像/JS/CSSもOK（外部参照なしで完結にすることも可能）</li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- Minecraft -->
-  <section class="section wrap" id="minecraft">
+  <!-- ====== Minecraft ====== -->
+  <section id="minecraft" class="section wrap">
     <div class="card">
       <div class="pill">Minecraft テストサーバー</div>
       <h2 style="margin:10px 0 8px">接続情報</h2>
       <div class="grid cols-2">
         <div>
-          <p class="lead">下記のアドレスをMinecraftのマルチプレイに登録してください。</p>
+          <p class="lead">Minecraftの「マルチプレイ」→「サーバーを追加」で次のアドレスを入力。</p>
           <div class="grid">
             <div class="code" id="mcAddr">mc.example.com:25565</div>
-            <div class="grid" style="grid-template-columns: auto auto; gap:8px">
-              <button class="btn" onclick="copyMC()">アドレスをコピー</button>
-              <button class="btn ghost" onclick="openMinecraftHelp()">接続手順</button>
+            <div class="grid" style="grid-template-columns:auto auto;gap:8px">
+              <button class="btn" id="copyMC">アドレスをコピー</button>
+              <button class="btn ghost" id="howto">接続手順</button>
             </div>
-            <span class="inline-note">※ サーバーはメンテ等で停止する場合があります。</span>
+            <div class="inline-note">※ メンテ時は一時停止の可能性があります</div>
           </div>
         </div>
         <div>
-          <h3 style="margin:0 0 8px">よくある質問</h3>
+          <h3 style="margin:0 0 8px">FAQ</h3>
           <ul class="list">
-            <li>バージョンは？ → <span class="code">最新安定版</span>（必要に応じて案内更新）</li>
-            <li>ホワイトリスト？ → 招待イベント時に適用する場合あり</li>
+            <li>推奨バージョン → <span class="code">最新安定版</span></li>
+            <li>ホワイトリスト → イベント時に適用の可能性あり</li>
             <li>禁止事項 → 迷惑行為・破壊行為・改造クライアント等</li>
           </ul>
         </div>
@@ -219,89 +171,71 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ====== About ====== -->
+  <section id="about" class="section wrap">
+    <div class="card">
+      <div class="pill">MCMLについて</div>
+      <p class="lead">MCMLはゲーム好きが集まるコミュニティ。Discord中心に運営し、テストサーバーでの検証やイベントを行っています。</p>
+    </div>
+  </section>
+
+  <!-- ====== Footer ====== -->
   <footer class="wrap">
-    <div class="grid cols-2">
-      <div>
-        <b>MCML</b><br/>
-        <span class="inline-note">© <span id="year"></span> MCML</span>
-      </div>
-      <div style="text-align:right">
-        <a class="link" href="/Public/">Public フォルダ</a> ・
-        <a class="link" href="/Admin/">Admin フォルダ</a> ・
+    <div style="display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <div>© <span id="year"></span> MCML</div>
+      <div style="display:flex;gap:12px">
+        <a class="link" href="/Public/">Public</a>
+        <a class="link" href="/Admin/">Admin</a>
         <a class="link" href="/auth/logout">ログアウト</a>
       </div>
     </div>
   </footer>
 
-  <script>
-    // ========= 設定（ここを書き換えてください） =========
-    const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL"; // 例: https://discord.gg/xxxxxxxx
-    const MINECRAFT_ADDRESS  = "mc.example.com:25565";    // 例: mc.example.com:25565
-    // ================================================
+<script>
+  // ===== 設定（ここを書き換えてください） =====
+  const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL"; // 例: https://discord.gg/xxxxxxxx
+  const MINECRAFT_ADDRESS  = "mc.example.com:25565";    // 例: mc.example.com:25565
+  // =============================================
 
-    // 初期表示調整
-    const inviteTextEl = document.getElementById("inviteText");
-    const mcAddrEl     = document.getElementById("mcAddr");
-    inviteTextEl.textContent = DISCORD_INVITE_URL;
-    mcAddrEl.textContent     = MINECRAFT_ADDRESS;
+  // 初期値の流し込み
+  const $ = sel => document.querySelector(sel);
+  $("#inviteText").textContent = DISCORD_INVITE_URL;
+  $("#mcAddr").textContent = MINECRAFT_ADDRESS;
+  $("#year").textContent = new Date().getFullYear();
+  $("#ts").textContent = new Date().toLocaleString();
 
-    // 最終更新（クライアント側の読み込み時刻）
-    document.getElementById("lastUpdated").textContent =
-      new Date().toLocaleString(undefined, {year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"});
+  // アクション
+  $("#joinBtn").addEventListener("click", ()=> window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer"));
+  $("#copyInvite").addEventListener("click", ()=> copy(DISCORD_INVITE_URL, "招待リンクをコピーしました"));
+  $("#copyMC").addEventListener("click", ()=> copy(MINECRAFT_ADDRESS, "Minecraft アドレスをコピーしました"));
+  $("#howto").addEventListener("click", ()=>{
+    alert("Minecraftの「マルチプレイ」→「サーバーを追加」で、表示中のアドレスを入力してください。");
+  });
+  function goAdmin(){ location.href="/Admin/"; }
 
-    // コピー系
-    async function copyInvite(){
-      try{
-        await navigator.clipboard.writeText(DISCORD_INVITE_URL);
-        flash("招待リンクをコピーしました");
-      }catch(e){alert("コピーに失敗しました");}
-    }
-    async function copyMC(){
-      try{
-        await navigator.clipboard.writeText(MINECRAFT_ADDRESS);
-        flash("Minecraftアドレスをコピーしました");
-      }catch(e){alert("コピーに失敗しました");}
-    }
+  async function copy(text, msg){
+    try{ await navigator.clipboard.writeText(text); toast(msg); }
+    catch(e){ alert("コピーに失敗しました"); }
+  }
+  function toast(msg){
+    const el = document.createElement("div");
+    el.textContent = msg;
+    el.style.position="fixed"; el.style.left="50%"; el.style.top="20px"; el.style.transform="translateX(-50%)";
+    el.style.padding="10px 14px"; el.style.background="rgba(0,0,0,.85)"; el.style.color="#fff";
+    el.style.borderRadius="12px"; el.style.zIndex="9999";
+    document.body.appendChild(el);
+    setTimeout(()=>{ el.style.transition="opacity .35s"; el.style.opacity="0"; }, 1100);
+    setTimeout(()=> el.remove(), 1550);
+  }
 
-    function openInvite(){ window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer"); }
-    function openMinecraftHelp(){
-      alert("Minecraftの「マルチプレイ」→「サーバーを追加」で、上記アドレスを入力してください。");
-    }
-
-    // 小さなトースト表示
-    function flash(msg){
-      const el = document.createElement("div");
-      el.textContent = msg;
-      el.style.position="fixed";
-      el.style.left="50%";
-      el.style.top="24px";
-      el.style.transform="translateX(-50%)";
-      el.style.padding="10px 14px";
-      el.style.background="rgba(0,0,0,.8)";
-      el.style.color="#fff";
-      el.style.borderRadius="12px";
-      el.style.boxShadow="0 10px 30px rgba(0,0,0,.4)";
-      el.style.zIndex="9999";
-      document.body.appendChild(el);
-      setTimeout(()=>{ el.style.transition="opacity .4s"; el.style.opacity="0"; }, 1200);
-      setTimeout(()=> el.remove(), 1700);
-    }
-
-    // 年
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // アンカーのスムーズスクロール（ネイティブ対応がない古いブラウザ向け）
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener("click", (e)=>{
-        const id = a.getAttribute("href").slice(1);
-        const target = document.getElementById(id);
-        if(target){
-          e.preventDefault();
-          target.scrollIntoView({behavior:"smooth", block:"start"});
-        }
-      });
+  // アンカーをスムーズに
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener("click", e=>{
+      const id = a.getAttribute("href").slice(1);
+      const el = document.getElementById(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:"smooth",block:"start"}); }
     });
-  </script>
+  });
+</script>
 </body>
 </html>
