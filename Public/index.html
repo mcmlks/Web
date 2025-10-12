@@ -94,13 +94,14 @@
     .hscroll{
       display:grid;
       grid-auto-flow:column;
-      grid-auto-columns: var(--card-w); /* 常に一定幅のカードで横に並べる */
+      grid-auto-columns: var(--card-w); /* 一定幅のカードで横に並べる */
       gap:var(--gap);
       overflow-x:auto;
       padding-bottom:6px;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch
     }
+    .hscroll.autoscrolling{ scroll-snap-type: none; } /* ← 自動スクロール中は吸着を無効化 */
     .hscroll::-webkit-scrollbar{height:8px}
     .hscroll > *{scroll-snap-align:start}
     .autoScrollHint{color:var(--muted); font-size:12px; margin-top:8px}
@@ -142,7 +143,7 @@
       <div>
         <span class="pill">マインクラフトマルチ連盟</span>
         <h1>マイクラ好きがつながる場所<br/>MCML</h1>
-        <p class="lead">～初心者から上級さんまで歓迎～v2.4</p>
+        <p class="lead">～初心者から上級さんまで歓迎～ V2.5</p>
         <div class="cta">
           <a class="btn" href="#discord" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -186,7 +187,7 @@
       <h2>ギャラリー</h2>
       <!-- カード表示（3カラム） -->
       <div id="galleryGrid" class="grid cols-3" style="margin-top:10px"></div>
-      <!-- 横スクロール表示（多いときにJSで切替/今回は常時使用可） -->
+      <!-- 横スクロール表示（今回は常時使用） -->
       <div id="galleryHScroll" class="hscroll" style="margin-top:10px; display:none"></div>
       <p class="autoScrollHint" id="autoScrollHint" style="display:none">写真が多いため自動で横スクロールしています。ホバーで一時停止できます。</p>
       <p class="muted" style="margin-top:8px">※ 画像リストは <code>/Public/ギャラリー写真追加用.txt</code> または <code>/Public/gallery.txt</code> を編集してください。</p>
@@ -272,24 +273,24 @@
 
   <!-- ===== Scripts ===== -->
   <script>
-/* ================= 設定 ================= */
-const GALLERY_TXT_SOURCES = [
-  "/Public/ギャラリー写真追加用.txt",
-  "/Public/gallery.txt",
-  "ギャラリー写真追加用.txt",
-  "gallery.txt",
-];
-const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
+  /* ================= 設定 ================= */
+  const GALLERY_TXT_SOURCES = [
+    "/Public/ギャラリー写真追加用.txt",
+    "/Public/gallery.txt",
+    "ギャラリー写真追加用.txt",
+    "gallery.txt",
+  ];
+  const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
 
-const AUTOSCROLL_ALWAYS = true;
-const SCROLL_STEP_PX = 1.5;
-const FORCE_SCROLL_MIN = 4;
+  /* 常時自動スクロール & 速度調整 */
+  const AUTOSCROLL_ALWAYS = true;
+  const SCROLL_STEP_PX = 1.5;   // px/frame（1.0～3.0で調整推奨）
+  const FORCE_SCROLL_MIN = 4;   // 多いときの自動切替基準（保険）
 
-/* ▼ 追加 */
-const IGNORE_REDUCED_MOTION = true; // OS設定に関係なく動かす
-const RUN_ONLY_WHEN_VISIBLE = true; // 画面に見えている時だけ動かす（省電力）
-/* ======================================= */
-
+  /* OSの reduce motion を無視するか / 可視時のみ動作するか */
+  const IGNORE_REDUCED_MOTION = true;
+  const RUN_ONLY_WHEN_VISIBLE = true;
+  /* ======================================= */
 
   // 年表示 & 招待リンク
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -423,11 +424,16 @@ const RUN_ONLY_WHEN_VISIBLE = true; // 画面に見えている時だけ動か�
         grid.style.display = 'none';
         strip.style.display = 'grid';
         hint.style.display  = 'block';
+
+        // 自動スクロール中は snap を無効化
+        strip.classList.add('autoscrolling');
+
         startAutoScroll();
       }else{
         grid.style.display = '';
         strip.style.display = 'none';
         hint.style.display  = 'none';
+        strip.classList.remove('autoscrolling');
       }
     });
   }
@@ -440,7 +446,7 @@ const RUN_ONLY_WHEN_VISIBLE = true; // 画面に見えている時だけ動か�
   const btnPrev = document.getElementById('lbPrev');
   const btnNext = document.getElementById('lbNext');
   const btnClose= document.getElementById('lbClose');
-  let gallery = [], cur = 0, autoTimer=null, paused=false;
+  let gallery = [], cur = 0, autoTimer=null, paused=false, wheelTimer=null;
 
   function showAt(i){
     cur = (i + gallery.length) % gallery.length;
@@ -465,66 +471,79 @@ const RUN_ONLY_WHEN_VISIBLE = true; // 画面に見えている時だけ動か�
     if(e.key==='ArrowRight') showAt(cur+1);
   });
 
-  // ===== 自動横スクロール（堅牢版） =====
-function startAutoScroll(){
-  if(autoTimer) return;
-  const el = strip;
+  // ===== 自動横スクロール（snap無効化制御つき） =====
+  function startAutoScroll(){
+    if(autoTimer) return;
+    const el = strip;
 
-  // OSの「アニメ少なめ」を尊重するかどうかをフラグで制御
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduceMotion && !IGNORE_REDUCED_MOTION) return;
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduceMotion && !IGNORE_REDUCED_MOTION) return;
 
-  // 画面に見えている時だけ動かす（任意）
-  let visible = true;
-  let io = null;
-  if (RUN_ONLY_WHEN_VISIBLE) {
-    io = new IntersectionObserver((entries)=>{
-      visible = entries.some(e => e.isIntersecting);
-    }, { root: null, threshold: 0.01 });
-    io.observe(el);
-  }
+    let visible = true;
+    let io = null;
+    if (RUN_ONLY_WHEN_VISIBLE) {
+      io = new IntersectionObserver((entries)=>{
+        visible = entries.some(e => e.isIntersecting);
+      }, { root: null, threshold: 0.01 });
+      io.observe(el);
+    }
 
-  const step = SCROLL_STEP_PX; // px/frame
+    const step = SCROLL_STEP_PX;
 
-  function tick(){
-    if(paused || (RUN_ONLY_WHEN_VISIBLE && !visible)){
+    function tick(){
+      if(paused || (RUN_ONLY_WHEN_VISIBLE && !visible)){
+        autoTimer = requestAnimationFrame(tick);
+        return;
+      }
+      const max = el.scrollWidth - el.clientWidth;
+
+      if(max <= 0){
+        // 画像ロード後の幅変化を待って再判定
+        requestAnimationFrame(()=>{
+          const max2 = el.scrollWidth - el.clientWidth;
+          if(max2 <= 0){
+            cancelAnimationFrame(autoTimer);
+            autoTimer = null;
+            if(io) io.disconnect();
+            el.classList.remove('autoscrolling'); // 終了時は戻す
+          }else{
+            autoTimer = requestAnimationFrame(tick);
+          }
+        });
+        return;
+      }
+
+      el.scrollLeft += step;
+      if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
       autoTimer = requestAnimationFrame(tick);
-      return;
-    }
-    const max = el.scrollWidth - el.clientWidth;
-
-    // オーバーフローが無ければ、一度だけレイアウト後に再確認
-    if(max <= 0){
-      requestAnimationFrame(()=>{
-        const max2 = el.scrollWidth - el.clientWidth;
-        if(max2 <= 0){
-          cancelAnimationFrame(autoTimer);
-          autoTimer = null;
-          if(io) io.disconnect();
-        }else{
-          autoTimer = requestAnimationFrame(tick);
-        }
-      });
-      return;
     }
 
-    el.scrollLeft += step;
-    if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
-    autoTimer = requestAnimationFrame(tick);
+    // display切替直後の計測ズレ対策
+    requestAnimationFrame(()=>{ autoTimer = requestAnimationFrame(tick); });
+
+    // ==== 一時停止/再開時に snap を戻す/切る ====
+    function pause(){ paused = true; el.classList.remove('autoscrolling'); }
+    function resume(){ paused = false; el.classList.add('autoscrolling'); }
+
+    // ライトボックスからも呼べるようにエクスポート
+    window.__galleryPause = pause;
+    window.__galleryResume = resume;
+
+    el.addEventListener('mouseenter', pause);
+    el.addEventListener('mouseleave', resume);
+    el.addEventListener('touchstart', pause, {passive:true});
+    el.addEventListener('touchend',   resume);
+
+    // ホイール操作 → 一時停止して 1.2 秒後に再開
+    el.addEventListener('wheel', ()=>{
+      pause();
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(resume, 1200);
+    }, {passive:true});
   }
 
-  // 1フレーム遅らせて（display切替直後の計測ズレ対策）
-  requestAnimationFrame(()=>{ autoTimer = requestAnimationFrame(tick); });
-
-  // ユーザー操作で一時停止/再開
-  el.addEventListener('mouseenter', ()=> paused=true);
-  el.addEventListener('mouseleave', ()=> paused=false);
-  el.addEventListener('touchstart', ()=> paused=true, {passive:true});
-  el.addEventListener('touchend',   ()=> paused=false);
-  // ホイール操作でも一時停止（好みで外してOK）
-  el.addEventListener('wheel', ()=> paused=true, {passive:true});
-}
-
+  function pauseAutoScroll(){ if(window.__galleryPause) window.__galleryPause(); }
+  function resumeAutoScroll(){ if(window.__galleryResume) window.__galleryResume(); }
 
   // ===== 初期化 =====
   (async ()=>{
