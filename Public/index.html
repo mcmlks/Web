@@ -25,8 +25,8 @@
       --panel-2:#0e152b;
       --text:#e5e7eb;
       --muted:#9aa4b2;
-      --brand:#22d3ee; /* cyan */
-      --brand-2:#34d399; /* green */
+      --brand:#22d3ee;
+      --brand-2:#34d399;
       --danger:#ef4444;
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:18px;
@@ -40,7 +40,7 @@
     }
     .container{width:min(var(--max), 92vw); margin-inline:auto}
 
-    /* ===== Base.html で使うクラス（ヘッダー） ===== */
+    /* ===== Base.html 用（ヘッダー） ===== */
     header{position:sticky; top:0; z-index:40; backdrop-filter:blur(10px);
            background: color-mix(in oklab, #0b1020 80%, transparent);
            border-bottom:1px solid rgba(255,255,255,.08)}
@@ -65,7 +65,7 @@
     .hero p.lead{margin-top:12px; color:var(--muted)}
     .cta{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
 
-    /* ===== Cards / Sections ===== */
+    /* ===== Sections / Cards ===== */
     .card{background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
     .card .content{padding:18px}
     section{padding:34px 0}
@@ -79,6 +79,36 @@
     }
     @media (max-width: 640px){
       .grid.cols-3,.grid.cols-2{grid-template-columns:1fr}
+    }
+
+    /* ===== Gallery (cards + horizontal scroller) ===== */
+    .imgcard{position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:#0e152b; cursor:pointer}
+    .imgwrap{aspect-ratio: 16/9; width:100%; position:relative; overflow:hidden}
+    .imgwrap img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease}
+    .imgcard:hover img{transform:scale(1.03)}
+    .imgcap{padding:10px 12px; color:var(--muted); font-size:14px; border-top:1px solid rgba(255,255,255,.06)}
+    .imgph{width:100%; height:100%; display:grid; place-items:center; color:#9aa4b2; font-size:12px; background:linear-gradient(180deg,#101a33,#0e152b)}
+    /* 横スクロール・スナップ */
+    .hscroll{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(260px, 1fr); gap:var(--gap);
+             overflow-x:auto; padding-bottom:6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch}
+    .hscroll::-webkit-scrollbar{height:8px}
+    .hscroll > *{scroll-snap-align:start}
+    .autoScrollHint{color:var(--muted); font-size:12px; margin-top:8px}
+
+    /* ===== Lightbox (popup) ===== */
+    .lightbox{position:fixed; inset:0; background:rgba(5,8,15,.75); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(3px)}
+    .lightbox.open{display:flex}
+    .lb-inner{position:relative; width:min(96vw, 1100px); max-height:90vh; display:grid; grid-template-rows: auto 1fr auto; gap:8px}
+    .lb-media{background:#0b1224; border:1px solid rgba(255,255,255,.12); border-radius:14px; overflow:hidden; display:grid; place-items:center}
+    .lb-media img{width:100%; height:100%; object-fit:contain; background:#0b1224}
+    .lb-caption{display:flex; justify-content:space-between; gap:12px; align-items:center; color:#c8d0dc; font-size:14px}
+    .lb-actions{position:absolute; inset:auto 0 50% 0; transform:translateY(50%); display:flex; justify-content:space-between; pointer-events:none}
+    .lb-btn{pointer-events:auto; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.18); color:#fff; width:44px; height:44px; display:grid; place-items:center; border-radius:10px; cursor:pointer}
+    .lb-btn:hover{background:rgba(0,0,0,.6)}
+    .lb-close{position:absolute; top:-12px; right:-12px; width:40px; height:40px; border-radius:999px; background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.18); color:#fff; display:grid; place-items:center; cursor:pointer}
+    @media (max-width:640px){
+      .lb-inner{width:96vw}
+      .lb-actions{inset:auto 6px 50% 6px}
     }
 
     /* ===== Footer ===== */
@@ -131,7 +161,7 @@
       <div class="grid cols-3" style="margin-top:10px">
         <article class="card"><div class="content"><h3>みんなでワイワイ</h3><p class="muted">一人で進めたい方やみんなで楽しくマルチを楽しみたい方が集まっています</p></div></article>
         <article class="card"><div class="content"><h3>優しいメンバー</h3><p class="muted">新規さんや初心者さんはもちろん、みんなが優しく教え合ったり楽しくマルチをしています</p></div></article>
-        <article class="card"><div class="content"><h3>イベント</h3><p class="muted">数ヶ月に1度ミニイベントを開催！年に大規模イベント2～5回代弁とを開催しています！（夏祭り、クリスマス、ハロウィン、年末、釣り大会など....）</p></div></article>
+        <article class="card"><div class="content"><h3>イベント</h3><p class="muted">数ヶ月に1度ミニイベントを開催！年に大規模イベント2～5回を開催！（夏祭り、クリスマス、ハロウィン、年末、釣り大会など）</p></div></article>
       </div>
     </div>
   </section>
@@ -140,11 +170,12 @@
   <section id="gallery">
     <div class="container">
       <h2>ギャラリー</h2>
-      <div class="grid cols-3" style="margin-top:10px">
-        <div class="card"><div class="content"><p class="muted">https://pbs.twimg.com/media/GecRY-3akAAAiuJ?format=jpg&name=large</p></div></div>
-        <div class="card"><div class="content"><p class="muted">建築例 #2</p></div></div>
-        <div class="card"><div class="content"><p class="muted">建築例 #3</p></div></div>
-      </div>
+      <!-- カード表示（3カラム） -->
+      <div id="galleryGrid" class="grid cols-3" style="margin-top:10px"></div>
+      <!-- 横スクロール表示（多いときにJSで切替） -->
+      <div id="galleryHScroll" class="hscroll" style="margin-top:10px; display:none"></div>
+      <p class="autoScrollHint" id="autoScrollHint" style="display:none">写真が多いため自動で横スクロールしています。ホバーで一時停止できます。</p>
+      <p class="muted" style="margin-top:8px">※ 下の <code>GALLERY_LINKS</code> に画像URLを追加するとここに表示されます。</p>
     </div>
   </section>
 
@@ -195,6 +226,22 @@
     </div>
   </section>
 
+  <!-- ===== Lightbox (popup) ===== -->
+  <div class="lightbox" id="lightbox" aria-modal="true" role="dialog">
+    <div class="lb-inner">
+      <div class="lb-media"><img id="lbImg" alt="拡大画像" decoding="async"></div>
+      <div class="lb-caption">
+        <span id="lbText" class="muted"></span>
+        <span id="lbIndex" class="muted"></span>
+      </div>
+      <button class="lb-close" id="lbClose" aria-label="閉じる">✕</button>
+      <div class="lb-actions">
+        <button class="lb-btn" id="lbPrev" aria-label="前へ">‹</button>
+        <button class="lb-btn" id="lbNext" aria-label="次へ">›</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== Footer ===== -->
   <footer>
     <div class="container footer-grid">
@@ -209,8 +256,15 @@
   </footer>
 
   <script>
-    // ---- 設定（必要に応じて差し替え）----
+    /* ================= 設定 ================= */
+    const GALLERY_LINKS = [
+      "https://pbs.twimg.com/media/GecRY-3akAAAiuJ?format=jpg&name=large",
+      // 推奨：自分のリポジトリ/CDN配下の画像
+      // "https://raw.githubusercontent.com/<OWNER>/<REPO>/<BRANCH>/Public/images/build1.jpg",
+      // "https://example.com/path/screenshot2.png",
+    ];
     const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
+    /* ======================================= */
 
     // 年表示
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -226,7 +280,161 @@
       navigator.clipboard.writeText(DISCORD_INVITE_URL).then(()=>alert("招待リンクをコピーしました"));
     });
 
-    // スムーズスクロール
+    // ===== ギャラリー表示（カード or 横スクロール） =====
+    const grid   = document.getElementById('galleryGrid');
+    const strip  = document.getElementById('galleryHScroll');
+    const hint   = document.getElementById('autoScrollHint');
+
+    function makeCard(url, idx){
+      const card = document.createElement('article');
+      card.className = 'imgcard';
+      card.setAttribute('data-index', idx);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'imgwrap';
+
+      const ph = document.createElement('div');
+      ph.className = 'imgph';
+      ph.textContent = '読み込み中…';
+      wrap.appendChild(ph);
+
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = 'MCML ギャラリー画像';
+      img.src = url;
+      img.addEventListener('load', ()=> wrap.replaceChildren(img));
+      img.addEventListener('error', ()=> { ph.textContent = '画像を表示できませんでした'; wrap.replaceChildren(ph); });
+
+      card.appendChild(wrap);
+
+      try{
+        const u = new URL(url);
+        const cap = document.createElement('div');
+        cap.className = 'imgcap';
+        cap.textContent = u.hostname;
+        card.appendChild(cap);
+      }catch(_){}
+
+      // クリックでライトボックス
+      card.addEventListener('click', ()=> openLightbox(idx));
+      return card;
+    }
+
+    function renderGallery(){
+      if(!Array.isArray(GALLERY_LINKS) || GALLERY_LINKS.length === 0){
+        const p = document.createElement('p');
+        p.className = 'muted';
+        p.textContent = '画像URLを GALLERY_LINKS に追加すると表示されます。';
+        grid.appendChild(p);
+        return;
+      }
+
+      // まず通常グリッドに配置
+      GALLERY_LINKS.forEach((url, i)=> grid.appendChild(makeCard(url, i)));
+
+      // 幅を見て「はみ出す」= 横スクロール版に切替
+      requestAnimationFrame(()=>{
+        const totalCols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+        const minCardWidth = grid.querySelector('.imgcard')?.getBoundingClientRect().width || 280;
+        const neededWidth = (minCardWidth + 16/*gap概算*/) * GALLERY_LINKS.length;
+        const visibleWidth = grid.getBoundingClientRect().width;
+
+        const shouldScroll = neededWidth > visibleWidth * 1.2; // ちょい余裕を見て判定
+        if(shouldScroll){
+          // strip に入れ直し
+          strip.innerHTML = '';
+          GALLERY_LINKS.forEach((url, i)=> strip.appendChild(makeCard(url, i)));
+          grid.style.display = 'none';
+          strip.style.display = 'grid';
+          hint.style.display = 'block';
+          startAutoScroll();
+        }
+      });
+    }
+
+    // ===== ライトボックス（ポップアップ） =====
+    const lb      = document.getElementById('lightbox');
+    const lbImg   = document.getElementById('lbImg');
+    const lbText  = document.getElementById('lbText');
+    const lbIndex = document.getElementById('lbIndex');
+    const btnPrev = document.getElementById('lbPrev');
+    const btnNext = document.getElementById('lbNext');
+    const btnClose= document.getElementById('lbClose');
+    let cur = 0;
+
+    function showAt(i){
+      cur = (i + GALLERY_LINKS.length) % GALLERY_LINKS.length;
+      const url = GALLERY_LINKS[cur];
+      lbImg.src = ''; // reset first to avoid flash
+      lbImg.src = url;
+      try{ lbText.textContent = new URL(url).hostname; }catch{ lbText.textContent = ''; }
+      lbIndex.textContent = `${cur+1} / ${GALLERY_LINKS.length}`;
+      // 近傍プリロード
+      const preloadNext = new Image(); preloadNext.src = GALLERY_LINKS[(cur+1)%GALLERY_LINKS.length];
+      const preloadPrev = new Image(); preloadPrev.src = GALLERY_LINKS[(cur-1+GALLERY_LINKS.length)%GALLERY_LINKS.length];
+    }
+    function openLightbox(i){
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      pauseAutoScroll();
+      showAt(i);
+    }
+    function closeLightbox(){
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+      resumeAutoScroll();
+    }
+    btnPrev.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur-1); });
+    btnNext.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur+1); });
+    btnClose.addEventListener('click', e=>{ e.stopPropagation(); closeLightbox(); });
+    lb.addEventListener('click', e=>{ if(e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', e=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key === 'Escape') closeLightbox();
+      if(e.key === 'ArrowLeft') showAt(cur-1);
+      if(e.key === 'ArrowRight') showAt(cur+1);
+    });
+
+    // スワイプ（モバイル）
+    (function addSwipe(el){
+      let sx=0, dx=0;
+      el.addEventListener('touchstart', e=>{ if(!lb.classList.contains('open')) return; sx = e.touches[0].clientX; }, {passive:true});
+      el.addEventListener('touchmove',  e=>{ if(!lb.classList.contains('open')) return; dx = e.touches[0].clientX - sx; }, {passive:true});
+      el.addEventListener('touchend',   ()=>{ if(!lb.classList.contains('open')) return;
+        if(Math.abs(dx) > 50){ dx<0 ? showAt(cur+1) : showAt(cur-1); }
+        sx=0; dx=0;
+      });
+    })(document.getElementById('lightbox'));
+
+    // ===== 自動横スクロール（はみ出す場合のみ起動） =====
+    let autoTimer=null, paused=false;
+    function startAutoScroll(){
+      if(autoTimer) return;
+      const el = strip;
+      const step = 1.2; // px per frame-ish
+      function tick(){
+        if(paused) { autoTimer = requestAnimationFrame(tick); return; }
+        const max = el.scrollWidth - el.clientWidth;
+        if(max <= 0){ cancelAnimationFrame(autoTimer); autoTimer=null; return; }
+        el.scrollLeft += step;
+        // 端まで行ったら戻す
+        if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
+        autoTimer = requestAnimationFrame(tick);
+      }
+      autoTimer = requestAnimationFrame(tick);
+      el.addEventListener('mouseenter', ()=> paused=true);
+      el.addEventListener('mouseleave', ()=> paused=false);
+      el.addEventListener('touchstart', ()=> paused=true, {passive:true});
+      el.addEventListener('touchend',   ()=> paused=false);
+    }
+    function pauseAutoScroll(){ paused = true; }
+    function resumeAutoScroll(){ paused = false; }
+
+    // ===== 初期化 =====
+    renderGallery();
+
+    // スムーズスクロール（サイト内アンカー）
     document.addEventListener('click', (e) => {
       const a = e.target.closest('a[href^="#"]');
       if (!a) return;
