@@ -260,16 +260,22 @@
   </footer>
 
 <script>
-  /* ================= 設定 ================= */
-  // 読み込み候補（上から順に探す → 成功したものを全部読み、重複をマージ）
-  const GALLERY_TXT_SOURCES = [
-    "ギャラリー写真追加用.txt",
-  ];
-  const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
+/* ================= 設定 ================= */
+// 読み込み候補
+const GALLERY_TXT_SOURCES = [
+  "/Public/ギャラリー写真追加用.txt",
+  "/Public/gallery.txt",
+  "ギャラリー写真追加用.txt",
+  "gallery.txt",
+];
+const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
 
-  // 枚数がこの数以上なら横スクロールに“強制”切替
-  const FORCE_SCROLL_MIN = 4;
-  /* ======================================= */
+// ✅ ここを追加
+const AUTOSCROLL_ALWAYS = true;   // 常に横スク＆自動スクロール
+const SCROLL_STEP_PX = 1.5;       // 1フレームあたりのスクロール量（px）
+const FORCE_SCROLL_MIN = 4;       // （既存）多い場合の自動切替基準
+/* ======================================= */
+
 
   // 年表示 & 招待リンク
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -379,34 +385,39 @@
   }
 
   function layoutAndMaybeScroll(items){
-    if(!items.length){
-      grid.innerHTML = '<p class="muted">ギャラリーリストが空です。/Public/gallery.txt を編集してください。</p>';
-      return;
-    }
-    // まずグリッド
-    grid.innerHTML = "";
-    items.forEach((it, i)=> grid.appendChild(makeCard(it, i)));
-
-    requestAnimationFrame(()=>{
-      const card = grid.querySelector('.imgcard');
-      const w = card ? card.getBoundingClientRect().width : 280;
-      const needed = (w + 16) * items.length;
-      const visible = grid.getBoundingClientRect().width;
-
-      // 多い or 横に溢れる → 横スクロール
-      const shouldScroll = items.length >= FORCE_SCROLL_MIN || needed > visible * 0.95;
-      if(shouldScroll){
-        strip.innerHTML = "";
-        items.forEach((it, i)=> strip.appendChild(makeCard(it, i)));
-        grid.style.display = 'none';
-        strip.style.display = 'grid';
-        hint.style.display  = 'block';
-        startAutoScroll();
-      }
-      // デバッグ（必要ならConsoleで確認）
-      // console.log({count: items.length, needed, visible, shouldScroll});
-    });
+  if(!items.length){
+    grid.innerHTML = '<p class="muted">ギャラリーリストが空です。/Public/gallery.txt を編集してください。</p>';
+    return;
   }
+  // まずグリッド
+  grid.innerHTML = "";
+  items.forEach((it, i)=> grid.appendChild(makeCard(it, i)));
+
+  requestAnimationFrame(()=>{
+    const card = grid.querySelector('.imgcard');
+    const w = card ? card.getBoundingClientRect().width : 280;
+    const needed = (w + 16) * items.length;
+    const visible = grid.getBoundingClientRect().width;
+
+    // ⬇⬇⬇ ここを変更：AutoscrollAlways を追加
+    const shouldScroll = AUTOSCROLL_ALWAYS || items.length >= FORCE_SCROLL_MIN || needed > visible * 0.95;
+
+    if(shouldScroll){
+      strip.innerHTML = "";
+      items.forEach((it, i)=> strip.appendChild(makeCard(it, i)));
+      grid.style.display = 'none';
+      strip.style.display = 'grid';
+      hint.style.display  = 'block';
+      startAutoScroll(); // ← 横スクロール要素で自動開始
+    }else{
+      // グリッドのまま
+      grid.style.display = '';
+      strip.style.display = 'none';
+      hint.style.display  = 'none';
+    }
+  });
+}
+
 
   // ===== ライトボックス =====
   const lb = document.getElementById('lightbox');
