@@ -25,8 +25,8 @@
       --panel-2:#0e152b;
       --text:#e5e7eb;
       --muted:#9aa4b2;
-      --brand:#22d3ee;
-      --brand-2:#34d399;
+      --brand:#22d3ee;   /* main CTA */
+      --brand-2:#34d399; /* accent */
       --danger:#ef4444;
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:18px;
@@ -82,15 +82,34 @@
     }
 
     /* ===== Gallery (cards + horizontal scroller) ===== */
-  <section id="gallery">
-    <div class="container">
-      <h2>ギャラリー</h2>
-      <div id="galleryGrid" class="grid cols-3" style="margin-top:10px"></div>
-      <div id="galleryHScroll" class="hscroll" style="margin-top:10px; display:none"></div>
-      <p class="autoScrollHint" id="autoScrollHint" style="display:none">写真が多いため自動で横スクロールしています。ホバーで一時停止できます。</p>
-      <p class="muted" style="margin-top:8px">※ 画像は <code>Public/gallery.txt</code> を編集すると反映されます（コメント可）。</p>
-    </div>
-  </section>
+    .imgcard{position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:#0e152b; cursor:pointer}
+    .imgwrap{aspect-ratio: 16/9; width:100%; position:relative; overflow:hidden}
+    .imgwrap img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease}
+    .imgcard:hover img{transform:scale(1.03)}
+    .imgcap{padding:10px 12px; color:var(--muted); font-size:14px; border-top:1px solid rgba(255,255,255,.06)}
+    .imgph{width:100%; height:100%; display:grid; place-items:center; color:#9aa4b2; font-size:12px; background:linear-gradient(180deg,#101a33,#0e152b)}
+    /* 横スクロール・スナップ */
+    .hscroll{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(260px, 1fr); gap:var(--gap);
+             overflow-x:auto; padding-bottom:6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch}
+    .hscroll::-webkit-scrollbar{height:8px}
+    .hscroll > *{scroll-snap-align:start}
+    .autoScrollHint{color:var(--muted); font-size:12px; margin-top:8px}
+
+    /* ===== Lightbox (popup) ===== */
+    .lightbox{position:fixed; inset:0; background:rgba(5,8,15,.75); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(3px)}
+    .lightbox.open{display:flex}
+    .lb-inner{position:relative; width:min(96vw, 1100px); max-height:90vh; display:grid; grid-template-rows: auto 1fr auto; gap:8px}
+    .lb-media{background:#0b1224; border:1px solid rgba(255,255,255,.12); border-radius:14px; overflow:hidden; display:grid; place-items:center}
+    .lb-media img{width:100%; height:100%; object-fit:contain; background:#0b1224}
+    .lb-caption{display:flex; justify-content:space-between; gap:12px; align-items:center; color:#c8d0dc; font-size:14px}
+    .lb-actions{position:absolute; inset:auto 0 50% 0; transform:translateY(50%); display:flex; justify-content:space-between; pointer-events:none}
+    .lb-btn{pointer-events:auto; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.18); color:#fff; width:44px; height:44px; display:grid; place-items:center; border-radius:10px; cursor:pointer}
+    .lb-btn:hover{background:rgba(0,0,0,.6)}
+    .lb-close{position:absolute; top:-12px; right:-12px; width:40px; height:40px; border-radius:999px; background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.18); color:#fff; display:grid; place-items:center; cursor:pointer}
+    @media (max-width:640px){
+      .lb-inner{width:96vw}
+      .lb-actions{inset:auto 6px 50% 6px}
+    }
 
     /* ===== Footer ===== */
     footer{padding:28px 0 48px; color:var(--muted); border-top:1px solid rgba(255,255,255,.08)}
@@ -123,7 +142,6 @@
           <a class="btn secondary" href="/#gallery">ギャラリー</a>
           <a class="btn secondary" href="/#discord">参加</a>
           <a class="btn secondary" href="/#faq">FAQ</a>
-
         </div>
       </div>
       <aside class="card">
@@ -161,7 +179,7 @@
       <!-- 横スクロール表示（多いときにJSで切替） -->
       <div id="galleryHScroll" class="hscroll" style="margin-top:10px; display:none"></div>
       <p class="autoScrollHint" id="autoScrollHint" style="display:none">写真が多いため自動で横スクロールしています。ホバーで一時停止できます。</p>
-      <p class="muted" style="margin-top:8px">※ 下の <code>GALLERY_LINKS</code> に画像URLを追加するとここに表示されます。</p>
+      <p class="muted" style="margin-top:8px">※ 画像リストは <code>/Public/ギャラリー写真追加用.txt</code> または <code>/Public/gallery.txt</code> を編集すると反映されます（コメント可）。</p>
     </div>
   </section>
 
@@ -244,7 +262,13 @@
 
   <script>
     /* ================= 設定 ================= */
-    const GALLERY_TXT = "ギャラリー写真追加用.txt"; // Public/index.html と同階層に置く
+    // 相対 → 絶対フォールバック（どの階層のHTMLでもOK）
+    const GALLERY_TXT_CANDIDATES = [
+      "ギャラリー写真追加用.txt",
+      "gallery.txt",
+      "/Public/ギャラリー写真追加用.txt",
+      "/Public/gallery.txt",
+    ];
     const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
     /* ======================================= */
 
@@ -262,12 +286,49 @@
       navigator.clipboard.writeText(DISCORD_INVITE_URL).then(()=>alert("招待リンクをコピーしました"));
     });
 
-    // ===== ギャラリー表示（カード or 横スクロール） =====
+    // ===== ギャラリー =====
     const grid   = document.getElementById('galleryGrid');
     const strip  = document.getElementById('galleryHScroll');
     const hint   = document.getElementById('autoScrollHint');
 
-    function makeCard(url, idx){
+    async function fetchFirst(urls){
+      for(const u of urls){
+        try{
+          const res = await fetch(u, { cache:"no-store", credentials:"same-origin" });
+          if(res.ok) return await res.text();
+        }catch(_){}
+      }
+      throw new Error("gallery list not found");
+    }
+
+    // コメント（#, //, ;）行・行末コメント対応。区切りは , | " - " | 最初の空白
+    function parseGalleryTxt(text){
+      const items = [];
+      for(let raw of text.split(/\r?\n/)){
+        let line = raw.trim();
+        if(!line) continue;
+        if(/^(#|;|\/\/)/.test(line)) continue;                // コメント行
+        line = line.replace(/\s+(#|;|\/\/).*$/, "").trim();   // 行末コメント
+        if(!line) continue;
+
+        let url="", cap="";
+        let m = line.match(/^\s*([^,|]+)\s*[,|]\s*(.+)\s*$/); // CSV/パイプ
+        if(m){ url=m[1].trim(); cap=m[2].trim(); }
+        else if( (m=line.match(/^\s*(\S+)\s+-\s+(.+)\s*$/)) ){ // " - "
+          url=m[1]; cap=m[2].trim();
+        }else{
+          const sp = line.indexOf(" ");
+          if(sp>0){ url=line.slice(0,sp).trim(); cap=line.slice(sp+1).trim(); }
+          else { url=line; cap=""; }
+        }
+        if(url) items.push({src:url, caption:cap});
+      }
+      return items;
+    }
+
+    function safeHost(u){ try{ return new URL(u).hostname }catch{ return "" } }
+
+    function makeCard(item, idx){
       const card = document.createElement('article');
       card.className = 'imgcard';
       card.setAttribute('data-index', idx);
@@ -283,124 +344,92 @@
       const img = document.createElement('img');
       img.loading = 'lazy';
       img.decoding = 'async';
-      img.alt = 'MCML ギャラリー画像';
-      img.src = url;
+      img.alt = item.caption || 'MCML ギャラリー画像';
+      img.src = item.src;
       img.addEventListener('load', ()=> wrap.replaceChildren(img));
       img.addEventListener('error', ()=> { ph.textContent = '画像を表示できませんでした'; wrap.replaceChildren(ph); });
 
-      card.appendChild(wrap);
+      const cap = document.createElement('div');
+      cap.className = 'imgcap';
+      cap.textContent = item.caption || safeHost(item.src) || '';
 
-      try{
-        const u = new URL(url);
-        const cap = document.createElement('div');
-        cap.className = 'imgcap';
-        cap.textContent = u.hostname;
-        card.appendChild(cap);
-      }catch(_){}
+      card.appendChild(wrap);
+      card.appendChild(cap);
 
       // クリックでライトボックス
       card.addEventListener('click', ()=> openLightbox(idx));
       return card;
     }
 
-    function renderGallery(){
-      if(!Array.isArray(GALLERY_LINKS) || GALLERY_LINKS.length === 0){
-        const p = document.createElement('p');
-        p.className = 'muted';
-        p.textContent = '画像URLを GALLERY_LINKS に追加すると表示されます。';
-        grid.appendChild(p);
+    function layoutAndMaybeScroll(items){
+      if(!items.length){
+        grid.innerHTML = '<p class="muted">ギャラリーリストが空です。/Public/ギャラリー写真追加用.txt を編集してください。</p>';
         return;
       }
+      grid.innerHTML = "";
+      items.forEach((it, i)=> grid.appendChild(makeCard(it, i)));
 
-      // まず通常グリッドに配置
-      GALLERY_LINKS.forEach((url, i)=> grid.appendChild(makeCard(url, i)));
-
-      // 幅を見て「はみ出す」= 横スクロール版に切替
+      // 多いときは横スクロールに切替
       requestAnimationFrame(()=>{
-        const totalCols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
-        const minCardWidth = grid.querySelector('.imgcard')?.getBoundingClientRect().width || 280;
-        const neededWidth = (minCardWidth + 16/*gap概算*/) * GALLERY_LINKS.length;
-        const visibleWidth = grid.getBoundingClientRect().width;
-
-        const shouldScroll = neededWidth > visibleWidth * 1.2; // ちょい余裕を見て判定
+        const card = grid.querySelector('.imgcard');
+        const w = card ? card.getBoundingClientRect().width : 280;
+        const needed = (w + 16) * items.length;
+        const visible = grid.getBoundingClientRect().width;
+        const shouldScroll = needed > visible * 1.2;
         if(shouldScroll){
-          // strip に入れ直し
-          strip.innerHTML = '';
-          GALLERY_LINKS.forEach((url, i)=> strip.appendChild(makeCard(url, i)));
+          strip.innerHTML = "";
+          items.forEach((it, i)=> strip.appendChild(makeCard(it, i)));
           grid.style.display = 'none';
           strip.style.display = 'grid';
-          hint.style.display = 'block';
+          hint.style.display  = 'block';
           startAutoScroll();
         }
       });
     }
 
-    // ===== ライトボックス（ポップアップ） =====
-    const lb      = document.getElementById('lightbox');
-    const lbImg   = document.getElementById('lbImg');
-    const lbText  = document.getElementById('lbText');
+    // ===== ライトボックス =====
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbText = document.getElementById('lbText');
     const lbIndex = document.getElementById('lbIndex');
     const btnPrev = document.getElementById('lbPrev');
     const btnNext = document.getElementById('lbNext');
     const btnClose= document.getElementById('lbClose');
-    let cur = 0;
+    let gallery = [], cur = 0, autoTimer=null, paused=false;
 
     function showAt(i){
-      cur = (i + GALLERY_LINKS.length) % GALLERY_LINKS.length;
-      const url = GALLERY_LINKS[cur];
-      lbImg.src = ''; // reset first to avoid flash
-      lbImg.src = url;
-      try{ lbText.textContent = new URL(url).hostname; }catch{ lbText.textContent = ''; }
-      lbIndex.textContent = `${cur+1} / ${GALLERY_LINKS.length}`;
+      cur = (i + gallery.length) % gallery.length;
+      const it = gallery[cur];
+      lbImg.src = '';
+      lbImg.src = it.src;
+      lbText.textContent = it.caption || safeHost(it.src) || '';
+      lbIndex.textContent = `${cur+1} / ${gallery.length}`;
       // 近傍プリロード
-      const preloadNext = new Image(); preloadNext.src = GALLERY_LINKS[(cur+1)%GALLERY_LINKS.length];
-      const preloadPrev = new Image(); preloadPrev.src = GALLERY_LINKS[(cur-1+GALLERY_LINKS.length)%GALLERY_LINKS.length];
+      const pre1 = new Image(); pre1.src = gallery[(cur+1)%gallery.length].src;
+      const pre2 = new Image(); pre2.src = gallery[(cur-1+gallery.length)%gallery.length].src;
     }
-    function openLightbox(i){
-      lb.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      pauseAutoScroll();
-      showAt(i);
-    }
-    function closeLightbox(){
-      lb.classList.remove('open');
-      document.body.style.overflow = '';
-      resumeAutoScroll();
-    }
+    function openLightbox(i){ lb.classList.add('open'); document.body.style.overflow='hidden'; pauseAutoScroll(); showAt(i); }
+    function closeLightbox(){ lb.classList.remove('open'); document.body.style.overflow=''; resumeAutoScroll(); }
     btnPrev.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur-1); });
     btnNext.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur+1); });
     btnClose.addEventListener('click', e=>{ e.stopPropagation(); closeLightbox(); });
-    lb.addEventListener('click', e=>{ if(e.target === lb) closeLightbox(); });
+    lb.addEventListener('click', e=>{ if(e.target===lb) closeLightbox(); });
     document.addEventListener('keydown', e=>{
       if(!lb.classList.contains('open')) return;
-      if(e.key === 'Escape') closeLightbox();
-      if(e.key === 'ArrowLeft') showAt(cur-1);
-      if(e.key === 'ArrowRight') showAt(cur+1);
+      if(e.key==='Escape') closeLightbox();
+      if(e.key==='ArrowLeft') showAt(cur-1);
+      if(e.key==='ArrowRight') showAt(cur+1);
     });
 
-    // スワイプ（モバイル）
-    (function addSwipe(el){
-      let sx=0, dx=0;
-      el.addEventListener('touchstart', e=>{ if(!lb.classList.contains('open')) return; sx = e.touches[0].clientX; }, {passive:true});
-      el.addEventListener('touchmove',  e=>{ if(!lb.classList.contains('open')) return; dx = e.touches[0].clientX - sx; }, {passive:true});
-      el.addEventListener('touchend',   ()=>{ if(!lb.classList.contains('open')) return;
-        if(Math.abs(dx) > 50){ dx<0 ? showAt(cur+1) : showAt(cur-1); }
-        sx=0; dx=0;
-      });
-    })(document.getElementById('lightbox'));
-
-    // ===== 自動横スクロール（はみ出す場合のみ起動） =====
-    let autoTimer=null, paused=false;
+    // ===== 自動横スクロール =====
     function startAutoScroll(){
       if(autoTimer) return;
-      const el = strip;
-      const step = 1.2; // px per frame-ish
+      const el = strip; const step = 1.2;
       function tick(){
-        if(paused) { autoTimer = requestAnimationFrame(tick); return; }
+        if(paused){ autoTimer = requestAnimationFrame(tick); return; }
         const max = el.scrollWidth - el.clientWidth;
         if(max <= 0){ cancelAnimationFrame(autoTimer); autoTimer=null; return; }
         el.scrollLeft += step;
-        // 端まで行ったら戻す
         if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
         autoTimer = requestAnimationFrame(tick);
       }
@@ -413,8 +442,17 @@
     function pauseAutoScroll(){ paused = true; }
     function resumeAutoScroll(){ paused = false; }
 
-    // ===== 初期化 =====
-    renderGallery();
+    // ===== 初期化：gallery list を相対→絶対で探して描画 =====
+    (async ()=>{
+      try{
+        const text = await fetchFirst(GALLERY_TXT_CANDIDATES);
+        gallery = parseGalleryTxt(text);
+        layoutAndMaybeScroll(gallery);
+      }catch(e){
+        console.warn(e);
+        grid.innerHTML = '<p class="muted">ギャラリーリスト (ギャラリー写真追加用.txt / gallery.txt) が見つかりません。</p>';
+      }
+    })();
 
     // スムーズスクロール（サイト内アンカー）
     document.addEventListener('click', (e) => {
