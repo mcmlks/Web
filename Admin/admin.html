@@ -232,7 +232,7 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
         <details>
           <summary>② 範囲検索 <span class="tag">/co l</span></summary>
           <div class="content">
-            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block +container'>コピー</button>例：/co lookup u: neco t: 5h r: 30 a:+block
+            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block'>コピー</button>例：/co lookup u: neco t: 5h r: 30 a:+block
 短縮: /co l u:Steve t:24h r:20 a:+block +container</pre>
             <table class="table">
               <tr><th>u:</th><td>ユーザー名（複数可）。<code>-user</code>で除外。</td></tr>
@@ -257,7 +257,7 @@ a:username — ユーザーネームの変更
         <details>
           <summary>③ ロールバック / 復元 <span class="tag">/co rb, /co rs</span></summary>
           <div class="content">
-            <pre><button class="copy" data-copy="/co rollback u:Steve t:1h r:15">コピー</button>
+            <pre><button class="copy" data-copy="/co rollback u:Steve t:1h r:15">コピー</button>/co rollback u:Steve t:1h r:15
 （取り消し）/co restore u:&lt;player&gt; t:&lt;期間&gt; r:&lt;半径&gt;</pre>
             <ul>
             <p class="muted">
@@ -279,7 +279,8 @@ a:username — ユーザーネームの変更
           <summary>失敗した時は？</summary>
           <div class="content">
             <ul>
-              <li><b>焦らないでください</b> <pre><button class="copy" data-copy="/co undo">コピー</button>で戻すことが可能です</li>
+              <li><b>焦らないでください。次のコマンドを使用して操作をキャンセルしましょう（1つしか戻れません）</b> <pre><button class="copy" data-copy="/co undo">コピー</button>/co undo</li>
+              <li><pre><button class="copy" data-copy="/co undo">コピー</button>/co undo</li>
             </ul>
           </div>
         </details>
