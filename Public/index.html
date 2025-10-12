@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MCML 公式ホームページ</title>
-  <meta name="description" content="MCMLはMinecraft好きが集まるエンジョイ勢コミュニティ" />
+  <title>MCML（マインクラフトコミュニティー）公式ホームページ</title>
+  <meta name="description" content="MCMLはMinecraft好きが集まる日本のコミュニティ。お知らせ、イベント、サーバー情報、参加方法など。" />
   <meta property="og:title" content="MCML 公式ホームページ" />
-  <meta property="og:description" content="Minecraft好きが集まるコミュニティ。最新情報などはこちら。" />
+  <meta property="og:description" content="Minecraft好きが集まる日本のコミュニティ。最新情報とイベントはこちら。" />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#1f2937" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231f2937'/><text x='50' y='58' font-size='48' text-anchor='middle' fill='%23fff'>M</text></svg>">
@@ -34,15 +34,7 @@
     }
     body{font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", Helvetica, Arial, sans-serif; background:linear-gradient(180deg,#0b1020 0%, #0a0f1b 100%); color:var(--text); line-height:1.65}
     .container{width:min(1100px, 92vw); margin-inline:auto}
-
-    /* ===== Header placeholder (loaded from Base.html) ===== */
-    header#site-header{position:sticky;top:0;z-index:50;background:rgba(11,16,32,.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
-    .header-fallback{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-    .brand .logo{inline-size:34px;block-size:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-2)); display:grid;place-items:center;color:#0b1020;font-weight:900}
-    .nav{display:flex;gap:16px}
-    .nav a{opacity:.9}
-    .nav a:hover{opacity:1}
+    /* ===== (Header is fully external: loaded from Base.html) ===== */
 
     /* ===== Hero ===== */
     .hero{position:relative; isolation:isolate; padding:64px 0 24px; overflow:hidden}
@@ -88,15 +80,15 @@
   </style>
 </head>
 <body>
-  <!-- ===== Header: load from Base.html ===== -->
-
+  <!-- ===== Header: entirely external (Base.html). Nothing is hardcoded here. ===== -->
+  
   <!-- ===== Hero ===== -->
   <section class="hero">
     <div class="container hero-grid">
       <div>
-        <span class="pill">マインクラフトマルチ連盟</span>
-        <h1>マイクラ好きがつながる場所<br/>MCML</h1>
-        <p class="lead">.</p>
+        <span class="pill">MCML - Minecraft Community in Japan</span>
+        <h1>マインクラフト好きがつながる場所<br/>MCML（マインクラフトコミュニティー）</h1>
+        <p class="lead">ビルド、レッドストーン、アドベンチャー、配布ワールド制作まで。初心者から上級者まで気軽に参加できます。</p>
         <div class="cta">
           <a class="btn" href="#join" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -106,11 +98,11 @@
       </div>
       <aside class="card">
         <div class="content">
-          <h3 style="margin-bottom:8px">MCMLのアピールポイント</h3>
+          <h3 style="margin-bottom:8px">今週のハイライト</h3>
           <ul style="display:grid; gap:10px">
-            <li>初心者さんに優しくおしえます</li>
-            <li>メンバーの治安がとてもいいです</li>
-            <li>複数のサーバーを用意！ <span class="kbd">mc.mcml.jp</span> を公開</li>
+            <li>🧱 建築ジャム #12 – テーマ「近未来の村」</li>
+            <li>⚙️ レッドストーン勉強会 – 反復回路の基礎</li>
+            <li>🌐 新マルチサーバー <span class="kbd">mc.mcml.jp</span> を公開</li>
           </ul>
         </div>
       </aside>
@@ -195,20 +187,23 @@
   <script>
     // ===== Load header from Base.html =====
     (async () => {
-      const header = document.getElementById('site-header');
-      const fallback = document.getElementById('header-fallback');
+      // Insert the <header> from Base.html at the very top of <body>
+    (async () => {
       try {
         const res = await fetch('Base.html', { credentials: 'same-origin' });
         if (!res.ok) throw new Error('Failed to fetch Base.html');
         const html = await res.text();
-        // Basic sanitization: create a DOM fragment and only allow <header> content
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
         const externalHeader = tmp.querySelector('header') || tmp.firstElementChild || tmp;
-        header.innerHTML = externalHeader.outerHTML || externalHeader.innerHTML || html;
+        // If the external header isn't a <header>, wrap it for semantics
+        const wrapper = document.createElement('header');
+        wrapper.setAttribute('aria-label', 'MCML ヘッダー');
+        wrapper.appendChild(externalHeader.cloneNode(true));
+        document.body.prepend(wrapper);
       } catch (err) {
         console.warn('[MCML] ヘッダー読込に失敗:', err);
-        fallback.hidden = false; // Show minimal header
+        // Intentionally do nothing — index.html does not include a fallback header
       }
     })();
 
