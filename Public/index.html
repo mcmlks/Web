@@ -1,262 +1,521 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MCML | 公式サイト</title>
-<meta name="description" content="MCMLの公式サイト。コミュニティ紹介、Discord参加、Minecraftテスト接続情報。">
-<meta name="color-scheme" content="light dark">
-<style>
-  :root{
-    --bg:#0b0f14; --panel:#101722; --card:#121a27; --line:#1d2940;
-    --text:#eaf1f8; --muted:#9fb0c5;
-    --brand:#5865f2; --accent:#22d3ee; --ok:#22c55e;
-    --radius:18px; --shadow:0 10px 32px rgba(0,0,0,.35);
-    --max:1100px;
-  }
-  @media (prefers-color-scheme: light){
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minecraft Community – 公式ホームページ</title>
+  <meta name="description" content="Minecraftコミュニティ公式サイト。参加方法、サーバー情報、イベント、ルール、ニュースを掲載。"/>
+  <meta name="theme-color" content="#2e7d32" />
+  <style>
     :root{
-      --bg:#f6f8fb; --panel:#f1f5f9; --card:#ffffff; --line:#e6ebf2;
-      --text:#0b1320; --muted:#546579; --shadow:0 10px 28px rgba(2,6,23,.08);
+      --bg:#0b1220;           /* 夜空 */
+      --bg-alt:#0e1630;       /* 濃い夜空 */
+      --text:#e6f1ff;         /* 明るい文字 */
+      --muted:#b8c6e0;
+      --accent:#42b883;       /* 草 */
+      --accent-2:#2e7d32;     /* 濃い草 */
+      --earth:#6b4f2a;        /* 土 */
+      --stone:#7d7d7d;        /* 石 */
+      --sand:#c2a76c;         /* 砂 */
+      --sky:#66c6ff;          /* 空 */
+      --card:#121a33;         /* カード背景 */
+      --shadow:0 8px 24px rgba(0,0,0,.45);
+      --radius:18px;
     }
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Inter, Roboto,
-                 "Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo", sans-serif;
-    color:var(--text);
-    background:
-      radial-gradient(1100px 560px at 90% -10%, rgba(88,101,242,.16), transparent 60%),
-      radial-gradient(1000px 520px at 12% -12%, rgba(34,211,238,.14), transparent 60%),
-      var(--bg);
-  }
-  a{color:inherit;text-decoration:none}
-  .wrap{max-width:var(--max); margin:0 auto; padding:24px}
+    [data-theme="light"]{
+      --bg:#eaf4ff;
+      --bg-alt:#f6fbff;
+      --text:#0c1b34;
+      --muted:#364863;
+      --accent:#2e7d32;
+      --accent-2:#1b5e20;
+      --card:#ffffff;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI, Noto Sans JP, Hiragino Kaku Gothic ProN, Meiryo, sans-serif;
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg-alt) 100%);
+      color:var(--text);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    /* ====== 共通 ====== */
+    .container{width:min(1200px, 92%); margin-inline:auto}
+    .btn{
+      display:inline-flex; align-items:center; gap:.5rem;
+      border:none; background:linear-gradient(180deg,var(--accent),var(--accent-2));
+      color:#fff; padding:.8rem 1.1rem; border-radius:12px; box-shadow:var(--shadow);
+      cursor:pointer; font-weight:700; letter-spacing:.02em; text-decoration:none;
+      transition:transform .08s ease, filter .2s ease;
+      clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    }
+    .btn:hover{ transform: translateY(-1px); filter:brightness(1.05); }
+    .btn.secondary{ background:linear-gradient(180deg,#5865F2,#454FBF); }
+    .chip{display:inline-block; padding:.25rem .6rem; border-radius:999px; background:rgba(255,255,255,.08); color:var(--muted); font-size:.85rem}
 
-  /* Header（Base.htmlで使うクラスも含めて定義） */
-  header{position:sticky; top:0; z-index:40; backdrop-filter:blur(10px);
-         background: color-mix(in oklab, var(--bg) 78%, transparent);
-         border-bottom:1px solid var(--line)}
-  .nav{display:flex; align-items:center; gap:14px; padding:12px 24px}
-  .brand{display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.2px}
-  .brand svg{opacity:.95}
-  .sp{flex:1}
-  .navlinks{display:flex; gap:8px; flex-wrap:wrap}
-  .link{display:inline-flex; padding:8px 10px; border-radius:10px}
-  .link:hover{background:color-mix(in oklab, var(--text) 10%, transparent)}
+    /* ====== ヘッダー ====== */
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(180%) blur(8px);
+      background:linear-gradient(180deg,rgba(10,16,30,.85),rgba(10,16,30,.45));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{display:flex; align-items:center; justify-content:space-between; padding:.7rem 0}
+    .brand{display:flex; align-items:center; gap:.7rem; font-weight:900; letter-spacing:.02em}
+    .logo{
+      width:36px; height:36px; display:inline-grid; grid-template:repeat(6,1fr)/repeat(6,1fr); gap:2px;
+    }
+    .logo span{border-radius:2px}
+    .l1{background:var(--sky)} .l2{background:var(--accent)} .l3{background:var(--earth)} .l4{background:var(--stone)}
+    nav ul{display:flex; gap:1rem; list-style:none; padding:0; margin:0}
+    nav a{color:var(--text); text-decoration:none; padding:.5rem .7rem; border-radius:10px}
+    nav a:hover{background:rgba(255,255,255,.06)}
+    .nav-actions{display:flex; gap:.6rem; align-items:center}
+    .menu-btn{display:none}
 
-  /* Buttons / Cards / Layout */
-  .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px;
-       border:1px solid var(--line); background:var(--panel); cursor:pointer; font-weight:800;
-       transition:.18s transform ease, .18s background ease, .18s filter ease}
-  .btn:hover{transform:translateY(-1px)}
-  .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 86%, #fff 6%), var(--brand)); color:#fff; border-color:transparent}
-  .btn.accent{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #fff 4%), var(--accent)); color:#012; border-color:transparent}
-  .btn.ghost{background:transparent}
+    /* ====== ヒーロー ====== */
+    .hero{
+      position:relative; isolation:isolate;
+      padding: clamp(64px, 8vw, 120px) 0 72px;
+      overflow:hidden;
+    }
+    .hero:before{
+      content:""; position:absolute; inset:-20%; z-index:-1;
+      background:
+        linear-gradient(180deg, rgba(102,198,255,.25), transparent 60%),
+        radial-gradient(600px 200px at 20% 20%, rgba(66,184,131,.25), transparent 60%),
+        radial-gradient(800px 300px at 80% 10%, rgba(255,255,255,.08), transparent 60%);
+      filter:saturate(120%);
+    }
+    .hero-grid{display:grid; grid-template-columns: 1.1fr 1fr; gap: min(4vw, 36px); align-items:center}
+    .hero h1{font-size: clamp(28px, 4vw, 48px); line-height:1.15; margin:0 0 .6rem; font-weight:900}
+    .hero p{margin:0 0 1.25rem; color:var(--muted)}
+    .hero .cta{display:flex; gap:.6rem; flex-wrap:wrap}
 
-  .card{background:var(--card); border:1px solid var(--line);
-        border-radius:var(--radius); box-shadow:var(--shadow); padding:24px}
+    .world-card{
+      background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:1rem; position:relative; overflow:hidden;
+    }
+    .isometric{
+      --c1:#4CAF50; --c2:#2e7d32; --c3:#6b4f2a; --c4:#a57a49;
+      position:relative; width:100%; aspect-ratio: 16/11; background:linear-gradient(180deg,rgba(255,255,255,.04), transparent);
+      border-radius:14px; overflow:hidden; display:grid; place-items:center;
+    }
+    .iso-scene{ position:relative; transform:skewY(-12deg) rotate(-12deg) scale(1.05); }
+    .block{ width:80px; height:80px; position:absolute; transform-style:preserve-3d; }
+    .block .top, .block .left, .block .right{ position:absolute; }
+    .top{ width:80px; height:80px; background:linear-gradient(180deg,var(--c1),var(--c2)); transform:rotateX(90deg) translateZ(40px); }
+    .left{ width:80px; height:80px; background:linear-gradient(180deg,var(--c3),var(--c4)); transform: rotateY(90deg) translateZ(40px); filter:brightness(.95)}
+    .right{ width:80px; height:80px; background:linear-gradient(180deg,#5e3f1a,#7a5326); transform: translateZ(40px); filter:brightness(.9)}
+    .block.shadow:after{content:""; position:absolute; inset:0; background:radial-gradient(closest-side, rgba(0,0,0,.3), transparent 65%); transform: translateZ(-60px)}
 
-  .hero{padding:48px 24px 10px}
-  .hero-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:28px; align-items:center}
-  @media (max-width: 980px){ .hero-grid{grid-template-columns:1fr} }
+    /* ====== セクション ====== */
+    section{padding:64px 0}
+    .section-title{font-size: clamp(22px, 2.6vw, 32px); margin:0 0 18px; font-weight:900}
+    .lead{color:var(--muted); margin:0 0 24px}
 
-  .section{padding:24px}
-  .grid{display:grid; gap:16px}
-  .cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
-  .cols-2{grid-template-columns: repeat(2, minmax(0,1fr))}
-  @media (max-width: 980px){ .cols-3, .cols-2{grid-template-columns:1fr} }
+    .grid{display:grid; gap:18px}
+    .grid.cols-3{ grid-template-columns: repeat(3, 1fr) }
+    .grid.cols-2{ grid-template-columns: repeat(2, 1fr) }
+    .card{background:var(--card); border:1px solid rgba(255,255,255,.06); padding:18px; border-radius:var(--radius); box-shadow:var(--shadow)}
+    .card h3{margin:.2rem 0 .6rem}
+    .card p{margin:.2rem 0}
 
-  .h1{font-size: clamp(30px, 4.4vw, 48px); line-height:1.08; margin:0 0 12px; font-weight:900}
-  .h2{font-size: clamp(22px, 3vw, 30px); margin:0 0 10px; font-weight:900}
-  .lead{color:var(--muted); font-size: clamp(14px,2vw,18px); margin:0 0 18px}
-  .pill{font:700 12px/1 ui-sans-serif; padding:8px 10px; border-radius:999px;
-        background:color-mix(in oklab, var(--text) 12%, transparent); color:var(--muted); display:inline-block; margin-bottom:8px}
-  .code{font-family: ui-monospace, Menlo, Consolas, monospace; background:color-mix(in oklab, var(--text) 12%, transparent); padding:6px 10px; border-radius:8px}
-  .list{display:grid; gap:8px; padding-left:18px}
-  .list li{margin-left:8px}
-  .shot{aspect-ratio: 16 / 9; width:100%; border-radius:14px; border:1px solid var(--line);
-        background:linear-gradient(180deg,#101826,#0e1a2a); display:grid; place-items:center; color:#9bb0c8}
-  .faq dt{font-weight:800; margin:8px 0 6px}
-  .faq dd{margin:0 0 8px; color:var(--muted)}
-  footer{padding:28px 24px; color:var(--muted); border-top:1px dashed var(--line); margin-top:18px}
-</style>
+    /* ====== サーバー情報 ====== */
+    .server-box{display:grid; gap:14px}
+    .server-row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight:700}
+    .status{display:inline-flex; align-items:center; gap:.5rem}
+    .dot{width:10px; height:10px; border-radius:999px; background:#999}
+    .dot.on{background:#2ecc71}
+    .dot.off{background:#e74c3c}
+
+    /* ====== タイムライン/ニュース ====== */
+    .timeline{position:relative; padding-left:18px}
+    .timeline:before{content:""; position:absolute; left:6px; top:4px; bottom:4px; width:2px; background:linear-gradient(var(--accent), transparent)}
+    .timeline-item{position:relative; padding:10px 0 10px 6px}
+    .timeline-item:before{content:""; position:absolute; left:-12px; top:16px; width:10px; height:10px; border-radius:50%; background:var(--accent)}
+    details summary{cursor:pointer; user-select:none}
+
+    /* ====== ギャラリー（データURIダミー） ====== */
+    .gallery{display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px}
+    .gallery figure{margin:0; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.06)}
+    .gallery img{display:block; width:100%; height:140px; object-fit:cover}
+
+    /* ====== ルール ====== */
+    .rules{display:grid; gap:10px}
+    .rules li{margin:0 0 .4rem}
+
+    /* ====== フッター ====== */
+    footer{padding:36px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--muted)}
+
+    /* ====== レスポンシブ ====== */
+    @media (max-width: 900px){
+      .hero-grid{grid-template-columns:1fr}
+      .grid.cols-3{ grid-template-columns:1fr }
+      .grid.cols-2{ grid-template-columns:1fr }
+      .menu-btn{display:inline-flex}
+      nav ul{display:none}
+      nav ul.open{display:flex; position:absolute; inset:56px 4% auto; flex-direction:column; background:var(--card); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,.08)}
+    }
+  </style>
 </head>
 <body>
-  <!-- 共通ヘッダー（ログインボタン付き） -->
-  <!--#include "/Public/Base.html" -->
-
-  <!-- Hero -->
-  <section class="hero wrap">
-    <div class="hero-grid">
-      <div class="card">
-        <h1 class="h1">ようこそ、MCMLへ</h1>
-        <p class="lead">ゲーム好きが集まるコミュニティ。Discordで交流し、テストサーバーでイベントや検証を行っています。はじめての方は、まずDiscordに参加してください。</p>
-        <div style="display:flex; gap:12px; flex-wrap:wrap">
-          <button class="btn primary" id="ctaJoin">Discordに参加する</button>
-          <a class="btn ghost" href="#features">特長を見る</a>
+  <!-- ====== ヘッダー ====== -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span>
+          <span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span>
+          <span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span>
+          <span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span>
+          <span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span>
+          <span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span>
         </div>
-        <div style="display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); font-size:14px; margin-top:12px">
-          <span>最終表示: <b id="ts">…</b></span>
+        <span>Minecraft Community</span>
+        <span class="chip">公式</span>
+      </div>
+      <nav>
+        <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mainMenu">メニュー</button>
+        <ul id="mainMenu">
+          <li><a href="#about">概要</a></li>
+          <li><a href="#server">サーバー</a></li>
+          <li><a href="#events">イベント</a></li>
+          <li><a href="#news">ニュース</a></li>
+          <li><a href="#rules">ルール</a></li>
+          <li><a href="#join">参加</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn" id="themeToggle" aria-pressed="false" title="ライト/ダーク切替">🌓 テーマ</button>
+        <a class="btn secondary" href="#join">Discordで参加</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====== ヒーロー ====== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <h1>ブロックの世界へようこそ！<br/>Minecraftコミュニティ公式サイト</h1>
+        <p>サバイバルから建築、レッドストーンまで。誰でも気軽に参加できるコミュニティです。最新イベントやサーバー情報、ルールをチェックして冒険を始めよう！</p>
+        <div class="cta">
+          <a class="btn" href="#server">サーバーに入る</a>
+          <a class="btn secondary" href="#events">イベントを見る</a>
         </div>
       </div>
-      <div class="card">
-        <div class="shot" aria-label="コミュニティのイメージ"><span>ギャラリー画像 / スクショをここに</span></div>
+      <div class="world-card">
+        <div class="isometric" aria-hidden="true">
+          <div class="iso-scene" id="isoScene"></div>
+        </div>
+        <p class="lead" style="margin-top:.6rem">コミュニティのワールドは、建築・経済・ミニゲームなど様々。保護プラグインで安心して遊べます。</p>
       </div>
     </div>
   </section>
 
-  <!-- Features -->
-  <section id="features" class="section wrap">
-    <div class="pill">MCMLの特長</div>
-    <div class="grid cols-3">
+  <!-- ====== 概要 ====== -->
+  <section id="about">
+    <div class="container grid cols-2">
       <div class="card">
-        <h2 class="h2">みんなでワイワイ</h2>
-        <p class="lead">雑談から攻略まで。イベント・告知・交流はDiscord中心に行っています。</p>
+        <h2 class="section-title">コミュニティ概要</h2>
+        <p class="lead">Minecraftをもっと楽しく、安心して。初参加の方でも迷わないガイドと運営体制を用意しています。</p>
+        <ul>
+          <li>Java版 / 統合版 どちらも歓迎（クロスプレイ対応サーバー構成も検討中）</li>
+          <li>初心者向け建築区画と、上級者向けフリービルド区画を用意</li>
+          <li>定期イベント：建築コンテスト、PvPトーナメント、協力ボス討伐 など</li>
+        </ul>
       </div>
       <div class="card">
-        <h2 class="h2">テストサーバー</h2>
-        <p class="lead">新要素の検証や建築イベントを随時開催。安全に試せる環境です。</p>
-      </div>
-      <div class="card">
-        <h2 class="h2">オープンな運営</h2>
-        <p class="lead">サイトやドキュメントはGitHubで編集可能。PRで改善に参加できます。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Gallery -->
-  <section id="gallery" class="section wrap">
-    <div class="pill">ギャラリー</div>
-    <div class="grid cols-3">
-      <div class="card"><div class="shot">スクリーンショットA</div></div>
-      <div class="card"><div class="shot">スクリーンショットB</div></div>
-      <div class="card"><div class="shot">スクリーンショットC</div></div>
-    </div>
-    <p class="lead" style="margin-top:10px">※ 実画像に差し替えると、第一印象と参加率が上がります。</p>
-  </section>
-
-  <!-- Discord Join -->
-  <section id="discord" class="section wrap">
-    <div class="card">
-      <div class="pill">Discord 参加方法</div>
-      <div class="grid cols-2">
-        <div>
-          <h2 class="h2">手順</h2>
-          <ol class="list" style="list-style:decimal">
-            <li>招待リンクを開く</li>
-            <li>画面の指示に従って参加</li>
-          </ol>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
-            <button class="btn primary" id="openInvite">招待リンクを開く</button>
-            <button class="btn" id="copyInvite">コピー</button>
-          </div>
-          <div class="code" id="inviteText" style="margin-top:10px">YOUR_DISCORD_INVITE_URL</div>
+        <h3>コミュニケーション</h3>
+        <p>運営連絡・雑談・取引はDiscordで行っています。荒らし対策として入室認証とロール付与を実施します。</p>
+        <div class="cta">
+          <a class="btn secondary" href="#join">Discordに参加</a>
         </div>
-        <div>
-          <h2 class="h2">参加のメリット</h2>
-          <ul class="list">
-            <li>最新のお知らせ・イベント情報を受け取れる</li>
-            <li>質問・サポートがスムーズ</li>
-            <li>コラボ企画や建築共有がしやすい</li>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== サーバー ====== -->
+  <section id="server">
+    <div class="container">
+      <h2 class="section-title">サーバー情報</h2>
+      <p class="lead">アドレスをコピーして、今すぐ参加しよう。ステータスチェックでオンライン状況も確認できます。</p>
+      <div class="grid cols-3">
+        <div class="card server-box">
+          <h3>接続情報</h3>
+          <div class="server-row"><span class="mono">mc.example.com</span> <button class="btn" id="copyIpBtn">IPをコピー</button></div>
+          <div>対応バージョン: <strong>1.20.x – 1.21.x</strong></div>
+          <div>推奨リソースパック: 公式軽量パック（任意）</div>
+        </div>
+        <div class="card server-box">
+          <h3>現在の状態</h3>
+          <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">不明</span></div>
+          <button class="btn" id="checkBtn">ステータスをチェック</button>
+          <small id="statusNote" style="color:var(--muted)">※ デモ用：ブラウザ内で簡易判定します。実運用ではAPI連携に置き換えてください。</small>
+        </div>
+        <div class="card server-box">
+          <h3>ルール要点</h3>
+          <ul>
+            <li>荒らし・チート・不正改造は禁止</li>
+            <li>他者の建築物を尊重しよう</li>
+            <li>チャットのマナーを守る</li>
           </ul>
+          <a class="btn" href="#rules">詳しいルールへ</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Minecraft Connection -->
-  <section id="minecraft" class="section wrap">
-    <div class="card">
-      <div class="pill">Minecraft テスト接続</div>
-      <div class="grid cols-2">
-        <div>
-          <h2 class="h2">接続アドレス</h2>
-          <div class="code" id="mcAddr" style="margin:10px 0">mc.example.com:25565</div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap">
-            <button class="btn" id="copyMC">アドレスをコピー</button>
-            <button class="btn accent" id="howto">接続手順</button>
-          </div>
-          <p class="lead" style="margin-top:8px">メンテナンス時は一時停止する場合があります。</p>
+  <!-- ====== イベント ====== -->
+  <section id="events">
+    <div class="container">
+      <h2 class="section-title">イベント</h2>
+      <p class="lead">毎月の定期開催に加え、季節の特別イベントも！</p>
+      <div class="grid cols-3">
+        <article class="card">
+          <div class="chip">今月</div>
+          <h3>建築コンテスト：秋の街</h3>
+          <p>テーマは「秋」。紅葉・収穫・温かみのある街並みを表現しよう。</p>
+          <p><strong>締切:</strong> 月末 23:59 / <strong>審査:</strong> 運営+投票</p>
+          <a class="btn" href="#join">参加登録</a>
+        </article>
+        <article class="card">
+          <div class="chip">週末</div>
+          <h3>協力レイド：古代都市攻略</h3>
+          <p>装備指定あり（鉄以上）。初心者はベテランがサポートします。</p>
+          <p><strong>集合:</strong> スポーン広場 / <strong>所要:</strong> 約90分</p>
+          <a class="btn" href="#join">参加登録</a>
+        </article>
+        <article class="card">
+          <div class="chip">常設</div>
+          <h3>PvPトーナメント</h3>
+          <p>月次ポイント制。決勝は配信！観戦も大歓迎です。</p>
+          <p><strong>形式:</strong> BO3 / <strong>賞品:</strong> 限定称号</p>
+          <a class="btn" href="#join">エントリー</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ニュース ====== -->
+  <section id="news">
+    <div class="container">
+      <h2 class="section-title">ニュース / お知らせ</h2>
+      <div class="card timeline">
+        <div class="timeline-item">
+          <details open>
+            <summary><strong>[重要]</strong> サーバー移行メンテナンス完了</summary>
+            <p>新しいハードウェアに移行しました。ラグが大幅に解消されています。ご協力ありがとうございました。</p>
+          </details>
         </div>
-        <div>
-          <h2 class="h2">注意事項</h2>
-          <ul class="list">
-            <li>推奨バージョン → <span class="code">最新安定版</span></li>
-            <li>ホワイトリスト → イベント時に適用の可能性あり</li>
-            <li>禁止事項 → 迷惑行為・破壊行為・改造クライアント等</li>
-          </ul>
+        <div class="timeline-item">
+          <details>
+            <summary>公式ショップに限定スキン風バナー追加</summary>
+            <p>ゲーム内の見た目を変えるものではありません。サイト内プロフィール用のバナージェネレーターです。</p>
+          </details>
+        </div>
+        <div class="timeline-item">
+          <details>
+            <summary>初心者向けガイドを更新</summary>
+            <p>保護コマンドや土地システムの使い方を追記しました。</p>
+          </details>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq" class="section wrap">
-    <div class="card">
-      <div class="pill">FAQ</div>
-      <dl class="faq">
-        <dt>Q. いつ活動していますか？</dt>
-        <dd>主に夜〜週末にイベントや雑談が活発です。詳細はDiscordで告知します。</dd>
-        <dt>Q. サイトの内容は誰が更新？</dt>
-        <dd>GitHubで提案・PR可能です。反映はアクセス毎に自動で行われます。</dd>
-      </dl>
+  <!-- ====== ギャラリー ====== -->
+  <section id="gallery">
+    <div class="container">
+      <h2 class="section-title">コミュニティ・ギャラリー</h2>
+      <p class="lead">メンバーの作品をピックアップ（ダミー画像）。本番では画像アップロード機能に接続してください。</p>
+      <div class="gallery">
+        <figure><img alt="ギャラリー1" src="data:image/svg+xml;utf8,\
+          <svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>\
+            <defs><linearGradient id='g' x1='0' x2='0' y1='0' y2='1'>\
+              <stop offset='0%' stop-color='%2366c6ff'/>\
+              <stop offset='100%' stop-color='%2342b883'/>\
+            </linearGradient></defs>\
+            <rect width='100%' height='100%' fill='url(%23g)'/>\
+            <text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Build A</text>\
+          </svg>"/></figure>
+        <figure><img alt="ギャラリー2" src="data:image/svg+xml;utf8,\
+          <svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>\
+            <rect width='100%' height='100%' fill='%236b4f2a'/>\
+            <text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Castle</text>\
+          </svg>"/></figure>
+        <figure><img alt="ギャラリー3" src="data:image/svg+xml;utf8,\
+          <svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>\
+            <rect width='100%' height='100%' fill='%237d7d7d'/>\
+            <text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Redstone</text>\
+          </svg>"/></figure>
+        <figure><img alt="ギャラリー4" src="data:image/svg+xml;utf8,\
+          <svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'>\
+            <rect width='100%' height='100%' fill='%2342b883'/>\
+            <text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Town</text>\
+          </svg>"/></figure>
+      </div>
     </div>
   </section>
 
-  <footer class="wrap">
-    <div style="display:flex; gap:12px; justify-content:space-between; align-items:center; flex-wrap:wrap">
-      <div>© <span id="year"></span> MCML</div>
-      <div style="color:var(--muted)">最終表示: <span id="ts2"></span></div>
+  <!-- ====== ルール ====== -->
+  <section id="rules">
+    <div class="container grid cols-2">
+      <div class="card">
+        <h2 class="section-title">ルール</h2>
+        <ol class="rules">
+          <li>他プレイヤーの所有物・建築物を破壊しないこと。</li>
+          <li>チート、X-Ray、外部ツールによる不正行為をしないこと。</li>
+          <li>暴言・ハラスメント・政治/宗教の過度な議論は控えること。</li>
+          <li>資源ワールドでは再生と共有を意識し、過度な独占は控えること。</li>
+          <li>疑問点は運営に確認し、決定に従うこと。</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>セキュリティと保護</h3>
+        <p>土地保護・チェスト保護のプラグインを導入。ワールドバックアップは1日1回。</p>
+        <ul>
+          <li><strong>/protect</strong>：保護ウィザード</li>
+          <li><strong>/claim</strong>：土地の取得</li>
+          <li><strong>/trust &lt;name&gt;</strong>：建築許可の付与</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== 参加 ====== -->
+  <section id="join">
+    <div class="container grid cols-2">
+      <div class="card">
+        <h2 class="section-title">参加方法</h2>
+        <ol>
+          <li><strong>Discordに参加</strong>（下のボタン）</li>
+          <li>認証チャンネルでルールに同意</li>
+          <li>自己紹介→ロール付与→サーバーへIN！</li>
+        </ol>
+        <div class="cta">
+          <a class="btn secondary" href="#" aria-label="Discordサーバー招待リンク">Discordに参加</a>
+          <a class="btn" href="#server">サーバー情報へ戻る</a>
+        </div>
+      </div>
+      <form class="card" onsubmit="event.preventDefault(); subscribe();">
+        <h3>メール購読（お知らせ）</h3>
+        <p class="lead">イベントやメンテ情報をメールで受け取りたい方はこちら。</p>
+        <label for="email">メールアドレス</label><br/>
+        <input id="email" name="email" type="email" required placeholder="name@example.com" style="width:100%; padding:.8rem; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:transparent; color:var(--text);"/>
+        <div style="display:flex; gap:.6rem; margin-top:.8rem">
+          <button class="btn" type="submit">登録する</button>
+          <span id="subMsg" class="chip" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+      <small>© <span id="year"></span> Minecraft Community. Not affiliated with Mojang/Microsoft.</small>
+      <div style="display:flex; gap:.6rem">
+        <a href="#rules" style="color:inherit">利用規約</a>
+        <a href="#" style="color:inherit">プライバシー</a>
+        <a href="#join" style="color:inherit">お問い合わせ</a>
+      </div>
     </div>
   </footer>
 
-<script>
-  // ===== 設定（ここを書き換えてください） =====
-  const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL"; // 例: https://discord.gg/xxxxxx
-  const MINECRAFT_ADDRESS  = "mc.example.com:25565";    // 例: mc.example.com:25565
-  // ===============================================
+  <script>
+    // ====== モバイルメニュー ======
+    const menuBtn = document.getElementById('menuBtn');
+    const mainMenu = document.getElementById('mainMenu');
+    if(menuBtn){
+      menuBtn.addEventListener('click', () => {
+        const open = mainMenu.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
 
-  const $ = s => document.querySelector(s);
-  function toast(msg){
-    const el = document.createElement("div");
-    el.textContent = msg;
-    el.style.position="fixed"; el.style.left="50%"; el.style.top="18px"; el.style.transform="translateX(-50%)";
-    el.style.padding="10px 14px"; el.style.background="rgba(0,0,0,.85)"; el.style.color="#fff";
-    el.style.borderRadius="12px"; el.style.zIndex="9999";
-    document.body.appendChild(el);
-    setTimeout(()=>{ el.style.transition="opacity .35s"; el.style.opacity="0"; }, 1100);
-    setTimeout(()=> el.remove(), 1550);
-  }
-  async function copy(text,msg){ try{ await navigator.clipboard.writeText(text); toast(msg); } catch(e){ alert("コピーに失敗しました"); } }
+    // ====== スムーススクロール ======
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
 
-  // 初期表示
-  $("#inviteText").textContent = DISCORD_INVITE_URL;
-  $("#mcAddr").textContent     = MINECRAFT_ADDRESS;
-  $("#year").textContent       = new Date().getFullYear();
-  const now = new Date().toLocaleString();
-  $("#ts").textContent  = now;
-  $("#ts2").textContent = now;
+    // ====== テーマ切替 ======
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    function applyTheme(t){ document.body.setAttribute('data-theme', t); themeToggle?.setAttribute('aria-pressed', t==='light'); }
+    const saved = localStorage.getItem('theme');
+    applyTheme(saved || 'dark');
+    themeToggle?.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next); localStorage.setItem('theme', next);
+    });
 
-  // CTA / ボタン
-  $("#ctaJoin").addEventListener("click", ()=> window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer"));
-  $("#openInvite").addEventListener("click", ()=> window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer"));
-  $("#copyInvite").addEventListener("click", ()=> copy(DISCORD_INVITE_URL, "招待リンクをコピーしました"));
-  $("#copyMC").addEventListener("click", ()=> copy(MINECRAFT_ADDRESS, "Minecraftアドレスをコピーしました"));
-  $("#howto").addEventListener("click", ()=>{
-    alert("Minecraftの「マルチプレイ」→「サーバーを追加」で、表示中のアドレスを入力してください。");
-  });
+    // ====== 年号 ======
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-  // セクション内アンカーのスムーズスクロール（外部ページ遷移時も自然に）
-  document.querySelectorAll('a[href^=\"#\"]').forEach(a=>{
-    a.addEventListener("click",(e)=>{
-      const id = a.getAttribute("href").slice(1);
-      const el = document.getElementById(id);
-      if(el){ e.preventDefault(); el.scrollIntoView({behavior:"smooth", block:"start"}); }
-    })
-  })
-</script>
+    // ====== IPコピー ======
+    document.getElementById('copyIpBtn')?.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText('mc.example.com');
+        alert('サーバーアドレスをコピーしました！');
+      }catch{ alert('コピーに失敗しました…'); }
+    });
+
+    // ====== ステータス（デモ） ======
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const checkBtn = document.getElementById('checkBtn');
+    const statusNote = document.getElementById('statusNote');
+
+    function setStatus(isOnline){
+      statusDot.classList.remove('on','off');
+      statusDot.classList.add(isOnline ? 'on':'off');
+      statusText.textContent = isOnline ? 'オンライン' : 'オフライン';
+    }
+    setStatus(false);
+
+    checkBtn?.addEventListener('click', async () => {
+      checkBtn.disabled = true; checkBtn.textContent = '確認中…';
+      statusText.textContent = 'チェック中…';
+      statusDot.classList.remove('on','off');
+      await new Promise(r => setTimeout(r, 800));
+      // ★ 実運用ではここを fetch("/api/status?ip=mc.example.com") などに変更
+      const online = Math.random() > .3; // デモ：7割でオンライン
+      setStatus(online);
+      checkBtn.disabled = false; checkBtn.textContent = 'ステータスをチェック';
+      statusNote.textContent = online ? 'Ping良好。プレイヤー数はAPI連携で表示可能です。' : 'メンテナンス中の可能性があります。Discordで最新情報をご確認ください。';
+    });
+
+    // ====== 簡易購読（デモ） ======
+    function subscribe(){
+      const email = document.getElementById('email').value.trim();
+      const subMsg = document.getElementById('subMsg');
+      if(!email){ subMsg.textContent = 'メールを入力してください'; return; }
+      // 実運用：fetch('/subscribe', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email})})
+      subMsg.textContent = '登録完了（デモ）';
+    }
+    window.subscribe = subscribe;
+
+    // ====== アイソメ・ブロック風装飾 ======
+    const scene = document.getElementById('isoScene');
+    const layout = [
+      {x:0,y:0},{x:90,y:0},{x:180,y:0},
+      {x:45,y:65},{x:135,y:65},
+      {x:0,y:130},{x:90,y:130},{x:180,y:130},
+    ];
+    layout.forEach((pos,i)=>{
+      const b = document.createElement('div'); b.className='block shadow'; b.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+      b.innerHTML = `<div class="top"></div><div class="left"></div><div class="right"></div>`;
+      scene.appendChild(b);
+    });
+  </script>
 </body>
 </html>
