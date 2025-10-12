@@ -7,7 +7,9 @@
       </svg>
       <span>MCML</span>
     </div>
+
     <div class="sp"></div>
+
     <nav class="navlinks">
       <a class="link" href="/#features">特長</a>
       <a class="link" href="/#gallery">ギャラリー</a>
@@ -15,13 +17,16 @@
       <a class="link" href="/#minecraft">接続情報</a>
       <a class="link" href="/#faq">FAQ</a>
     </nav>
+
+    <!-- ログイン関連（未ログイン時はログインを表示、ログイン済みは挨拶＋ログアウト） -->
     <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
     <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
     <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
   </div>
 </header>
+
 <script>
-  // ヘッダーだけで完結する軽量JS（/auth/me でログイン状態を確認）
+  // /auth/me でセッション確認 → ヘッダー表示を切り替え
   (async ()=>{
     try{
       const res = await fetch("/auth/me", {credentials:"include"});
@@ -30,7 +35,7 @@
       if(me && me.ok){
         const name = me.global_name || me.username || "";
         const w = document.getElementById("welcome");
-        w.textContent = name ? `ようこそ ${name} さん` : "ログイン中";
+        if(name){ w.textContent = `ようこそ ${name} さん`; } else { w.textContent = "ログイン中"; }
         w.style.display = "inline-flex";
         document.getElementById("loginBtn").style.display = "none";
         document.getElementById("logoutBtn").style.display = "inline-flex";
