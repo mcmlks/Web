@@ -174,55 +174,24 @@
   @media (max-width:900px){ .navlinks{display:none} }
   /* 固定ヘッダーに対するアンカー余白 */
   section, #features, #gallery, #discord, #minecraft, #faq { scroll-margin-top: 88px; }
+}
+
+  .brand{display:inline-flex; align-items:center; gap:.5rem; font-weight:900; letter-spacing:.02em}
+  .sp{flex:1}
+  .navlinks{display:flex; gap:.6rem; align-items:center}
+  .link{color:var(--text); text-decoration:none; padding:.45rem .7rem; border-radius:10px}
+  .link:hover{background:rgba(255,255,255,.06)}
+  .link:focus-visible{outline:2px solid rgba(255,255,255,.5); outline-offset:2px}
+  .navlinks .link{color:var(--text)}
+  .btn.primary{background:linear-gradient(180deg,#00bcd4,#2196f3); color:#fff}
+  @media (max-width:900px){ .navlinks{display:none} }
+  /* 固定ヘッダーに対するアンカー余白 */
+  section, #features, #gallery, #discord, #minecraft, #faq { scroll-margin-top: 88px; }
 </style>
 </head>
 <body>
-  <!-- ====== ヘッダー ====== -->
-  <!-- ====== ヘッダー（Public/Base.html を使用） ====== -->
-<header>
-  <div class="nav wrap" style="padding-left:0;padding-right:0">
-    <div class="brand">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
-      </svg>
-      <span>MCML</span>
-    </div>
-
-    <div class="sp"></div>
-
-    <nav class="navlinks">
-      <a class="link" href="/#features">特長</a>
-      <a class="link" href="/#gallery">ギャラリー</a>
-      <a class="link" href="/#discord">Discord参加</a>
-      <a class="link" href="/#minecraft">接続情報</a>
-      <a class="link" href="/#faq">FAQ</a>
-    </nav>
-
-    <!-- ログイン関連（未ログイン時はログインを表示、ログイン済みは挨拶＋ログアウト） -->
-    <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
-    <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
-    <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
-  </div>
-</header>
-
-<script>
-  // /auth/me でセッション確認 → ヘッダー表示を切り替え
-  (async ()=>{
-    try{
-      const res = await fetch("/auth/me", {credentials:"include"});
-      if(!res.ok) return;
-      const me = await res.json();
-      if(me && me.ok){
-        const name = me.global_name || me.username || "";
-        const w = document.getElementById("welcome");
-        if(name){ w.textContent = `ようこそ ${name} さん`; } else { w.textContent = "ログイン中"; }
-        w.style.display = "inline-flex";
-        document.getElementById("loginBtn").style.display = "none";
-        document.getElementById("logoutBtn").style.display = "inline-flex";
-      }
-    }catch(_e){}
-  })();
-</script>
+  <!-- ====== ヘッダー（外部読み込み） ====== -->
+  <div id="headerMount" data-include="/Public/Base.html"></div>
 
   <!-- ====== ヒーロー ====== -->
   <section class="hero">
@@ -252,8 +221,36 @@
         <h2 class="section-title">コミュニティ概要</h2>
         <p class="lead">Minecraftをもっと楽しく、安心して。初参加の方でも迷わないガイドと運営体制を用意しています。</p>
         <ul>
-          <li>Java版 / 統合版 どちらも歓迎（クロスプレイ対応サーバー構成も検討中）</li>
-          <li>初心者向け建築区画と、上級者向けフリービルド区画を用意</li>
+          <li>Java版 / 統合版 どちらも歓迎（クロスプレイ対応サーバー構成も検討中）<<script>
+    // ====== 外部HTMLインクルード（Public/Base.html 等） ======
+    async function includePartials(){
+      const nodes = Array.from(document.querySelectorAll('[data-include]'));
+      for (const el of nodes){
+        const url = el.getAttribute('data-include');
+        if(!url) continue;
+        try{
+          const res = await fetch(url, {credentials:'include'});
+          if(!res.ok) throw new Error('fetch failed');
+          const html = await res.text();
+          // 挿入
+          el.innerHTML = html;
+          // 埋め込まれた <script> を実行（/auth/me の初期化など）
+          const scripts = el.querySelectorAll('script');
+          scripts.forEach(old => {
+            const s = document.createElement('script');
+            Array.from(old.attributes).forEach(a=>s.setAttribute(a.name,a.value));
+            s.textContent = old.textContent;
+            // 同一オリジンを前提
+            old.replaceWith(s);
+          });
+        }catch(e){
+          console.error('[includePartials]', url, e);
+          el.innerHTML = '<div style="padding:.75rem 1rem; border-radius:10px; background:rgba(255,255,255,.06); color:#f8d7da;">ヘッダーの読み込みに失敗しました。ページを再読み込みしてください。</div>';
+        }
+      }
+    }
+    includePartials();
+       <li>初心者向け建築区画と、上級者向けフリービルド区画を用意</li>
           <li>定期イベント：建築コンテスト、PvPトーナメント、協力ボス討伐 など</li>
         </ul>
       </div>
