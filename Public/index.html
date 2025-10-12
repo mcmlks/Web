@@ -261,210 +261,236 @@
   </footer>
 
   <script>
-    /* ================= 設定 ================= */
-    // 相対 → 絶対フォールバック（どの階層のHTMLでもOK）
-    const GALLERY_TXT_CANDIDATES = [
-      "ギャラリー写真追加用.txt",
-      "gallery.txt",
-      "/Public/ギャラリー写真追加用.txt",
-      "/Public/gallery.txt",
-    ];
-    const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
-    /* ======================================= */
+<script>
+  /* ================= 設定 ================= */
+  // 読み込み候補（上から順に探す → 成功したものを全部読み、重複をマージ）
+  const GALLERY_TXT_SOURCES = [
+    "/Public/ギャラリー写真追加用.txt",
+    "/Public/gallery.txt",
+    "ギャラリー写真追加用.txt",
+    "gallery.txt",
+  ];
+  const DISCORD_INVITE_URL = "YOUR_DISCORD_INVITE_URL";
 
-    // 年表示
-    document.getElementById('year').textContent = new Date().getFullYear();
+  // 枚数がこの数以上なら横スクロールに“強制”切替
+  const FORCE_SCROLL_MIN = 6;
+  /* ======================================= */
 
-    // 招待リンク
-    document.getElementById('inviteText').innerHTML = `<span class="kbd">${DISCORD_INVITE_URL}</span>`;
-    document.getElementById('openInvite').addEventListener('click', (e)=>{
-      e.preventDefault();
-      window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer");
-    });
-    document.getElementById('copyInvite').addEventListener('click', (e)=>{
-      e.preventDefault();
-      navigator.clipboard.writeText(DISCORD_INVITE_URL).then(()=>alert("招待リンクをコピーしました"));
-    });
+  // 年表示 & 招待リンク
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('inviteText').innerHTML = `<span class="kbd">${DISCORD_INVITE_URL}</span>`;
+  document.getElementById('openInvite').addEventListener('click', (e)=>{
+    e.preventDefault(); window.open(DISCORD_INVITE_URL, "_blank", "noopener,noreferrer");
+  });
+  document.getElementById('copyInvite').addEventListener('click', (e)=>{
+    e.preventDefault(); navigator.clipboard.writeText(DISCORD_INVITE_URL).then(()=>alert("招待リンクをコピーしました"));
+  });
 
-    // ===== ギャラリー =====
-    const grid   = document.getElementById('galleryGrid');
-    const strip  = document.getElementById('galleryHScroll');
-    const hint   = document.getElementById('autoScrollHint');
+  // ====== ギャラリー ======
+  const grid   = document.getElementById('galleryGrid');
+  const strip  = document.getElementById('galleryHScroll');
+  const hint   = document.getElementById('autoScrollHint');
 
-    async function fetchFirst(urls){
-      for(const u of urls){
-        try{
-          const res = await fetch(u, { cache:"no-store", credentials:"same-origin" });
-          if(res.ok) return await res.text();
-        }catch(_){}
-      }
-      throw new Error("gallery list not found");
-    }
-
-    // コメント（#, //, ;）行・行末コメント対応。区切りは , | " - " | 最初の空白
-    function parseGalleryTxt(text){
-      const items = [];
-      for(let raw of text.split(/\r?\n/)){
-        let line = raw.trim();
-        if(!line) continue;
-        if(/^(#|;|\/\/)/.test(line)) continue;                // コメント行
-        line = line.replace(/\s+(#|;|\/\/).*$/, "").trim();   // 行末コメント
-        if(!line) continue;
-
-        let url="", cap="";
-        let m = line.match(/^\s*([^,|]+)\s*[,|]\s*(.+)\s*$/); // CSV/パイプ
-        if(m){ url=m[1].trim(); cap=m[2].trim(); }
-        else if( (m=line.match(/^\s*(\S+)\s+-\s+(.+)\s*$/)) ){ // " - "
-          url=m[1]; cap=m[2].trim();
-        }else{
-          const sp = line.indexOf(" ");
-          if(sp>0){ url=line.slice(0,sp).trim(); cap=line.slice(sp+1).trim(); }
-          else { url=line; cap=""; }
-        }
-        if(url) items.push({src:url, caption:cap});
-      }
-      return items;
-    }
-
-    function safeHost(u){ try{ return new URL(u).hostname }catch{ return "" } }
-
-    function makeCard(item, idx){
-      const card = document.createElement('article');
-      card.className = 'imgcard';
-      card.setAttribute('data-index', idx);
-
-      const wrap = document.createElement('div');
-      wrap.className = 'imgwrap';
-
-      const ph = document.createElement('div');
-      ph.className = 'imgph';
-      ph.textContent = '読み込み中…';
-      wrap.appendChild(ph);
-
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      img.alt = item.caption || 'MCML ギャラリー画像';
-      img.src = item.src;
-      img.addEventListener('load', ()=> wrap.replaceChildren(img));
-      img.addEventListener('error', ()=> { ph.textContent = '画像を表示できませんでした'; wrap.replaceChildren(ph); });
-
-      const cap = document.createElement('div');
-      cap.className = 'imgcap';
-      cap.textContent = item.caption || safeHost(item.src) || '';
-
-      card.appendChild(wrap);
-      card.appendChild(cap);
-
-      // クリックでライトボックス
-      card.addEventListener('click', ()=> openLightbox(idx));
-      return card;
-    }
-
-    function layoutAndMaybeScroll(items){
-      if(!items.length){
-        grid.innerHTML = '<p class="muted">ギャラリーリストが空です。/Public/ギャラリー写真追加用.txt を編集してください。</p>';
-        return;
-      }
-      grid.innerHTML = "";
-      items.forEach((it, i)=> grid.appendChild(makeCard(it, i)));
-
-      // 多いときは横スクロールに切替
-      requestAnimationFrame(()=>{
-        const card = grid.querySelector('.imgcard');
-        const w = card ? card.getBoundingClientRect().width : 280;
-        const needed = (w + 16) * items.length;
-        const visible = grid.getBoundingClientRect().width;
-        const shouldScroll = needed > visible * 1.2;
-        if(shouldScroll){
-          strip.innerHTML = "";
-          items.forEach((it, i)=> strip.appendChild(makeCard(it, i)));
-          grid.style.display = 'none';
-          strip.style.display = 'grid';
-          hint.style.display  = 'block';
-          startAutoScroll();
-        }
-      });
-    }
-
-    // ===== ライトボックス =====
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImg');
-    const lbText = document.getElementById('lbText');
-    const lbIndex = document.getElementById('lbIndex');
-    const btnPrev = document.getElementById('lbPrev');
-    const btnNext = document.getElementById('lbNext');
-    const btnClose= document.getElementById('lbClose');
-    let gallery = [], cur = 0, autoTimer=null, paused=false;
-
-    function showAt(i){
-      cur = (i + gallery.length) % gallery.length;
-      const it = gallery[cur];
-      lbImg.src = '';
-      lbImg.src = it.src;
-      lbText.textContent = it.caption || safeHost(it.src) || '';
-      lbIndex.textContent = `${cur+1} / ${gallery.length}`;
-      // 近傍プリロード
-      const pre1 = new Image(); pre1.src = gallery[(cur+1)%gallery.length].src;
-      const pre2 = new Image(); pre2.src = gallery[(cur-1+gallery.length)%gallery.length].src;
-    }
-    function openLightbox(i){ lb.classList.add('open'); document.body.style.overflow='hidden'; pauseAutoScroll(); showAt(i); }
-    function closeLightbox(){ lb.classList.remove('open'); document.body.style.overflow=''; resumeAutoScroll(); }
-    btnPrev.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur-1); });
-    btnNext.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur+1); });
-    btnClose.addEventListener('click', e=>{ e.stopPropagation(); closeLightbox(); });
-    lb.addEventListener('click', e=>{ if(e.target===lb) closeLightbox(); });
-    document.addEventListener('keydown', e=>{
-      if(!lb.classList.contains('open')) return;
-      if(e.key==='Escape') closeLightbox();
-      if(e.key==='ArrowLeft') showAt(cur-1);
-      if(e.key==='ArrowRight') showAt(cur+1);
-    });
-
-    // ===== 自動横スクロール =====
-    function startAutoScroll(){
-      if(autoTimer) return;
-      const el = strip; const step = 1.2;
-      function tick(){
-        if(paused){ autoTimer = requestAnimationFrame(tick); return; }
-        const max = el.scrollWidth - el.clientWidth;
-        if(max <= 0){ cancelAnimationFrame(autoTimer); autoTimer=null; return; }
-        el.scrollLeft += step;
-        if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
-        autoTimer = requestAnimationFrame(tick);
-      }
-      autoTimer = requestAnimationFrame(tick);
-      el.addEventListener('mouseenter', ()=> paused=true);
-      el.addEventListener('mouseleave', ()=> paused=false);
-      el.addEventListener('touchstart', ()=> paused=true, {passive:true});
-      el.addEventListener('touchend',   ()=> paused=false);
-    }
-    function pauseAutoScroll(){ paused = true; }
-    function resumeAutoScroll(){ paused = false; }
-
-    // ===== 初期化：gallery list を相対→絶対で探して描画 =====
-    (async ()=>{
+  async function fetchTexts(urls){
+    const results = [];
+    await Promise.all(urls.map(async (u) => {
       try{
-        const text = await fetchFirst(GALLERY_TXT_CANDIDATES);
-        gallery = parseGalleryTxt(text);
-        layoutAndMaybeScroll(gallery);
-      }catch(e){
-        console.warn(e);
-        grid.innerHTML = '<p class="muted">ギャラリーリスト (ギャラリー写真追加用.txt / gallery.txt) が見つかりません。</p>';
-      }
-    })();
+        const res = await fetch(u, { cache:"no-store", credentials:"same-origin" });
+        if(res.ok){
+          const t = await res.text();
+          if(t.trim()) results.push({ url: u, text: t });
+        }
+      }catch(_){}
+    }));
+    return results; // 成功したものだけ
+  }
 
-    // スムーズスクロール（サイト内アンカー）
-    document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-      const id = a.getAttribute('href').slice(1);
-      const el = document.getElementById(id);
-      if (el) {
-        e.preventDefault();
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // コメント（#, //, ;）行・行末コメント対応。区切りは , | " - " | 最初の空白
+  function parseGalleryTxt(text){
+    const items = [];
+    for(let raw of text.split(/\r?\n/)){
+      let line = raw.trim();
+      if(!line) continue;
+      if(/^(#|;|\/\/)/.test(line)) continue;                // コメント行
+      line = line.replace(/\s+(#|;|\/\/).*$/, "").trim();   // 行末コメント
+      if(!line) continue;
+
+      let url="", cap="";
+      let m = line.match(/^\s*([^,|]+)\s*[,|]\s*(.+)\s*$/); // CSV/パイプ
+      if(m){ url=m[1].trim(); cap=m[2].trim(); }
+      else if( (m=line.match(/^\s*(\S+)\s+-\s+(.+)\s*$/)) ){ // " - "
+        url=m[1]; cap=m[2].trim();
+      }else{
+        const sp = line.indexOf(" ");
+        if(sp>0){ url=line.slice(0,sp).trim(); cap=line.slice(sp+1).trim(); }
+        else { url=line; cap=""; }
       }
+      if(url) items.push({src:url, caption:cap});
+    }
+    return items;
+  }
+
+  function mergeItems(listOfItems){
+    const seen = new Map(); // url -> {src, caption}
+    for(const arr of listOfItems){
+      for(const it of arr){
+        if(!seen.has(it.src)){
+          seen.set(it.src, it);
+        }else{
+          // 既存にキャプションが無い/短いときは上書き
+          const cur = seen.get(it.src);
+          if((!cur.caption || cur.caption.length < (it.caption||"").length) && it.caption){
+            seen.set(it.src, it);
+          }
+        }
+      }
+    }
+    return Array.from(seen.values());
+  }
+
+  function safeHost(u){ try{ return new URL(u).hostname }catch{ return "" } }
+
+  function makeCard(item, idx){
+    const card = document.createElement('article');
+    card.className = 'imgcard';
+    card.setAttribute('data-index', idx);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'imgwrap';
+
+    const ph = document.createElement('div');
+    ph.className = 'imgph';
+    ph.textContent = '読み込み中…';
+    wrap.appendChild(ph);
+
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = item.caption || 'MCML ギャラリー画像';
+    img.src = item.src;
+    img.addEventListener('load', ()=> wrap.replaceChildren(img));
+    img.addEventListener('error', ()=> { ph.textContent = '画像を表示できませんでした'; wrap.replaceChildren(ph); });
+
+    const cap = document.createElement('div');
+    cap.className = 'imgcap';
+    cap.textContent = item.caption || safeHost(item.src) || '';
+
+    card.appendChild(wrap);
+    card.appendChild(cap);
+
+    // クリックでライトボックス
+    card.addEventListener('click', ()=> openLightbox(idx));
+    return card;
+  }
+
+  function layoutAndMaybeScroll(items){
+    if(!items.length){
+      grid.innerHTML = '<p class="muted">ギャラリーリストが空です。/Public/gallery.txt を編集してください。</p>';
+      return;
+    }
+    // まずグリッド
+    grid.innerHTML = "";
+    items.forEach((it, i)=> grid.appendChild(makeCard(it, i)));
+
+    requestAnimationFrame(()=>{
+      const card = grid.querySelector('.imgcard');
+      const w = card ? card.getBoundingClientRect().width : 280;
+      const needed = (w + 16) * items.length;
+      const visible = grid.getBoundingClientRect().width;
+
+      // 多い or 横に溢れる → 横スクロール
+      const shouldScroll = items.length >= FORCE_SCROLL_MIN || needed > visible * 0.95;
+      if(shouldScroll){
+        strip.innerHTML = "";
+        items.forEach((it, i)=> strip.appendChild(makeCard(it, i)));
+        grid.style.display = 'none';
+        strip.style.display = 'grid';
+        hint.style.display  = 'block';
+        startAutoScroll();
+      }
+      // デバッグ（必要ならConsoleで確認）
+      // console.log({count: items.length, needed, visible, shouldScroll});
     });
+  }
+
+  // ===== ライトボックス =====
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbText = document.getElementById('lbText');
+  const lbIndex = document.getElementById('lbIndex');
+  const btnPrev = document.getElementById('lbPrev');
+  const btnNext = document.getElementById('lbNext');
+  const btnClose= document.getElementById('lbClose');
+  let gallery = [], cur = 0, autoTimer=null, paused=false;
+
+  function showAt(i){
+    cur = (i + gallery.length) % gallery.length;
+    const it = gallery[cur];
+    lbImg.src = '';
+    lbImg.src = it.src;
+    lbText.textContent = it.caption || safeHost(it.src) || '';
+    lbIndex.textContent = `${cur+1} / ${gallery.length}`;
+    const pre1 = new Image(); pre1.src = gallery[(cur+1)%gallery.length].src;
+    const pre2 = new Image(); pre2.src = gallery[(cur-1+gallery.length)%gallery.length].src;
+  }
+  function openLightbox(i){ lb.classList.add('open'); document.body.style.overflow='hidden'; pauseAutoScroll(); showAt(i); }
+  function closeLightbox(){ lb.classList.remove('open'); document.body.style.overflow=''; resumeAutoScroll(); }
+  btnPrev.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur-1); });
+  btnNext.addEventListener('click', e=>{ e.stopPropagation(); showAt(cur+1); });
+  btnClose.addEventListener('click', e=>{ e.stopPropagation(); closeLightbox(); });
+  lb.addEventListener('click', e=>{ if(e.target===lb) closeLightbox(); });
+  document.addEventListener('keydown', e=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') closeLightbox();
+    if(e.key==='ArrowLeft') showAt(cur-1);
+    if(e.key==='ArrowRight') showAt(cur+1);
+  });
+
+  // ===== 自動横スクロール =====
+  function startAutoScroll(){
+    if(autoTimer) return;
+    const el = strip; const step = 1.2;
+    function tick(){
+      if(paused){ autoTimer = requestAnimationFrame(tick); return; }
+      const max = el.scrollWidth - el.clientWidth;
+      if(max <= 0){ cancelAnimationFrame(autoTimer); autoTimer=null; return; }
+      el.scrollLeft += step;
+      if(el.scrollLeft >= max - 2){ el.scrollLeft = 0; }
+      autoTimer = requestAnimationFrame(tick);
+    }
+    autoTimer = requestAnimationFrame(tick);
+    el.addEventListener('mouseenter', ()=> paused=true);
+    el.addEventListener('mouseleave', ()=> paused=false);
+    el.addEventListener('touchstart', ()=> paused=true, {passive:true});
+    el.addEventListener('touchend',   ()=> paused=false);
+  }
+  function pauseAutoScroll(){ paused = true; }
+  function resumeAutoScroll(){ paused = false; }
+
+  // ===== 初期化：候補txtをすべて読み、マージして描画 =====
+  (async ()=>{
+    const texts = await fetchTexts(GALLERY_TXT_SOURCES);
+    const parsedLists = texts.map(x => parseGalleryTxt(x.text));
+    // 1件も取れない場合のフォールバック
+    if(parsedLists.length === 0){
+      grid.innerHTML = '<p class="muted">ギャラリーリストが見つかりません。/Public/gallery.txt を用意してください。</p>';
+      return;
+    }
+    gallery = mergeItems(parsedLists);
+    layoutAndMaybeScroll(gallery);
+  })();
+
+  // スムーズスクロール
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) {
+      e.preventDefault();
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
   </script>
 </body>
 </html>
