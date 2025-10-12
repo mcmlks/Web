@@ -140,7 +140,7 @@
         <span class="pill">マインクラフトマルチ連盟</span>
         <h1>マイクラ好きがつながる場所<br/>MCML</h1>
         <p class="lead">～初心者から上級さんまで歓迎～</p>
-        <p class="lead">Ver3.6</p>
+        <p class="lead">Ver3.7</p>
         <div class="cta">
           <a class="btn" href="#discord" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -265,44 +265,32 @@
 <section id="twitter">
   <div class="container">
     <h2>最新情報（X）</h2>
-
-    <div class="grid cols-3" style="margin-top:10px">
-      <!-- 1件目 -->
-      <article class="card">
-        <div class="content" style="padding:0">
-          <iframe
-            src="https://twitframe.com/show?url=https://twitter.com/mcmlks/status/置き換え1"
-            style="width:100%;height:620px;border:0;overflow:hidden;border-radius:var(--radius)"
-            loading="lazy"></iframe>
-        </div>
-      </article>
-
-      <!-- 2件目 -->
-      <article class="card">
-        <div class="content" style="padding:0">
-          <iframe
-            src="https://twitframe.com/show?url=https://twitter.com/mcmlks/status/置き換え2"
-            style="width:100%;height:620px;border:0;overflow:hidden;border-radius:var(--radius)"
-            loading="lazy"></iframe>
-        </div>
-      </article>
-
-      <!-- 3件目（不要なら丸ごと削除） -->
-      <article class="card">
-        <div class="content" style="padding:0">
-          <iframe
-            src="https://twitframe.com/show?url=https://twitter.com/mcmlks/status/置き換え3"
-            style="width:100%;height:620px;border:0;overflow:hidden;border-radius:var(--radius)"
-            loading="lazy"></iframe>
-        </div>
-      </article>
+    <div class="card" style="margin-top:10px">
+      <div class="content">
+        <a class="twitter-timeline"
+           href="https://twitter.com/mcmlks"
+           data-theme="dark"
+           data-chrome="noheader nofooter noborders transparent"
+           data-dnt="true"
+           data-lang="ja"
+           data-tweet-limit="3"
+           data-width="100%"
+           data-height="620">
+          @mcmlks のポストを表示
+        </a>
+      </div>
     </div>
-
-    <p class="muted" style="margin-top:8px">
-      他のツイートに差し替える場合は、各 <code>status/xxxxxxxx</code> のURLを入れ替えてください。
-    </p>
   </div>
 </section>
+<script>
+(function(d, s, id){
+  if (d.getElementById(id)) return;
+  const js = d.createElement(s);
+  js.id = id; js.async = true;
+  js.src = "https://platform.twitter.com/widgets.js";
+  d.body.appendChild(js);
+})(document, "script", "twitter-wjs");
+</script>
 
 
 
