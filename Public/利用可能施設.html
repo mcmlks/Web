@@ -70,7 +70,8 @@ tr td{background:rgba(255,255,255,.04); border:1px solid var(--line); padding:10
 </head>
 <body>
 
-<!-- 共通ヘッダー（JS読み込み。Base.html 側の header に id="mcml-header" を付与してください） -->
+  <!-- 共通ヘッダー -->
+  <!--#include "/Public/Base.html" -->
 
 <main class="wrap">
   <section class="card"><div class="inner">
@@ -186,18 +187,6 @@ const $$= s=>Array.from(document.querySelectorAll(s));
 $("#year").textContent = new Date().getFullYear();
 function escapeHtml(s){return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
-/* ===== Base.html（重複防止付き） ===== */
-(async()=>{
-  if (document.querySelector('header#mcml-header')) return;
-  try{
-    const res = await fetch('/Public/Base.html', {credentials:'same-origin', cache:'no-store'});
-    if(!res.ok) return;
-    const html = await res.text();
-    const tmp = document.createElement('div'); tmp.innerHTML = html;
-    const header = tmp.querySelector('header#mcml-header') || tmp.querySelector('header') || tmp.firstElementChild;
-    if(header) document.body.prepend(header.cloneNode(true));
-  }catch(e){ console.warn("Base.html load failed", e); }
-})();
 
 /* ===== ログイン確認 ===== */
 let ME=null;
