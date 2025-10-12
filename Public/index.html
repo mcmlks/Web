@@ -143,7 +143,7 @@
       <div>
         <span class="pill">マインクラフトマルチ連盟</span>
         <h1>マイクラ好きがつながる場所<br/>MCML</h1>
-        <p class="lead">～初心者から上級さんまで歓迎～ V2.5</p>
+        <p class="lead">～初心者から上級さんまで歓迎～ V2.6</p>
         <div class="cta">
           <a class="btn" href="#discord" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -522,25 +522,29 @@
     requestAnimationFrame(()=>{ autoTimer = requestAnimationFrame(tick); });
 
     // ==== 一時停止/再開時に snap を戻す/切る ====
-    function pause(){ paused = true; el.classList.remove('autoscrolling'); }
-    function resume(){ paused = false; el.classList.add('autoscrolling'); }
+    function pause(){
+  paused = true;
+  // ★ snap を復活させない：位置が吸着して0に戻るのを防ぐ
+  //    （autoscrollingクラスは付けっぱなし）
+}
+function resume(){
+  paused = false;
+  // 念のため再付与（既に付いていてもOK）
+  el.classList.add('autoscrolling');
+}
 
-    // ライトボックスからも呼べるようにエクスポート
-    window.__galleryPause = pause;
-    window.__galleryResume = resume;
+// イベントハンドラも「クラスは触らない」ように
+el.addEventListener('mouseenter', pause);
+el.addEventListener('mouseleave', resume);
+el.addEventListener('touchstart', pause, {passive:true});
+el.addEventListener('touchend',   resume);
 
-    el.addEventListener('mouseenter', pause);
-    el.addEventListener('mouseleave', resume);
-    el.addEventListener('touchstart', pause, {passive:true});
-    el.addEventListener('touchend',   resume);
-
-    // ホイール操作 → 一時停止して 1.2 秒後に再開
-    el.addEventListener('wheel', ()=>{
-      pause();
-      clearTimeout(wheelTimer);
-      wheelTimer = setTimeout(resume, 1200);
-    }, {passive:true});
-  }
+// ホイール時もクラスは外さないで一時停止→一定時間後に再開
+el.addEventListener('wheel', ()=>{
+  pause();
+  clearTimeout(wheelTimer);
+  wheelTimer = setTimeout(resume, 1200);
+}, {passive:true});
 
   function pauseAutoScroll(){ if(window.__galleryPause) window.__galleryPause(); }
   function resumeAutoScroll(){ if(window.__galleryResume) window.__galleryResume(); }
