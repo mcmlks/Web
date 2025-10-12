@@ -6,12 +6,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MCML 管理ハンドブック（Admin）</title>
 <meta name="description" content="MCML 管理者向けハンドブック。役職別の業務内容、運営ルール、Minecraft管理コマンド、CoreProtectの使い方など。">
-<meta name="color-scheme" content="light dark">
+
+<!-- 端末の自動ダーク化を無効化（ダーク固定） -->
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b1020">
+
 <style>
 /* ================= Theme / Layout ================= */
-/* デフォルトはダーク基調。白系の混色を避け、一定のコントラストに固定 */
+/* デフォルトはダーク基調（固定） */
 :root{
-  color-scheme: dark;
   --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
   --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --warn:#fde047; --danger:#ef4444;
   --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35);
@@ -20,20 +23,15 @@
   --elev-2:rgba(255,255,255,.06);  /* 見出し・ボタン */
   --elev-3:rgba(255,255,255,.08);  /* 枠線や強調 */
 }
-@media (prefers-color-scheme: light){
-  :root{
-    color-scheme: light;
-    --bg:#f6f8fb; --panel:#f1f5f9; --panel2:#ffffff; --line:#e1e7ef;
-    --text:#0b1320; --muted:#55647a;
-    --elev-1:rgba(0,0,0,.03);
-    --elev-2:rgba(0,0,0,.05);
-    --elev-3:rgba(0,0,0,.08);
-    --shadow:0 10px 22px rgba(2,6,23,.08);
-  }
+
+/* ブラウザUIと配色を暗色に固定。古い環境でも白フラ防止の二重指定 */
+html{
+  color-scheme: dark;
+  background-color:#0b1020;      /* 先に実色 */
+  background-color:var(--bg);    /* その上で変数 */
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-html{background-color:var(--bg)} /* 一瞬の白フラッシュを防止 */
 body{
   margin:0; font: 15px/1.75 system-ui, -apple-system, Segoe UI, Inter, Roboto,
   "Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo", sans-serif;
@@ -54,7 +52,8 @@ header{
   background:rgba(8,12,24,.72);
   border-bottom:1px solid var(--line);
 }
-@media (prefers-reduced-transparency: reduce){
+/* backdrop-filter 非対応/不安定環境のフォールバック */
+@supports not (backdrop-filter: blur(1px)) {
   header{backdrop-filter:none; background:rgba(8,12,24,.95)}
 }
 
@@ -177,18 +176,19 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
               <li>統合版のアップデート</li>
             </ul>
           </div>
-<!--
+        </div>
+
+        <!-- ▼ このセクションを一時的に非表示にしたい場合（閉じタグは外に残す） ▼
         <h3 id="ops" class="h3" style="margin-top:14px">運営ルール / 連絡</h3>
         <table class="table">
           <tr><th>連絡窓口</th><td>緊急時は管理者Discordチャンネルへ。重大事案は @Owner をメンション。</td></tr>
           <tr><th>インシデント</th><td>証跡を残す（スクショ・動画・/co lookup 結果）。復旧前に必ず現状記録。</td></tr>
           <tr><th>変更管理</th><td>設定/サイトは GitHub で PR。コミットメッセージに変更理由・影響範囲を明記。</td></tr>
           <tr><th>秘密情報</th><td>クライアントID/Secret は <code>config.json</code> 管理。HTML/JS には絶対埋め込まない。</td></tr>
-        </table>　
-          -->
+        </table>
+        ▲ コメント終了 ▲ -->
       </div>
     </article>
-
 
     <!-- ② 管理コマンド基礎 -->
     <article id="mc-commands" class="card">
@@ -355,7 +355,11 @@ const search = document.getElementById('cmdSearch');
 search.addEventListener('input', () => {
   const q = search.value.trim().toLowerCase();
   document.querySelectorAll('#mc-commands details').forEach(d => {
-    if (!q){ d.style.display=''; d.open = d.hasAttribute('open'); return; }
+    if (!q){
+      d.style.display='';
+      d.open = d.hasAttribute('open');
+      return;
+    }
     const txt = d.textContent.toLowerCase();
     const hit = txt.includes(q);
     d.style.display = hit ? '' : 'none';
@@ -368,7 +372,8 @@ document.addEventListener('click', e=>{
   const btn = e.target.closest('.copy'); if(!btn) return;
   const text = btn.dataset.copy || btn.parentElement.textContent;
   navigator.clipboard.writeText(text).then(()=>{
-    btn.textContent = 'コピー済み ✔'; setTimeout(()=> btn.textContent='コピー', 1200);
+    btn.textContent = 'コピー済み ✔';
+    setTimeout(()=> btn.textContent='コピー', 1200);
   });
 });
 </script>
