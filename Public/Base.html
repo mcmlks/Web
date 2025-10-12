@@ -1,69 +1,50 @@
-<!-- /Public/Base.html -->
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MCML Header</title>
+<!-- /Public/Base.html 〈修正後：フラグメント〉 -->
+<header>
   <style>
     :root{ --header-h:64px; --text:#e6f1ff; --muted:#b8c6e0; --bg:rgba(10,16,30,.85); }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
-      height:var(--header-h);
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Noto Sans JP,Meiryo,sans-serif;
+    header{position:sticky; top:0; z-index:1000;
       background:linear-gradient(180deg,var(--bg),rgba(10,16,30,.55));
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
+      border-bottom:1px solid rgba(255,255,255,.06)}
     .wrap{max-width:1200px; margin:0 auto; padding:0 12px}
-    header{position:relative; height:var(--header-h); display:flex; align-items:center}
-    .nav{display:flex; align-items:center; width:100%; gap:.6rem}
+    .nav{display:flex; align-items:center; width:100%; gap:.6rem; height:var(--header-h)}
     .brand{display:inline-flex; align-items:center; gap:.55rem; font-weight:900; letter-spacing:.02em}
-    .brand span{font-size:15px}
     .sp{flex:1}
     .navlinks{display:flex; gap:.25rem; align-items:center}
     .link{color:var(--text); text-decoration:none; padding:.45rem .7rem; border-radius:10px}
     .link:hover{background:rgba(255,255,255,.06)}
-    .btn{
-      display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:10px;
-      border:1px solid rgba(255,255,255,.12); background:transparent; color:var(--text);
-      text-decoration:none; font-weight:700;
-    }
+    .btn{display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .8rem; border-radius:10px;
+         border:1px solid rgba(255,255,255,.12); background:transparent; color:var(--text);
+         text-decoration:none; font-weight:700}
     .btn.primary{border:none; background:linear-gradient(180deg,#00bcd4,#2196f3); color:#fff}
     @media (max-width:900px){ .navlinks{display:none} }
   </style>
-</head>
-<body>
-  <header>
-    <div class="nav wrap" style="padding-left:0;padding-right:0">
-      <div class="brand">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
-        </svg>
-        <span>MCML</span>
-      </div>
 
-      <div class="sp"></div>
-
-      <nav class="navlinks">
-        <a class="link" href="/#features">特長</a>
-        <a class="link" href="/#gallery">ギャラリー</a>
-        <a class="link" href="/#discord">Discord参加</a>
-        <a class="link" href="/#minecraft">接続情報</a>
-        <a class="link" href="/#faq">FAQ</a>
-      </nav>
-
-      <!-- ログイン関連（未ログイン時はログインを表示、ログイン済みは挨拶＋ログアウト） -->
-      <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
-      <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
-      <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
+  <div class="nav wrap" style="padding-left:0;padding-right:0">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
+      </svg>
+      <span>MCML</span>
     </div>
-  </header>
+
+    <div class="sp"></div>
+
+    <nav class="navlinks">
+      <a class="link" href="/#features">特長</a>
+      <a class="link" href="/#gallery">ギャラリー</a>
+      <a class="link" href="/#discord">Discord参加</a>
+      <a class="link" href="/#minecraft">接続情報</a>
+      <a class="link" href="/#faq">FAQ</a>
+    </nav>
+
+    <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
+    <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
+    <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
+  </div>
 
   <script>
-    // /auth/me でセッション確認 → ヘッダー表示を切り替え（Shadow DOM/iframe でも可）
+    // /auth/me でセッション確認 → ヘッダー表示切替
     (async ()=>{
       try{
         const res = await fetch("/auth/me", {credentials:"include"});
@@ -72,7 +53,7 @@
         if(me && me.ok){
           const name = me.global_name || me.username || "";
           const w = document.getElementById("welcome");
-          if(name){ w.textContent = `ようこそ ${name} さん`; } else { w.textContent = "ログイン中"; }
+          w.textContent = name ? `ようこそ ${name} さん` : "ログイン中";
           w.style.display = "inline-flex";
           document.getElementById("loginBtn").style.display = "none";
           document.getElementById("logoutBtn").style.display = "inline-flex";
@@ -80,5 +61,4 @@
       }catch(_e){}
     })();
   </script>
-</body>
-</html>
+</header>
