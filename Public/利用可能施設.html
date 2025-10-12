@@ -153,7 +153,7 @@ pre.preview{margin:10px 0 0; padding:12px 14px; background:#0c1426; border:1px s
 const GITHUB_OWNER  = "yourname";      // 例: coreone-jp
 const GITHUB_REPO   = "yourrepo";      // 例: mcml-site
 const GITHUB_BRANCH = "main";
-const FACILITIES_JSON_PATH = "Public/facilities.json"; // リストの元ファイル
+const FACILITIES_JSON_PATH = "Public/施設登録.json"; // リストの元ファイル
 
 /* ===== ユーティリティ ===== */
 const $ = s=>document.querySelector(s);
@@ -193,7 +193,7 @@ fetchMe();
 let Facilities = [];
 async function loadFacilities(){
   try{
-    const r = await fetch('/Public/facilities.json', {cache:'no-store', credentials:'same-origin'});
+    const r = await fetch('/Public/施設登録.json', {cache:'no-store', credentials:'same-origin'});
     if(!r.ok) throw new Error('facilities.json not found');
     Facilities = await r.json();
   }catch(e){
