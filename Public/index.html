@@ -34,7 +34,8 @@
   }
   a{color:inherit;text-decoration:none}
   .wrap{max-width:var(--max); margin:0 auto; padding:24px}
-  /* Header: ナビのみ（ログイン導線は出さない） */
+
+  /* Header（Base.htmlで使うクラスも含めて定義） */
   header{position:sticky; top:0; z-index:40; backdrop-filter:blur(10px);
          background: color-mix(in oklab, var(--bg) 78%, transparent);
          border-bottom:1px solid var(--line)}
@@ -45,30 +46,32 @@
   .navlinks{display:flex; gap:8px; flex-wrap:wrap}
   .link{display:inline-flex; padding:8px 10px; border-radius:10px}
   .link:hover{background:color-mix(in oklab, var(--text) 10%, transparent)}
-  /* Hero */
-  .hero{padding:48px 24px 10px}
-  .hero-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:28px; align-items:center}
-  @media (max-width: 980px){ .hero-grid{grid-template-columns:1fr} }
-  .card{background:var(--card); border:1px solid var(--line);
-        border-radius:var(--radius); box-shadow:var(--shadow); padding:24px}
-  .h1{font-size: clamp(30px, 4.4vw, 48px); line-height:1.08; margin:0 0 12px; font-weight:900}
-  .lead{color:var(--muted); font-size: clamp(14px,2vw,18px); margin:0 0 18px}
+
+  /* Buttons / Cards / Layout */
   .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px;
        border:1px solid var(--line); background:var(--panel); cursor:pointer; font-weight:800;
-       transition: .18s transform ease, .18s background ease, .18s filter ease}
+       transition:.18s transform ease, .18s background ease, .18s filter ease}
   .btn:hover{transform:translateY(-1px)}
   .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 86%, #fff 6%), var(--brand)); color:#fff; border-color:transparent}
   .btn.accent{background:linear-gradient(180deg, color-mix(in oklab, var(--accent) 92%, #fff 4%), var(--accent)); color:#012; border-color:transparent}
   .btn.ghost{background:transparent}
-  .kpis{display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); font-size:14px}
-  .kpis b{color:var(--text)}
-  /* Sections */
+
+  .card{background:var(--card); border:1px solid var(--line);
+        border-radius:var(--radius); box-shadow:var(--shadow); padding:24px}
+
+  .hero{padding:48px 24px 10px}
+  .hero-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:28px; align-items:center}
+  @media (max-width: 980px){ .hero-grid{grid-template-columns:1fr} }
+
   .section{padding:24px}
   .grid{display:grid; gap:16px}
   .cols-3{grid-template-columns: repeat(3, minmax(0,1fr))}
   .cols-2{grid-template-columns: repeat(2, minmax(0,1fr))}
   @media (max-width: 980px){ .cols-3, .cols-2{grid-template-columns:1fr} }
+
+  .h1{font-size: clamp(30px, 4.4vw, 48px); line-height:1.08; margin:0 0 12px; font-weight:900}
   .h2{font-size: clamp(22px, 3vw, 30px); margin:0 0 10px; font-weight:900}
+  .lead{color:var(--muted); font-size: clamp(14px,2vw,18px); margin:0 0 18px}
   .pill{font:700 12px/1 ui-sans-serif; padding:8px 10px; border-radius:999px;
         background:color-mix(in oklab, var(--text) 12%, transparent); color:var(--muted); display:inline-block; margin-bottom:8px}
   .code{font-family: ui-monospace, Menlo, Consolas, monospace; background:color-mix(in oklab, var(--text) 12%, transparent); padding:6px 10px; border-radius:8px}
@@ -82,25 +85,8 @@
 </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="nav wrap" style="padding-left:0;padding-right:0">
-      <div class="brand">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
-        </svg>
-        <span>MCML</span>
-      </div>
-      <div class="sp"></div>
-      <nav class="navlinks">
-        <a class="link" href="#features">特長</a>
-        <a class="link" href="#gallery">ギャラリー</a>
-        <a class="link" href="#discord">Discord参加</a>
-        <a class="link" href="#minecraft">接続情報</a>
-        <a class="link" href="#faq">FAQ</a>
-      </nav>
-    </div>
-  </header>
+  <!-- 共通ヘッダー（ログインボタン付き） -->
+  <!--#include "/Public/Base.html" -->
 
   <!-- Hero -->
   <section class="hero wrap">
@@ -112,7 +98,7 @@
           <button class="btn primary" id="ctaJoin">Discordに参加する</button>
           <a class="btn ghost" href="#features">特長を見る</a>
         </div>
-        <div class="kpis" style="margin-top:12px">
+        <div style="display:flex; gap:16px; flex-wrap:wrap; color:var(--muted); font-size:14px; margin-top:12px">
           <span>最終表示: <b id="ts">…</b></span>
         </div>
       </div>
@@ -141,7 +127,7 @@
     </div>
   </section>
 
-  <!-- Gallery / Visual emphasis -->
+  <!-- Gallery -->
   <section id="gallery" class="section wrap">
     <div class="pill">ギャラリー</div>
     <div class="grid cols-3">
@@ -149,7 +135,7 @@
       <div class="card"><div class="shot">スクリーンショットB</div></div>
       <div class="card"><div class="shot">スクリーンショットC</div></div>
     </div>
-    <p class="lead" style="margin-top:10px">※ 実画像に差し替えると、第一印象と参加率が上がります（大きなヒーロー画像＆明確CTAは今風の定石）。</p>
+    <p class="lead" style="margin-top:10px">※ 実画像に差し替えると、第一印象と参加率が上がります。</p>
   </section>
 
   <!-- Discord Join -->
@@ -168,7 +154,6 @@
             <button class="btn" id="copyInvite">コピー</button>
           </div>
           <div class="code" id="inviteText" style="margin-top:10px">YOUR_DISCORD_INVITE_URL</div>
-          <p class="lead" style="margin-top:8px">※ 公式の運営Tipsに沿って、WebやSNS上に招待リンクを統一掲示するのがおすすめです。</p>
         </div>
         <div>
           <h2 class="h2">参加のメリット</h2>
@@ -264,7 +249,7 @@
     alert("Minecraftの「マルチプレイ」→「サーバーを追加」で、表示中のアドレスを入力してください。");
   });
 
-  // アンカーのスムーズスクロール
+  // セクション内アンカーのスムーズスクロール（外部ページ遷移時も自然に）
   document.querySelectorAll('a[href^=\"#\"]').forEach(a=>{
     a.addEventListener("click",(e)=>{
       const id = a.getAttribute("href").slice(1);
