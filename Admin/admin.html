@@ -257,30 +257,29 @@ a:username — ユーザーネームの変更
         <details>
           <summary>③ ロールバック / 復元 <span class="tag">/co rb, /co rs</span></summary>
           <div class="content">
-            <pre><button class="copy" data-copy="/co rollback u:Steve t:1h r:15">コピー</button>/co rollback u:&lt;player&gt; t:&lt;期間&gt; r:&lt;半径&gt;
+            <pre><button class="copy" data-copy="/co rollback u:Steve t:1h r:15">コピー</button>
 （取り消し）/co restore u:&lt;player&gt; t:&lt;期間&gt; r:&lt;半径&gt;</pre>
             <ul>
-              <li><b>まず小さな半径で試す</b>（例: r:10〜20）。</li>
-              <li>チェスト窃盗は <code>a:container</code> を指定して対象を絞ると安全。</li>
-              <li>誤操作時は直ちに <code>/co rs</code>（restore）で元に戻す。</li>
+            <p class="muted">
+a:block — ブロックの設置/破壊<br>
+a:+block — ブロックの設置<br>
+a:-block — ブロックの破壊<br>
+a:click — クリック（ドアの開閉やレバーなど）<br>
+a:container — チェストなどからの出し入れ<br>
+a:+container — 収納 / a:-container — 取り出し<br>
+a:kill — mob/動物の殺害<br>
+a:chat, a:command, a:session — 管理者向け<br>
+a:username — ユーザーネームの変更
+            </p>
             </ul>
           </div>
         </details>
 
         <details>
-          <summary>④ 補助コマンド</summary>
-          <div class="content">
-            <pre>/co near r:&lt;半径&gt;        （近くの変更を一覧）
-/co teleport &lt;id&gt;        （lookup 結果の座標へTP）
-/co purge t:&lt;期間&gt;        （古いログを削除・計画的に）</pre>
-          </div>
-        </details>
-
-        <details>
-          <summary>よくある失敗と回避</summary>
+          <summary>しっぱしした時は？</summary>
           <div class="content">
             <ul>
-              <li><b>広範囲rbで巻き戻し過多</b> → 先に <code>r</code> を小さく、<code>u</code> と <code>a</code> で絞る。</li>
+              <li><b>焦らないでください</b> <pre><button class="copy" data-copy="/co undo">コピー</button>で戻すことが可能です</li>
               <li><b>看板/額縁の消失</b> → <code>a:block +item</code> を含めて検索し、必要なら個別復元。</li>
               <li><b>ログ不足</b> → <code>config</code> の <code>consumer</code>/<code>logger</code> 設定と保存期間を確認。</li>
             </ul>
