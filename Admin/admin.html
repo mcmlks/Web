@@ -211,6 +211,15 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
       </div>
     </article>
 
+
+
+
+
+
+
+
+
+    
     <!-- CoreProtect 実践 -->
     <article id="coreprotect" class="card">
       <div class="inner">
@@ -287,6 +296,93 @@ a:username — ユーザーネームの変更
         </details>
       </div>
     </article>
+
+
+
+
+
+
+
+<!-- BANコマンド -->
+<article id="ban" class="card">
+  <div class="inner">
+    <span class="badge">モデレート</span>
+    <h2 class="h2" style="margin-top:6px">BANやKickなど</h2>
+
+    <details open>
+      <summary>① 基本ルール（統合版 / Java版）</summary>
+      <div class="content">
+        <ul>
+          <li><b>まず必ず、統合版かJava版かを確認</b>してからコマンドを書いてください。</li>
+          <li>Java版はゲームタグ（ユーザー名）をそのまま記載します。</li>
+          <li>統合版（Bedrock）は<b>ゲームタグの先頭に「.（ドット）」</b>を付けます。</li>
+        </ul>
+        <pre>
+例：
+Java版 … <code>gametag123</code>
+統合版 … <code>.gametag123</code>
+        </pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>② ユーザーをBANする <span class="tag">/ban &lt;ゲームタグ&gt; @テンプレ</span></summary>
+      <div class="content">
+        <ul>
+          <li>テンプレ指定で理由を明確化します（下の「テンプレ一覧」を参照）。</li>
+          <li><code>/ban</code>のみ送信すると、使い方やテンプレ一覧が表示されます。</li>
+        </ul>
+        <pre><button class="copy" data-copy="/ban &lt;ゲームタグ&gt; @troll">コピー</button>/ban &lt;ゲームタグ&gt; @troll</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>③ テンプレの使用を強制（@テンプレ）</summary>
+      <div class="content">
+        <ul>
+          <li><code>@penalty</code>  … ユーザー操作待ち</li>
+          <li><code>@troll</code>    … 大規模な荒らし（<b>永久BAN</b>）</li>
+          <li><code>@cheat</code>    … チートツールの悪用（<b>永久BAN</b>）</li>
+          <li><code>@check</code>    … 怪しい人を一時的に止める</li>
+          <li><code>@many</code>     … 違反行為の繰り返し</li>
+          <li><code>@manytheft</code> … 窃盗行為の繰り返し</li>
+        </ul>
+        <pre><button class="copy" data-copy="/ban &lt;ゲームタグ&gt; @many">コピー</button>/ban &lt;ゲームタグ&gt; @many</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>④ 一時BAN（TEMPBAN） <span class="tag">/tempban &lt;ゲームタグ&gt; &lt;時間&gt; @ptime</span></summary>
+      <div class="content">
+        <pre><button class="copy" data-copy="/tempban &lt;ゲームタグ&gt; 1h @ptime">コピー</button>/tempban &lt;ゲームタグ&gt; 1h @ptime</pre>
+        <table class="table">
+          <tr><th>指定</th><th>意味</th></tr>
+          <tr><td><code>1s</code></td><td>1秒</td></tr>
+          <tr><td><code>1m</code></td><td>1分</td></tr>
+          <tr><td><code>1h</code></td><td>1時間</td></tr>
+          <tr><td><code>1d</code></td><td>1日</td></tr>
+        </table>
+        <p class="muted">※<code>@ptime</code> は処罰時間の記録・可視化に使用します。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>ヘルプ /ban の使い方を確認</summary>
+      <div class="content">
+        <p><code>/ban</code> だけを送信すると、コマンドの使い方やテンプレート一覧がチャットに表示されます。</p>
+        <pre><button class="copy" data-copy="/ban">コピー</button>/ban</pre>
+      </div>
+    </details>
+  </div>
+</article>
+
+
+
+
+
+
+
+    
 
 <script>
 /* 年表示 */
