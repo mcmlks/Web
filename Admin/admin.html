@@ -204,64 +204,12 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
       </div>
     </article>
 
-    <!-- ② 管理コマンド基礎 -->
+    <!-- ② 管理コマンド基礎（※このセクションを空のまま公開。丸ごと隠すなら <article> から </article> までを一括コメントアウトしてください） -->
     <article id="mc-commands" class="card">
       <div class="inner">
- <!--
-        <span class="badge">② サーバ管理コマンド基礎</span>
-        <h2 class="h2" style="margin-top:6px">よく使うMinecraftコマンド</h2>
-
-        <input id="cmdSearch" type="search" placeholder="コマンドを検索（例: whitelist, ban, op, time）" style="margin:8px 0 10px">
-
-        <details open>
-          <summary>/op, /deop <span class="tag">権限</span></summary>
-          <div class="content">
-            <pre><button class="copy" data-copy="/op <player>">コピー</button>/op &lt;player&gt;
-/deop &lt;player&gt;</pre>
-            <p class="muted">OP 付与/剥奪。乱用防止のため付与は最小限に。</p>
-          </div>
-        </details>
-
-        <details>
-          <summary>/whitelist <span class="tag">アクセス</span></summary>
-          <div class="content">
-            <pre><button class="copy" data-copy="/whitelist add <name>">コピー</button>/whitelist add &lt;name&gt;
- /whitelist remove &lt;name&gt;
- /whitelist on
- /whitelist off</pre>
-            <p class="muted">イベント時などに使用。リストはバックアップしておく。</p>
-          </div>
-        </details>
-
-        <details>
-          <summary>/ban, /pardon <span class="tag">秩序</span></summary>
-          <div class="content">
-            <pre><button class="copy" data-copy="/ban <name> [reason]">コピー</button>/ban &lt;name&gt; [reason]
-/ban-ip &lt;address&gt;
- /pardon &lt;name&gt;
- /pardon-ip &lt;address&gt;</pre>
-            <p class="muted">悪質行為にはスクショとログを残し、理由を添えて処置。</p>
-          </div>
-        </details>
-
-        <details>
-          <summary>/broadcast, /say <span class="tag">告知</span></summary>
-          <div class="content">
-            <pre><button class="copy" data-copy="/broadcast <>">コピー</button>/broadcast &lt;message&gt;
-/say &lt;message&gt;</pre>
-          </div>
-        </details>
-
-        <details>
-          <summary>/tp, /gamemode など</summary>
-          <div class="content">
-            <pre>/tp &lt;target&gt; &lt;x y z&gt;  /tp &lt;player&gt; &lt;toPlayer&gt;
- /gamemode survival|creative|adventure|spectator &lt;player&gt;
- /time set day|night  /weather clear|rain|thunder</pre>
-          </div>
-        </details>
+        <!-- ここにコンテンツを戻す場合は、cmdSearch と details 群を復活させてください -->
       </div>
-    </article>　-->
+    </article>
 
     <!-- CoreProtect 実践 -->
     <article id="coreprotect" class="card">
@@ -273,9 +221,10 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
 
         <details open>
           <summary>① 単体ブロックログ確認 <span class="tag">/co i</span></summary>
+          <div class="content">
             <ul>
-              <li>ブロックを壊すと壊したブロックのログ、設置すると設置しようとした場所のログが確認可能です</li>
-              <li>もう一度同一コマンドを送信すると解除されます</li>
+              <li>ブロックを壊すと壊したブロックのログ、設置すると設置しようとした場所のログが確認可能です。</li>
+              <li>もう一度同一コマンドを送信すると解除されます。</li>
             </ul>
           </div>
         </details>
@@ -291,20 +240,17 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
               <tr><th>r:</th><td>半径（現在位置中心）。未指定で広範囲検索。</td></tr>
               <tr><th>a:</th><td>アクション。<code>+block</code>（設置/破壊）、<code>+container</code>（チェスト出し入れ）等。</td></tr>
             </table>
-            <p>a:block	ブロックの設置/破壊	
-a:+block	ブロックの設置	
-a:-block	ブロックの破壊	
-a:click	クリック（ドアの開閉やレバーなど）	
-a:container	チェストなどからのアイテムの取り出しや収納	
-a:+container	チェストなどからのアイテムの収納	
-a:-container	チェストなどからのアイテムの取り出し	
-a:kill	mob/動物の殺害	
-a:chat	チャット	Adminのみ
-a:command	コマンド	Adminのみ
-a:session	プレイヤーのログイン/ログアウト	Adminのみ
-a:+session	プレイヤーのログイン	Adminのみ
-a:-session	プレイヤーのログアウト	Adminのみ
-a:username	ユーザーネームの変更</p>
+            <p class="muted">
+a:block — ブロックの設置/破壊<br>
+a:+block — ブロックの設置<br>
+a:-block — ブロックの破壊<br>
+a:click — クリック（ドアの開閉やレバーなど）<br>
+a:container — チェストなどからの出し入れ<br>
+a:+container — 収納 / a:-container — 取り出し<br>
+a:kill — mob/動物の殺害<br>
+a:chat, a:command, a:session — 管理者向け<br>
+a:username — ユーザーネームの変更
+            </p>
           </div>
         </details>
 
@@ -390,22 +336,24 @@ tocToggle.addEventListener('click', ()=>{
   localStorage.setItem(LS_KEY, next ? '1' : '0');
 });
 
-/* コマンド検索フィルタ */
+/* コマンド検索フィルタ（要素が存在する時だけ有効化） */
 const search = document.getElementById('cmdSearch');
-search.addEventListener('input', () => {
-  const q = search.value.trim().toLowerCase();
-  document.querySelectorAll('#mc-commands details').forEach(d => {
-    if (!q){
-      d.style.display='';
-      d.open = d.hasAttribute('open');
-      return;
-    }
-    const txt = d.textContent.toLowerCase();
-    const hit = txt.includes(q);
-    d.style.display = hit ? '' : 'none';
-    d.open = hit;
+if (search){
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    document.querySelectorAll('#mc-commands details').forEach(d => {
+      if (!q){
+        d.style.display='';
+        d.open = d.hasAttribute('open');
+        return;
+      }
+      const txt = d.textContent.toLowerCase();
+      const hit = txt.includes(q);
+      d.style.display = hit ? '' : 'none';
+      d.open = hit;
+    });
   });
-});
+}
 
 /* コードコピー */
 document.addEventListener('click', e=>{
