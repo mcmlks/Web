@@ -1,8 +1,8 @@
 {
-  "name": "公共エンチャント部屋",
-  "category": "学習",
-  "description": "本棚フル、金床2台、ラピス無料箱あり。",
-  "tags": ["エンチャ", "公共"],
+  "name": "本拠地（キャッ島）",
+  "category": "拠点",
+  "description": "みんなが家を作っている場所、レッドストーンなど回路、重いことは禁止",
+  "tags": ["拠点""],
   "images": [
     "https://pbs.twimg.com/media/Fwz18f8aEAEpc6X?format=png&name=900x900"
   ],
