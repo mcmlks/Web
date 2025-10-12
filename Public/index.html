@@ -161,41 +161,66 @@
       nav ul{display:none}
       nav ul.open{display:flex; position:absolute; inset:56px 4% auto; flex-direction:column; background:var(--card); padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,.08)}
     }
-  </style>
+    /* ====== Public/Base.html ヘッダー用の追加スタイル ====== */
+  .nav.wrap{display:flex; align-items:center; gap:.8rem; padding:.7rem 0}
+  .brand{display:inline-flex; align-items:center; gap:.5rem; font-weight:900; letter-spacing:.02em}
+  .sp{flex:1}
+  .navlinks{display:flex; gap:.6rem; align-items:center}
+  .navlinks .link{color:var(--text); text-decoration:none; padding:.45rem .7rem; border-radius:10px}
+  .navlinks .link:hover{background:rgba(255,255,255,.06)}
+  .btn.primary{background:linear-gradient(180deg,#00bcd4,#2196f3); color:#fff}
+  @media (max-width:900px){
+    .navlinks{display:none}
+  }
+</style>
 </head>
 <body>
   <!-- ====== ヘッダー ====== -->
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <div class="logo" aria-hidden="true">
-          <span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span><span class="l1"></span>
-          <span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span>
-          <span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span>
-          <span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span><span class="l4"></span>
-          <span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span><span class="l3"></span>
-          <span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span><span class="l2"></span>
-        </div>
-        <span>Minecraft Community</span>
-        <span class="chip">公式</span>
-      </div>
-      <nav>
-        <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mainMenu">メニュー</button>
-        <ul id="mainMenu">
-          <li><a href="#about">概要</a></li>
-          <li><a href="#server">サーバー</a></li>
-          <li><a href="#events">イベント</a></li>
-          <li><a href="#news">ニュース</a></li>
-          <li><a href="#rules">ルール</a></li>
-          <li><a href="#join">参加</a></li>
-        </ul>
-      </nav>
-      <div class="nav-actions">
-        <button class="btn" id="themeToggle" aria-pressed="false" title="ライト/ダーク切替">🌓 テーマ</button>
-        <a class="btn secondary" href="#join">Discordで参加</a>
-      </div>
+  <!-- ====== ヘッダー（Public/Base.html を使用） ====== -->
+<header>
+  <div class="nav wrap" style="padding-left:0;padding-right:0">
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.31L12 14.77 7.22 16.69l.91-5.31L4.27 7.62l5.34-.78L12 2z" fill="currentColor" opacity=".95"/>
+      </svg>
+      <span>MCML</span>
     </div>
-  </header>
+
+    <div class="sp"></div>
+
+    <nav class="navlinks">
+      <a class="link" href="/#features">特長</a>
+      <a class="link" href="/#gallery">ギャラリー</a>
+      <a class="link" href="/#discord">Discord参加</a>
+      <a class="link" href="/#minecraft">接続情報</a>
+      <a class="link" href="/#faq">FAQ</a>
+    </nav>
+
+    <!-- ログイン関連（未ログイン時はログインを表示、ログイン済みは挨拶＋ログアウト） -->
+    <div id="welcome" class="link" style="display:none; font-weight:700; margin-left:8px;"></div>
+    <a id="loginBtn" class="btn primary" href="/auth/discord/login" style="margin-left:8px">ログイン</a>
+    <a id="logoutBtn" class="btn" href="/auth/logout" style="display:none; margin-left:8px">ログアウト</a>
+  </div>
+</header>
+
+<script>
+  // /auth/me でセッション確認 → ヘッダー表示を切り替え
+  (async ()=>{
+    try{
+      const res = await fetch("/auth/me", {credentials:"include"});
+      if(!res.ok) return;
+      const me = await res.json();
+      if(me && me.ok){
+        const name = me.global_name || me.username || "";
+        const w = document.getElementById("welcome");
+        if(name){ w.textContent = `ようこそ ${name} さん`; } else { w.textContent = "ログイン中"; }
+        w.style.display = "inline-flex";
+        document.getElementById("loginBtn").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "inline-flex";
+      }
+    }catch(_e){}
+  })();
+</script>
 
   <!-- ====== ヒーロー ====== -->
   <section class="hero">
@@ -218,7 +243,8 @@
   </section>
 
   <!-- ====== 概要 ====== -->
-  <section id="about">
+  <span id="features"></span>
+<section id="about">
     <div class="container grid cols-2">
       <div class="card">
         <h2 class="section-title">コミュニティ概要</h2>
@@ -240,7 +266,8 @@
   </section>
 
   <!-- ====== サーバー ====== -->
-  <section id="server">
+  <span id="minecraft"></span>
+<section id="server">
     <div class="container">
       <h2 class="section-title">サーバー情報</h2>
       <p class="lead">アドレスをコピーして、今すぐ参加しよう。ステータスチェックでオンライン状況も確認できます。</p>
@@ -388,7 +415,8 @@
   </section>
 
   <!-- ====== 参加 ====== -->
-  <section id="join">
+  <span id="discord"></span>
+<section id="join">
     <div class="container grid cols-2">
       <div class="card">
         <h2 class="section-title">参加方法</h2>
@@ -412,6 +440,31 @@
           <span id="subMsg" class="chip" aria-live="polite"></span>
         </div>
       </form>
+    </div>
+  </section>
+
+    <!-- ====== FAQ ====== -->
+  <section id="faq">
+    <div class="container grid cols-2">
+      <div class="card">
+        <h2 class="section-title">FAQ</h2>
+        <details open>
+          <summary>Java版と統合版は一緒に遊べますか？</summary>
+          <p>クロスプレイ対応プラグインで接続可能に調整中です。対応状況はニュースをご確認ください。</p>
+        </details>
+        <details>
+          <summary>荒らし対策はありますか？</summary>
+          <p>土地・チェスト保護、権限ロール、バックアップにより被害を最小化しています。問題があれば運営へご連絡ください。</p>
+        </details>
+        <details>
+          <summary>配布・宣伝は可能ですか？</summary>
+          <p>外部リンクはDiscordの所定チャンネルでのみ許可しています。詳細はルールをご覧ください。</p>
+        </details>
+      </div>
+      <div class="card">
+        <h3>お問い合わせ</h3>
+        <p>不明点は <a href="/#discord">Discord</a> で運営へご連絡ください。</p>
+      </div>
     </div>
   </section>
 
@@ -441,6 +494,16 @@
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', e => {
         const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+    });
+
+    // "/#..." にも対応したスムーススクロール
+    document.querySelectorAll('a[href^="/#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const raw = a.getAttribute('href');
+        const id = raw.slice(2);
         const el = document.getElementById(id);
         if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
       });
