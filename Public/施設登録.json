@@ -1,0 +1,92 @@
+[
+  {
+    "name": "共用作業場（Spawn南）",
+    "category": "建築",
+    "coord": "Overworld X:120 Y:64 Z:-45",
+    "link": "https://map.example.com/?x=120&z=-45",
+    "description": "初心者向けの作業場。作業台・かまど・石切台など基本設備を常備。資材は各自持ち込み。",
+    "tags": ["初心者歓迎", "24h", "公共"],
+    "submitted_by": {
+      "id": "330322148692459524",
+      "username": "neco",
+      "global_name": "neco",
+      "avatar": "https://cdn.discordapp.com/avatars/330322148692459524/abcdef1234567890.png?size=64"
+    },
+    "submitted_at": "2025-10-12T12:00:00.000Z"
+  },
+  {
+    "name": "自動釣り施設 v2",
+    "category": "資源",
+    "coord": "Overworld X:-210 Y:63 Z:88",
+    "link": "",
+    "description": "サドル・エンチャ本狙いのAFK釣り。使用時はチャットで一言。満杯になったチェストは整理に協力を。",
+    "tags": ["AFK", "資源", "注意:放置しすぎNG"],
+    "submitted_by": {
+      "id": "642335102055088128",
+      "username": "mikan",
+      "global_name": "みかん",
+      "avatar": null
+    },
+    "submitted_at": "2025-10-10T09:21:35.000Z"
+  },
+  {
+    "name": "ネザー交通ハブ",
+    "category": "イベント",
+    "coord": "Nether X:0 Y:72 Z:0",
+    "link": "https://docs.example.com/nether-hub-guide",
+    "description": "各拠点へ素早くアクセスできる高速氷トンネルのハブ。ボート常備。分岐を増設する際はガイドラインを参照。",
+    "tags": ["高速移動", "交通", "共同管理"],
+    "submitted_by": {
+      "id": "1192747320454959136",
+      "username": "saku",
+      "global_name": "Saku",
+      "avatar": "https://cdn.discordapp.com/embed/avatars/5.png"
+    },
+    "submitted_at": "2025-09-28T14:03:12.000Z"
+  },
+  {
+    "name": "公共エンチャント部屋",
+    "category": "学習",
+    "coord": "Overworld X:35 Y:66 Z:-12",
+    "link": "",
+    "description": "本棚フル、金床2台、ラピス無料箱あり。使い終わりは補充に協力を。",
+    "tags": ["エンチャ", "公共", "補充歓迎"],
+    "submitted_by": {
+      "id": "330322148692459524",
+      "username": "neco",
+      "global_name": "neco",
+      "avatar": "https://cdn.discordapp.com/embed/avatars/2.png"
+    },
+    "submitted_at": "2025-08-19T02:40:00.000Z"
+  },
+  {
+    "name": "砂漠資材ステーション",
+    "category": "資源",
+    "coord": "Overworld X:1450 Y:64 Z:-820",
+    "link": "https://map.example.com/?x=1450&z=-820&dim=overworld",
+    "description": "砂・ガラス量産向け。ビーコン設置済み。夜は湧きやすいのでベッド推奨。",
+    "tags": ["ビーコン", "大量採掘", "ガラス"],
+    "submitted_by": {
+      "id": "642335102055088128",
+      "username": "mikan",
+      "global_name": "みかん",
+      "avatar": null
+    },
+    "submitted_at": "2025-06-03T17:12:45.000Z"
+  },
+  {
+    "name": "イベント会場：建築ジャム",
+    "category": "イベント",
+    "coord": "Overworld X:-320 Y:70 Z:220",
+    "link": "https://example.com/buildjam-rules",
+    "description": "定期開催の建築ジャム用会場。区画は先着で看板予約。終了後はスクショ撮影ゾーンあり。",
+    "tags": ["イベント", "区画制", "撮影OK"],
+    "submitted_by": {
+      "id": "330322148692459524",
+      "username": "neco",
+      "global_name": "neco",
+      "avatar": "https://cdn.discordapp.com/embed/avatars/0.png"
+    },
+    "submitted_at": "2025-05-11T11:00:00.000Z"
+  }
+]
