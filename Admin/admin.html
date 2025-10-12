@@ -7,43 +7,30 @@
 <title>MCML 管理ハンドブック（Admin）</title>
 <meta name="description" content="MCML 管理者向けハンドブック。役職別の業務内容、運営ルール、Minecraft管理コマンド、CoreProtectの使い方など。">
 
-<!-- 端末の自動ダーク化を無効化（ダーク固定） -->
+<!-- ダーク固定（端末の自動ダーク化を抑止） -->
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0b1020">
 
 <style>
 /* ================= Theme / Layout ================= */
-/* デフォルトはダーク基調（固定） */
 :root{
   --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
   --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --warn:#fde047; --danger:#ef4444;
   --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35);
-  --max:1180px; --side:280px;
-  --elev-1:rgba(255,255,255,.04);  /* 軽い面 */
-  --elev-2:rgba(255,255,255,.06);  /* 見出し・ボタン */
-  --elev-3:rgba(255,255,255,.08);  /* 枠線や強調 */
+  --max:1180px; --side:280px; --side-min:56px;
+  --elev-1:rgba(255,255,255,.04); --elev-2:rgba(255,255,255,.06); --elev-3:rgba(255,255,255,.08);
 }
-
-/* ブラウザUIと配色を暗色に固定。古い環境でも白フラ防止の二重指定 */
-html{
-  color-scheme: dark;
-  background-color:#0b1020;      /* 先に実色 */
-  background-color:var(--bg);    /* その上で変数 */
-}
+html{color-scheme:dark; background-color:#0b1020; background-color:var(--bg)}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0; font: 15px/1.75 system-ui, -apple-system, Segoe UI, Inter, Roboto,
-  "Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo", sans-serif;
+  margin:0; font:15px/1.75 system-ui,-apple-system,Segoe UI,Inter,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
   color:var(--text);
   background:
     radial-gradient(1000px 520px at 10% -10%, rgba(34,211,238,.10), transparent 60%),
     radial-gradient(1000px 520px at 90% -20%, rgba(52,211,153,.08), transparent 60%),
     var(--bg);
 }
-a{color:inherit; text-decoration:none}
-code,pre,.code{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Noto Sans JP", monospace}
-kbd{font:600 12px ui-monospace; background:var(--elev-2); padding:2px 6px; border-radius:6px}
 
 /* ===== Header（外部 Base.html を使う） ===== */
 header{
@@ -52,23 +39,28 @@ header{
   background:rgba(8,12,24,.72);
   border-bottom:1px solid var(--line);
 }
-/* backdrop-filter 非対応/不安定環境のフォールバック */
-@supports not (backdrop-filter: blur(1px)) {
+@supports not (backdrop-filter: blur(1px)){
   header{backdrop-filter:none; background:rgba(8,12,24,.95)}
 }
 
 /* ===== Page ===== */
-.wrap{max-width:var(--max); margin:0 auto; display:grid; grid-template-columns: var(--side) 1fr; gap:18px; padding:22px}
-@media (max-width: 980px){ .wrap{grid-template-columns:1fr} nav.sidenav{position:static; top:auto} }
+.wrap{max-width:var(--max); margin:0 auto; display:grid;
+      grid-template-columns: var(--side) 1fr; gap:18px; padding:22px}
+body.toc-collapsed .wrap{grid-template-columns: var(--side-min) 1fr}
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  body.toc-collapsed .wrap{grid-template-columns:1fr}
+}
+
 .card{
   background:linear-gradient(180deg,var(--panel),var(--panel2));
   border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)
 }
 .card>.inner{padding:18px 20px}
-.h1{font-size: clamp(24px, 3.6vw, 34px); font-weight:900; margin:0 0 6px}
+.h1{font-size:clamp(24px,3.6vw,34px); font-weight:900; margin:0 0 6px}
 .lead{color:var(--muted); margin:6px 0 0}
-.h2{font-size: clamp(18px, 2.6vw, 24px); margin:0 0 8px; font-weight:900}
-.h3{font-size: 16px; margin:0 0 6px; font-weight:800}
+.h2{font-size:clamp(18px,2.6vw,24px); margin:0 0 8px; font-weight:900}
+.h3{font-size:16px; margin:0 0 6px; font-weight:800}
 .badge{
   display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
   border:1px solid var(--line); background:var(--elev-1);
@@ -76,52 +68,60 @@ header{
 }
 .grid{display:grid; gap:12px}
 .cols-2{grid-template-columns:1fr 1fr} .cols-3{grid-template-columns:repeat(3,1fr)}
-@media (max-width: 900px){ .cols-2,.cols-3{grid-template-columns:1fr} }
+@media (max-width:900px){ .cols-2,.cols-3{grid-template-columns:1fr} }
 
-/* ===== Sidenav ===== */
-nav.sidenav{position:sticky; top:70px; align-self:start}
+/* ===== Sidenav（最小化対応） ===== */
+nav.sidenav{position:sticky; top:70px; align-self:start; overflow:hidden}
 nav.sidenav .inner{position:sticky; top:70px}
-nav.sidenav a{display:block; padding:8px 10px; border-radius:10px}
+nav.sidenav a{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:10px; white-space:nowrap
+}
 nav.sidenav a:hover{background:var(--elev-2)}
 nav.sidenav .sec{font-weight:800; margin-top:6px}
+nav.sidenav .icon{width:22px; text-align:center; opacity:.9; font-weight:800}
+nav.sidenav .label{flex:1}
 
-/* ===== Details（白飛び対策：白混色→低輝度の面色） ===== */
-details{
-  border:1px solid var(--line); border-radius:12px; overflow:hidden;
-  background:var(--elev-1)
+.toc-toggle{
+  width:100%; margin-bottom:8px;
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line); background:var(--elev-2); font-weight:800;
 }
-summary{
-  cursor:pointer; padding:10px 12px; font-weight:800;
-  background:var(--elev-2)
+.toc-toggle .icon{width:22px; text-align:center}
+
+body.toc-collapsed nav.sidenav{width:var(--side-min)}
+body.toc-collapsed nav.sidenav .label{display:none}
+body.toc-collapsed nav.sidenav .badge{justify-content:center}
+body.toc-collapsed .toc-toggle .text{display:none}
+
+/* モバイル時は通常のブロック表示。最小化ボタンはそのまま機能 */
+@media (max-width:980px){
+  nav.sidenav{position:static}
+  nav.sidenav .inner{position:static}
 }
+
+/* ===== Details ===== */
+details{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--elev-1)}
+summary{cursor:pointer; padding:10px 12px; font-weight:800; background:var(--elev-2)}
 details .content{padding:12px 14px}
 summary .tag{
   font:700 11px/1 ui-sans-serif; padding:6px 8px; border-radius:999px;
-  border:1px solid var(--line); margin-left:8px; color:var(--muted);
-  background:var(--elev-1)
+  border:1px solid var(--line); margin-left:8px; color:var(--muted); background:var(--elev-1)
 }
 
 /* ===== Tables ===== */
-.table{width:100%; border-collapse: collapse; font-size:14px}
+.table{width:100%; border-collapse:collapse; font-size:14px}
 .table th,.table td{border-top:1px dashed var(--line); padding:8px 10px; vertical-align:top}
 .table th{white-space:nowrap; color:var(--muted); text-align:left}
 
 /* ===== Code blocks ===== */
-pre{
-  margin:8px 0; padding:12px 14px;
-  background:#0c1426; border:1px solid #14223f; border-radius:10px; overflow:auto
-}
-.copy{
-  float:right; font-size:12px; padding:4px 8px; border-radius:8px;
-  border:1px solid var(--line); background:var(--elev-2); cursor:pointer
-}
+pre{margin:8px 0; padding:12px 14px; background:#0c1426; border:1px solid #14223f; border-radius:10px; overflow:auto}
+.copy{float:right; font-size:12px; padding:4px 8px; border-radius:8px; border:1px solid var(--line); background:var(--elev-2); cursor:pointer}
 .hl{color:#93c5fd}
 
 /* ===== Search ===== */
-#cmdSearch{
-  width:100%; padding:10px 12px; border-radius:12px;
-  border:1px solid var(--line); background:var(--elev-1); color:var(--text)
-}
+#cmdSearch{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--elev-1); color:var(--text)}
 
 /* ===== Footer ===== */
 footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); margin-top:18px}
@@ -133,15 +133,29 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
 <!--#include "/Public/Base.html" -->
 
 <main class="wrap">
-  <!-- ===== Side Nav ===== -->
-  <nav class="sidenav card">
+  <!-- ===== Side Nav（目次） ===== -->
+  <nav class="sidenav card" aria-label="目次">
     <div class="inner">
+      <button id="tocToggle" class="toc-toggle" type="button" aria-expanded="true">
+        <span class="icon">≡</span><span class="text">目次を最小化</span>
+      </button>
       <div class="badge">MCML Admin</div>
-      <a class="sec" href="#roles">① 役職別の業務</a>
-      <a href="#ops">運営ルール / 連絡</a>
-      <a class="sec" href="#mc-commands">② 管理コマンド基礎</a>
-      <a href="#coreprotect">CoreProtect 実践</a>
-      <a href="#cheatsheet">チートシート</a>
+
+      <a class="sec" href="#roles" title="① 役職別の業務">
+        <span class="icon">①</span><span class="label">役職別の業務</span>
+      </a>
+      <a href="#ops" title="運営ルール / 連絡">
+        <span class="icon">⚑</span><span class="label">運営ルール / 連絡</span>
+      </a>
+      <a class="sec" href="#mc-commands" title="② 管理コマンド基礎">
+        <span class="icon">②</span><span class="label">管理コマンド基礎</span>
+      </a>
+      <a href="#coreprotect" title="CoreProtect 実践">
+        <span class="icon">🛡</span><span class="label">CoreProtect 実践</span>
+      </a>
+      <a href="#cheatsheet" title="チートシート">
+        <span class="icon">✎</span><span class="label">チートシート</span>
+      </a>
     </div>
   </nav>
 
@@ -178,7 +192,7 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
           </div>
         </div>
 
-        <!-- ▼ このセクションを一時的に非表示にしたい場合（閉じタグは外に残す） ▼
+        <!-- ▼ 非表示にしたい場合のメモ（閉じタグは外に残す）
         <h3 id="ops" class="h3" style="margin-top:14px">運営ルール / 連絡</h3>
         <table class="table">
           <tr><th>連絡窓口</th><td>緊急時は管理者Discordチャンネルへ。重大事案は @Owner をメンション。</td></tr>
@@ -349,6 +363,21 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
 <script>
 /* 年表示 */
 document.getElementById('year').textContent = new Date().getFullYear();
+
+/* 目次最小化：bodyにフラグを付けてレイアウトを切替。状態は保存 */
+const tocToggle = document.getElementById('tocToggle');
+const LS_KEY = 'mcml.tocCollapsed';
+function applyTocState(collapsed){
+  document.body.classList.toggle('toc-collapsed', collapsed);
+  tocToggle.setAttribute('aria-expanded', String(!collapsed));
+  tocToggle.querySelector('.text').textContent = collapsed ? '目次を展開' : '目次を最小化';
+}
+applyTocState(localStorage.getItem(LS_KEY)==='1');
+tocToggle.addEventListener('click', ()=>{
+  const next = !document.body.classList.contains('toc-collapsed');
+  applyTocState(next);
+  localStorage.setItem(LS_KEY, next ? '1' : '0');
+});
 
 /* コマンド検索フィルタ */
 const search = document.getElementById('cmdSearch');
