@@ -1,3 +1,4 @@
+
 <!-- /Public/facilities.html -->
 <!doctype html>
 <html lang="ja">
@@ -162,17 +163,7 @@ function escapeHtml(s){return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;","
 function toast(msg){console.log("[MCML]", msg)}
 
 /* ===== 共通ヘッダー読込（Base.html） ===== */
-(async()=>{
-  try{
-    const res = await fetch('/Public/Base.html', {credentials:'same-origin'});
-    if(res.ok){
-      const html = await res.text();
-      const tmp = document.createElement('div'); tmp.innerHTML = html;
-      const header = tmp.querySelector('header') || tmp.firstElementChild || tmp;
-      document.body.insertBefore(header.cloneNode(true), document.body.firstChild);
-    }
-  }catch(e){ console.warn("Base.html load failed", e); }
-})();
+
 
 /* ===== ログイン状態の確認 =====
   app.py に以下のようなエンドポイントがある前提：
