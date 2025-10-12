@@ -1,5 +1,4 @@
-
-<!-- /Public/facilities.html -->
+<!-- /Public/facilities.html (images + lightbox 対応版) -->
 <!doctype html>
 <html lang="ja">
 <head>
@@ -9,10 +8,9 @@
 <meta name="description" content="MCMLのメンバー向け施設一覧。Discordログイン済みのメンバーは、フォームから施設情報を作成し、GitHubへPRとして提出できます。">
 <meta name="color-scheme" content="light dark">
 <style>
-/* ===== Theme ===== */
 :root{
   --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
-  --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --warn:#fde047; --danger:#ef4444;
+  --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --danger:#ef4444;
   --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --max:1100px;
 }
 @media (prefers-color-scheme: light){
@@ -29,8 +27,6 @@ a{color:inherit;text-decoration:none}
 code,kbd,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 kbd{background:rgba(255,255,255,.07); padding:2px 6px; border-radius:6px}
 .wrap{max-width:var(--max); margin:0 auto; padding:22px}
-
-/* Cards / UI */
 .card{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
 .inner{padding:18px 20px}
 .h1{font-size:clamp(24px,3.6vw,34px); font-weight:900; margin:0 0 6px}
@@ -46,33 +42,43 @@ kbd{background:rgba(255,255,255,.07); padding:2px 6px; border-radius:6px}
 .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); cursor:pointer; font-weight:800}
 .btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 88%, #fff 4%), var(--brand)); color:#081019; border-color:transparent}
 .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--muted); font-weight:700; font-size:12px}
-table{width:100%; border-collapse:separate; border-spacing:0 8px}
+table{width:100%; border-collapse:separate; border-spacing:0 10px}
 tr td{background:rgba(255,255,255,.04); border:1px solid var(--line); padding:10px 12px; border-radius:12px}
+
+/* 施設行のレイアウト */
+.fac-row{display:grid; grid-template-columns:88px 1fr; gap:12px; align-items:start}
+.fac-thumb{width:88px; aspect-ratio:1/1; border-radius:10px; border:1px solid var(--line); overflow:hidden; background:#0d1526; display:grid; place-items:center; color:var(--muted); font-size:12px}
+.fac-thumb img{width:100%; height:100%; object-fit:cover; display:block}
 .fac-head{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-bottom:6px}
 .fac-tags{display:flex; gap:6px; flex-wrap:wrap}
 .tag{font:700 11px/1 ui-sans-serif; padding:6px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:rgba(255,255,255,.06)}
 .fac-meta{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:13px}
 .fac-desc{margin-top:6px}
 .usr{display:flex; align-items:center; gap:8px}
-.usr img{width:24px; height:24px; border-radius:50%}
+.usr img{width:20px; height:20px; border-radius:50%}
 
-/* Light helper */
-.helper{font-size:13px; color:var(--muted)}
-pre.preview{margin:10px 0 0; padding:12px 14px; background:#0c1426; border:1px solid #14223f; border-radius:10px; overflow:auto; max-height:40vh}
+/* Lightbox */
+.lb{position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; place-items:center; z-index:1000}
+.lb.open{display:grid}
+.lb-panel{max-width:min(92vw, 1100px); width:100%; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); overflow:hidden}
+.lb-media{position:relative; background:#000}
+.lb-media img{width:100%; max-height:70vh; object-fit:contain; display:block}
+.lb-bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid var(--line)}
+.lb-ctrls{display:flex; gap:8px}
+.lb-btn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); cursor:pointer}
 </style>
 </head>
 <body>
 
-<!-- 共通ヘッダー -->
-<!--#include "/Public/Base.html" -->
+<!-- 共通ヘッダー（JS読み込み。Base.html 側の header に id="mcml-header" を付与してください） -->
 
 <main class="wrap">
   <section class="card"><div class="inner">
     <h1 class="h1">利用可能施設 一覧</h1>
-    <p class="muted">このページは <code>/Public/facilities.json</code> を元に表示されます。変更は GitHub でPRを作成してください（下部のジェネレーターが便利）。</p>
+    <p class="muted">このページは <code>/Public/施設登録.json</code> を元に表示されます。変更は GitHub でPRを作成してください（下部のジェネレーターが便利）。</p>
   </div></section>
 
-  <!-- ===== フィルタ / 検索 ===== -->
+  <!-- フィルタ -->
   <section class="card" style="margin-top:12px"><div class="inner">
     <div class="row">
       <input id="q" class="input" type="search" placeholder="検索（名称・説明・タグを対象）">
@@ -83,15 +89,13 @@ pre.preview{margin:10px 0 0; padding:12px 14px; background:#0c1426; border:1px s
     </div>
   </div></section>
 
-  <!-- ===== 一覧 ===== -->
+  <!-- 一覧 -->
   <section class="card" style="margin-top:12px"><div class="inner">
-    <div class="fac-list">
-      <table id="facTable" aria-label="施設一覧"></table>
-      <p id="emptyMsg" class="muted" style="display:none">該当する施設がありません。</p>
-    </div>
+    <table id="facTable" aria-label="施設一覧"></table>
+    <p id="emptyMsg" class="muted" style="display:none; margin-top:6px">該当する施設がありません。</p>
   </div></section>
 
-  <!-- ===== 投稿ジェネレーター（ログイン時のみ） ===== -->
+  <!-- 投稿ジェネレーター（ログイン時のみ） -->
   <section class="card" id="genSection" style="margin-top:12px; display:none"><div class="inner">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
       <h2 class="h2">登録ジェネレーター（PR用）</h2>
@@ -127,12 +131,18 @@ pre.preview{margin:10px 0 0; padding:12px 14px; background:#0c1426; border:1px s
       <textarea id="fDesc" class="input" rows="4" placeholder="施設の概要、使い方、注意事項など"></textarea>
     </div>
 
-    <div style="margin-top:10px">
-      <label>タグ（カンマ区切り）</label>
-      <input id="fTags" class="input" placeholder="例：自動釣り, 初心者歓迎, 24h">
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>タグ（カンマ区切り）</label>
+        <input id="fTags" class="input" placeholder="例：自動釣り, 初心者歓迎, 24h">
+      </div>
+      <div>
+        <label>画像URL（カンマ区切り, 任意）</label>
+        <input id="fImages" class="input" placeholder="例：https://.../img1.jpg, https://.../img2.png">
+      </div>
     </div>
 
-    <div class="helper" style="margin-top:6px">※ 送信は直接ではなく、<b>GitHubのPR</b>として提出します。内容は下のJSONにプレビューされます。</div>
+    <div class="muted" style="margin-top:6px">※ 送信は直接ではなく、<b>GitHubのPR</b>として提出します。内容は下のJSONにプレビューされます。</div>
 
     <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
       <button id="btnPreview" class="btn">JSONを生成</button>
@@ -148,193 +158,208 @@ pre.preview{margin:10px 0 0; padding:12px 14px; background:#0c1426; border:1px s
   </footer>
 </main>
 
+<!-- ライトボックス（拡大表示） -->
+<div class="lb" id="lb" role="dialog" aria-modal="true">
+  <div class="lb-panel">
+    <div class="lb-media"><img id="lbImg" alt="施設画像"></div>
+    <div class="lb-bar">
+      <div id="lbCaption" class="muted">画像</div>
+      <div class="lb-ctrls">
+        <button class="lb-btn" id="lbPrev" aria-label="前へ">‹</button>
+        <button class="lb-btn" id="lbNext" aria-label="次へ">›</button>
+        <button class="lb-btn" id="lbClose" aria-label="閉じる">✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-/* ===== 設定（必ずあなたのリポジトリに合わせて変更） ===== */
-const GITHUB_OWNER  = "yourname";      // 例: coreone-jp
-const GITHUB_REPO   = "yourrepo";      // 例: mcml-site
+/* ===== 設定 ===== */
+const GITHUB_OWNER  = "yourname";
+const GITHUB_REPO   = "yourrepo";
 const GITHUB_BRANCH = "main";
-const FACILITIES_JSON_PATH = "Public/施設登録.json"; // リストの元ファイル
+const FACILITIES_JSON_PATH = "Public/施設登録.json";
 
 /* ===== ユーティリティ ===== */
 const $ = s=>document.querySelector(s);
 const $$= s=>Array.from(document.querySelectorAll(s));
-const year = new Date().getFullYear(); $("#year").textContent = year;
+$("#year").textContent = new Date().getFullYear();
 function escapeHtml(s){return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function toast(msg){console.log("[MCML]", msg)}
 
-/* ===== 共通ヘッダー読込（Base.html） ===== */
-
-
-/* ===== ログイン状態の確認 =====
-  app.py に以下のようなエンドポイントがある前提：
-  @app.route("/auth/me")
-  return {"logged_in": bool, "id": "...", "username": "...", "global_name": "...", "avatar": "avatarhash_or_null"}
-*/
-let ME = null;
-async function fetchMe(){
+/* ===== Base.html（重複防止付き） ===== */
+(async()=>{
+  if (document.querySelector('header#mcml-header')) return;
   try{
-    const r = await fetch('/auth/me', {credentials:'same-origin'});
-    if(!r.ok) throw 0;
-    const j = await r.json();
+    const res = await fetch('/Public/Base.html', {credentials:'same-origin', cache:'no-store'});
+    if(!res.ok) return;
+    const html = await res.text();
+    const tmp = document.createElement('div'); tmp.innerHTML = html;
+    const header = tmp.querySelector('header#mcml-header') || tmp.querySelector('header') || tmp.firstElementChild;
+    if(header) document.body.prepend(header.cloneNode(true));
+  }catch(e){ console.warn("Base.html load failed", e); }
+})();
+
+/* ===== ログイン確認 ===== */
+let ME=null;
+(async()=>{
+  try{
+    const r=await fetch('/auth/me',{credentials:'same-origin'});
+    if(!r.ok) return;
+    const j=await r.json();
     if(j && j.logged_in){
-      ME = j;
-      const name = j.global_name || j.username || "(no name)";
-      const ava = j.avatar ? `https://cdn.discordapp.com/avatars/${j.id}/${j.avatar}.png?size=64`
-                           : 'https://cdn.discordapp.com/embed/avatars/0.png';
-      $("#genSection").style.display = '';
-      $("#meName").textContent = name;
-      $("#meAva").src = ava;
+      ME=j;
+      $("#genSection").style.display='';
+      $("#meName").textContent=j.global_name||j.username||'(no name)';
+      $("#meAva").src = j.avatar ? `https://cdn.discordapp.com/avatars/${j.id}/${j.avatar}.png?size=64`
+                                  : 'https://cdn.discordapp.com/embed/avatars/0.png';
     }
   }catch{}
-}
-fetchMe();
+})();
 
-/* ===== 施設一覧のロード ===== */
-let Facilities = [];
+/* ===== 一覧のロード/描画 ===== */
+let Facilities=[];
 async function loadFacilities(){
   try{
     const r = await fetch('/Public/施設登録.json', {cache:'no-store', credentials:'same-origin'});
-    if(!r.ok) throw new Error('facilities.json not found');
-    Facilities = await r.json();
-  }catch(e){
-    Facilities = [];
-    console.warn(e);
-  }
+    Facilities = r.ok ? await r.json() : [];
+  }catch{ Facilities=[]; }
   renderList();
 }
 function renderList(){
-  const q = $("#q").value.trim().toLowerCase();
-  const cat = $("#cat").value;
-  const tbl = $("#facTable"); tbl.innerHTML = '';
-  let items = Facilities;
-  if(cat) items = items.filter(x=> (x.category||'') === cat);
-  if(q){
-    items = items.filter(x=>{
-      const hay = `${x.name||''}\n${x.description||''}\n${(x.tags||[]).join(' ')}`.toLowerCase();
-      return hay.includes(q);
-    });
-  }
+  const q=$("#q").value.trim().toLowerCase();
+  const cat=$("#cat").value;
+  const tbl=$("#facTable"); tbl.innerHTML='';
+  let items=Facilities||[];
+  if(cat) items=items.filter(x=> (x.category||'')===cat);
+  if(q){ items=items.filter(x=>{
+    const hay = `${x.name||''}\n${x.description||''}\n${(x.tags||[]).join(' ')}`.toLowerCase(); return hay.includes(q);
+  });}
   $("#emptyMsg").style.display = items.length? "none":"";
-  for(const it of items){
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    // header line
-    const head = document.createElement('div'); head.className = 'fac-head';
-    const left = document.createElement('div');
-    left.innerHTML = `<strong>${escapeHtml(it.name||'(名称未設定)')}</strong>`;
-    const right = document.createElement('div'); right.className = 'fac-tags';
-    (it.tags||[]).forEach(t=>{
-      const span = document.createElement('span'); span.className='tag'; span.textContent=t; right.appendChild(span);
-    });
+  items.forEach((it, idx)=>{
+    const tr=document.createElement('tr'); const td=document.createElement('td'); tr.appendChild(td);
+    const row=document.createElement('div'); row.className='fac-row'; td.appendChild(row);
+
+    // thumb
+    const th=document.createElement('div'); th.className='fac-thumb';
+    const firstImg=(it.images&&it.images[0])||null;
+    if(firstImg){ const img=new Image(); img.src=firstImg; img.alt='サムネイル'; th.appendChild(img); }
+    else{ th.textContent='No Image'; }
+    row.appendChild(th);
+
+    // body
+    const body=document.createElement('div');
+    const head=document.createElement('div'); head.className='fac-head';
+    const left=document.createElement('div'); left.innerHTML=`<strong>${escapeHtml(it.name||'(名称未設定)')}</strong>`;
+    const right=document.createElement('div'); right.className='fac-tags';
+    (it.tags||[]).forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; right.appendChild(s); });
     head.appendChild(left); head.appendChild(right);
 
-    // meta
-    const meta = document.createElement('div'); meta.className='fac-meta';
+    const meta=document.createElement('div'); meta.className='fac-meta';
     if(it.category) meta.appendChild(spanMeta('カテゴリ', it.category));
     if(it.coord)    meta.appendChild(spanMeta('場所', it.coord));
     if(it.link)     meta.appendChild(spanLink('リンク', it.link));
     if(it.submitted_by){
-      const sb = document.createElement('div'); sb.className='usr';
-      const ava = document.createElement('img');
-      ava.src = it.submitted_by.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-      ava.alt = '';
-      sb.appendChild(ava);
-      const nm = document.createElement('span');
-      nm.textContent = it.submitted_by.global_name || it.submitted_by.username || it.submitted_by.id || 'unknown';
-      sb.appendChild(nm);
-      meta.appendChild(sb);
+      const sb=document.createElement('div'); sb.className='usr';
+      const ava=document.createElement('img'); ava.src=it.submitted_by.avatar||'https://cdn.discordapp.com/embed/avatars/0.png'; ava.alt='';
+      const nm=document.createElement('span'); nm.textContent=it.submitted_by.global_name||it.submitted_by.username||it.submitted_by.id||'unknown';
+      sb.appendChild(ava); sb.appendChild(nm); meta.appendChild(sb);
     }
 
-    // desc
-    const desc = document.createElement('div'); desc.className='fac-desc';
-    desc.textContent = it.description || '';
+    const desc=document.createElement('div'); desc.className='fac-desc'; desc.textContent=it.description||'';
 
-    td.appendChild(head); td.appendChild(meta); td.appendChild(desc);
-    tr.appendChild(td); tbl.appendChild(tr);
-  }
+    body.appendChild(head); body.appendChild(meta); body.appendChild(desc); row.appendChild(body);
+
+    // クリックで詳細（拡大）
+    td.style.cursor='pointer';
+    td.addEventListener('click', ()=> openLightbox(it));
+    tbl.appendChild(tr);
+  });
 }
 function spanMeta(label, text){
-  const s = document.createElement('span');
-  s.innerHTML = `<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(text)}`;
-  return s;
+  const s=document.createElement('span'); s.innerHTML=`<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(text)}`; return s;
 }
 function spanLink(label, url){
-  const s = document.createElement('a');
-  s.href = url; s.target = "_blank"; s.rel="noopener noreferrer";
-  s.innerHTML = `<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(url)}`;
-  return s;
+  const s=document.createElement('a'); s.href=url; s.target="_blank"; s.rel="noopener noreferrer";
+  s.innerHTML=`<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(url)}`; return s;
 }
 $("#q").addEventListener('input', renderList);
 $("#cat").addEventListener('change', renderList);
 loadFacilities();
 
-/* ===== PRジェネレーター ===== */
-function buildEntry(){
-  const name = $("#fName").value.trim();
-  const category = $("#fCat").value.trim();
-  const coord = $("#fCoord").value.trim();
-  const link = $("#fLink").value.trim();
-  const description = $("#fDesc").value.trim();
-  const tags = $("#fTags").value.split(",").map(s=>s.trim()).filter(Boolean);
-  if(!name){ alert("名称は必須です"); return null; }
-  const now = new Date().toISOString();
+/* ===== ライトボックス ===== */
+const lb=$("#lb"), lbImg=$("#lbImg"), lbCap=$("#lbCaption"), lbPrev=$("#lbPrev"), lbNext=$("#lbNext"), lbClose=$("#lbClose");
+let lbImages=[], lbIdx=0, lbTitle='';
+function openLightbox(item){
+  lbImages = Array.isArray(item.images) && item.images.length ? item.images : [];
+  lbIdx = 0; lbTitle = item.name || '';
+  updateLB();
+  lb.classList.add('open'); document.body.style.overflow='hidden';
+}
+function updateLB(){
+  if(!lbImages.length){ lbImg.src=''; lbCap.textContent= `${lbTitle}（画像なし）`; return; }
+  lbImg.src = lbImages[lbIdx];
+  lbCap.textContent = `${lbTitle} — ${lbIdx+1}/${lbImages.length}`;
+  // 近傍プリロード
+  const n = new Image(); n.src = lbImages[(lbIdx+1)%lbImages.length];
+  const p = new Image(); p.src = lbImages[(lbIdx-1+lbImages.length)%lbImages.length];
+}
+lbPrev.addEventListener('click', e=>{ e.stopPropagation(); if(lbImages.length){ lbIdx=(lbIdx-1+lbImages.length)%lbImages.length; updateLB(); }});
+lbNext.addEventListener('click', e=>{ e.stopPropagation(); if(lbImages.length){ lbIdx=(lbIdx+1)%lbImages.length; updateLB(); }});
+lbClose.addEventListener('click', closeLB);
+lb.addEventListener('click', e=>{ if(e.target===lb) closeLB(); });
+document.addEventListener('keydown', e=>{
+  if(!lb.classList.contains('open')) return;
+  if(e.key==='Escape') closeLB();
+  if(e.key==='ArrowLeft') lbPrev.click();
+  if(e.key==='ArrowRight') lbNext.click();
+});
+function closeLB(){ lb.classList.remove('open'); document.body.style.overflow=''; }
 
-  const entry = {
+/* ===== PR ジェネレーター ===== */
+function buildEntry(){
+  const name=$("#fName").value.trim();
+  const category=$("#fCat").value.trim();
+  const coord=$("#fCoord").value.trim();
+  const link=$("#fLink").value.trim();
+  const description=$("#fDesc").value.trim();
+  const tags=$("#fTags").value.split(",").map(s=>s.trim()).filter(Boolean);
+  const images=$("#fImages").value.split(",").map(s=>s.trim()).filter(Boolean);
+  if(!name){ alert("名称は必須です"); return null; }
+  const now=new Date().toISOString();
+  const entry={
     name, category,
     coord: coord || undefined,
     link:  link  || undefined,
     description,
     tags,
+    images: images.length ? images : undefined,
     submitted_by: ME ? {
-      id: ME.id,
-      username: ME.username || null,
-      global_name: ME.global_name || null,
+      id: ME.id, username: ME.username||null, global_name: ME.global_name||null,
       avatar: ME.avatar ? `https://cdn.discordapp.com/avatars/${ME.id}/${ME.avatar}.png?size=64` : null
-    } : { id: null },
+    } : { id:null },
     submitted_at: now
   };
   return entry;
 }
-
-function prettyJson(obj){ return JSON.stringify(obj, null, 2); }
-
-async function generatePreview(){
-  const entry = buildEntry(); if(!entry) return;
-  // 既存 facilities.json に追記する形のPRを想定 → 配列の末尾に追加する例を提示
-  const preview = [
-    "// 施設の配列。1要素=1施設。並び順は自由ですが、重複名称に注意してください。",
-    "[",
-    "  // 既存要素 ...",
-    "  /* ここより下に追加してください */",
-    ...prettyJson(entry).split("\n").map((l,i)=> (i===0?"  " + l:", " + l)),
-    "]"
-  ].join("\n");
+function prettyJson(o){ return JSON.stringify(o,null,2); }
+$("#btnPreview").addEventListener('click', ()=>{
+  const e=buildEntry(); if(!e) return;
+  const preview = prettyJson([e]) + "\n";
   $("#preview").textContent = preview;
   $("#btnPR").disabled = false;
   $("#btnCopy").disabled = false;
-}
-
-function openGitHubPR(){
-  const entry = buildEntry(); if(!entry) return;
-  // GitHubの「ファイル編集」画面に value をプリセット
-  // 1) 既存 JSON を全置換する方法（レビューでマージ調整しやすい）
-  //    実運用では facilities.json を手元で取得→末尾に追加→value へ流す方がコンフリクトに強いですが、
-  //    サイト単体では取得/書き戻しができないため、編集者が調整する前提にしています。
-  const value = prettyJson([entry]) + "\n";
-  const path = encodeURIComponent(FACILITIES_JSON_PATH);
-  const url = `https://github.com/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/new/${encodeURIComponent(GITHUB_BRANCH)}/Public?filename=${path}&value=${encodeURIComponent(value)}&message=${encodeURIComponent('Add facility: '+entry.name)}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-}
-
-async function copyPreview(){
-  const t = $("#preview").textContent;
-  try{ await navigator.clipboard.writeText(t); alert("コピーしました"); }
+});
+$("#btnCopy").addEventListener('click', async()=>{
+  try{ await navigator.clipboard.writeText($("#preview").textContent); alert("コピーしました"); }
   catch{ alert("コピーに失敗しました"); }
-}
-
-$("#btnPreview").addEventListener('click', generatePreview);
-$("#btnPR").addEventListener('click', openGitHubPR);
-$("#btnCopy").addEventListener('click', copyPreview);
+});
+$("#btnPR").addEventListener('click', ()=>{
+  const e=buildEntry(); if(!e) return;
+  const value = prettyJson([e]) + "\n";
+  const path = encodeURIComponent(FACILITIES_JSON_PATH);
+  const url = `https://github.com/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/new/${encodeURIComponent(GITHUB_BRANCH)}/Public?filename=${path}&value=${encodeURIComponent(value)}&message=${encodeURIComponent('Add facility: '+e.name)}`;
+  window.open(url,"_blank","noopener,noreferrer");
+});
 </script>
 </body>
 </html>
