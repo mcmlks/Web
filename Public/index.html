@@ -1,166 +1,244 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MCML – Minecraft Community 公式サイト</title>
-  <meta name="description" content="Minecraftコミュニティ MCML の公式サイト。特長、ギャラリー、Discord参加、接続情報、FAQ を掲載。"/>
-  <meta name="theme-color" content="#2e7d32" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCML（マインクラフトコミュニティー）公式ホームページ</title>
+  <meta name="description" content="MCMLはMinecraft好きが集まる日本のコミュニティ。お知らせ、イベント、サーバー情報、参加方法など。" />
+  <meta property="og:title" content="MCML 公式ホームページ" />
+  <meta property="og:description" content="Minecraft好きが集まる日本のコミュニティ。最新情報とイベントはこちら。" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#1f2937" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231f2937'/><text x='50' y='58' font-size='48' text-anchor='middle' fill='%23fff'>M</text></svg>">
   <style>
+    /* ===== CSS Reset (mini) ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body,h1,h2,h3,h4,p,ul,ol,li,figure,figcaption,blockquote,dl,dd{margin:0;padding:0}
+    ul{list-style:none}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+
+    /* ===== Theme ===== */
     :root{
-      --bg:#0b1220; --bg2:#0e1630; --text:#e6f1ff; --muted:#b8c6e0; --card:#121a33; --shadow:0 8px 24px rgba(0,0,0,.45);
-      --accent:#42b883; --accent2:#2e7d32; --header-h:64px;
+      --bg:#0b1020;
+      --panel:#121b36;
+      --panel-2:#0e152b;
+      --text:#e5e7eb;
+      --muted:#9aa4b2;
+      --brand:#22d3ee; /* cyan */
+      --brand-2:#34d399; /* green */
+      --danger:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --gap:16px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Noto Sans JP,Meiryo,sans-serif; color:var(--text);
-      background:linear-gradient(180deg,var(--bg),var(--bg2)); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-    .container{width:min(1200px,92%); margin-inline:auto}
+    body{font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", Helvetica, Arial, sans-serif; background:linear-gradient(180deg,#0b1020 0%, #0a0f1b 100%); color:var(--text); line-height:1.65}
+    .container{width:min(1100px, 92vw); margin-inline:auto}
 
-    /* 共通セクション */
-    main{display:block}
-    section{padding:64px 0; scroll-margin-top: calc(var(--header-h) + 12px)}
-    .section-title{font-size: clamp(22px, 2.6vw, 32px); margin:0 0 18px; font-weight:900}
-    .lead{color:var(--muted); margin:0 0 24px}
-    .grid{display:grid; gap:18px}
-    .grid.cols-3{ grid-template-columns: repeat(3,1fr) }
-    .grid.cols-2{ grid-template-columns: repeat(2,1fr) }
-    .card{background:var(--card); border:1px solid rgba(255,255,255,.06); padding:18px; border-radius:18px; box-shadow:var(--shadow)}
-    @media (max-width:900px){ .grid.cols-3,.grid.cols-2{ grid-template-columns:1fr } }
+    /* ===== Header placeholder (loaded from Base.html) ===== */
+    header#site-header{position:sticky;top:0;z-index:50;background:rgba(11,16,32,.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .header-fallback{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .brand .logo{inline-size:34px;block-size:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--brand-2)); display:grid;place-items:center;color:#0b1020;font-weight:900}
+    .nav{display:flex;gap:16px}
+    .nav a{opacity:.9}
+    .nav a:hover{opacity:1}
 
-    /* ヒーロー */
-    .hero{position:relative; padding: calc(var(--header-h) + 32px) 0 72px; overflow:hidden}
-    .hero:before{content:""; position:absolute; inset:-20%; z-index:-1;
-      background:linear-gradient(180deg, rgba(102,198,255,.25), transparent 60%),
-                 radial-gradient(600px 200px at 20% 20%, rgba(66,184,131,.25), transparent 60%),
-                 radial-gradient(800px 300px at 80% 10%, rgba(255,255,255,.08), transparent 60%);}
-    .hero-grid{display:grid; grid-template-columns: 1.1fr 1fr; gap:min(4vw,36px); align-items:center}
-    .hero h1{font-size: clamp(28px, 4vw, 48px); line-height:1.15; margin:0 0 .6rem; font-weight:900}
-    .hero p{margin:0 0 1.25rem; color:var(--muted)}
-    .btn{ display:inline-flex; align-items:center; gap:.5rem; border:none; background:linear-gradient(180deg,var(--accent),var(--accent2));
-      color:#fff; padding:.8rem 1.1rem; border-radius:12px; box-shadow:var(--shadow); cursor:pointer; font-weight:700; text-decoration:none }
+    /* ===== Hero ===== */
+    .hero{position:relative; isolation:isolate; padding:64px 0 24px; overflow:hidden}
+    .hero::before{content:""; position:absolute; inset:-20% -5% auto; height:60%; z-index:-1; background:
+      conic-gradient(from 45deg at 20% 30%, rgba(34,211,238,.2), transparent 30%),
+      radial-gradient(600px 300px at 80% -40%, rgba(52,211,153,.18), transparent 60%),
+      radial-gradient(500px 320px at -20% 20%, rgba(34,211,238,.15), transparent 60%);
+      filter: blur(12px);
+      opacity:.9}
+    .hero-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
+    .hero h1{font-size:clamp(28px, 5vw, 48px); line-height:1.15; letter-spacing:.2px}
+    .hero p.lead{margin-top:12px; color:var(--muted)}
+    .cta{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+    .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px; background:var(--brand); color:#081019; font-weight:700; box-shadow:var(--shadow); border:0; cursor:pointer}
+    .btn.secondary{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.14)}
+    .card{background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
+    .card .content{padding:18px}
 
-    /* ギャラリー */
-    .gallery{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px}
-    .gallery figure{margin:0; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.06)}
-    .gallery img{display:block; width:100%; height:140px; object-fit:cover}
+    /* ===== Sections ===== */
+    section{padding:34px 0}
+    section h2{font-size:clamp(20px, 3.6vw, 28px); margin-bottom:14px}
 
-    footer{padding:36px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--muted)}
+    .grid{display:grid; gap:var(--gap)}
+    .grid.cols-3{grid-template-columns:repeat(3, 1fr)}
+    .grid.cols-2{grid-template-columns:repeat(2, 1fr)}
+    @media (max-width: 900px){
+      .hero-grid{grid-template-columns:1fr}
+      .grid.cols-3{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 640px){
+      .grid.cols-3,.grid.cols-2{grid-template-columns:1fr}
+    }
+
+    /* ===== Footer ===== */
+    footer{padding:28px 0 48px; color:var(--muted); border-top:1px solid rgba(255,255,255,.08)}
+    .footer-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+    .tiny{font-size:12px; opacity:.8}
+
+    /* ===== Utility ===== */
+    .pill{display:inline-block; padding:6px 10px; border:1px solid rgba(255,255,255,.12); border-radius:999px; font-size:12px; opacity:.9}
+    .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:12px; background:rgba(255,255,255,.05); padding:2px 6px; border-radius:6px}
+    .muted{color:var(--muted)}
   </style>
 </head>
 <body>
-  <!-- ここにヘッダーは含めません（サーバー側でインクルード）。例: Nginx/Apache SSI -->
-  <!--# include file="/Public/Base.html" -->
-
-  <main>
-    <!-- ===== ヒーロー ===== -->
-    <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <h1>ブロックの世界へようこそ！<br/>MCML 公式サイト</h1>
-          <p>サバイバルから建築、レッドストーンまで。誰でも気軽に参加できるコミュニティです。最新イベントやサーバー情報、ルールをチェックして冒険を始めよう！</p>
-          <div class="cta">
-            <a class="btn" href="/#minecraft">サーバーに入る</a>
-            <a class="btn" href="/#gallery" style="background:linear-gradient(180deg,#5865F2,#454FBF)">ギャラリーを見る</a>
-          </div>
-        </div>
-        <div class="card">
-          <h3>お知らせ</h3>
-          <p class="lead">新ハードウェアに移行しラグ削減。資源ワールドをリセット、レア資源が復活しています。</p>
-        </div>
+  <!-- ===== Header: load from Base.html ===== -->
+  <header id="site-header" aria-label="MCML ヘッダー">
+    <div class="container header-fallback" id="header-fallback" hidden>
+      <div class="brand">
+        <div class="logo">M</div>
+        <span>MCML</span>
       </div>
-    </section>
+      <nav class="nav" aria-label="トップナビ">
+        <a href="#news">お知らせ</a>
+        <a href="#events">イベント</a>
+        <a href="#servers">サーバー</a>
+        <a href="#join">参加方法</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- ===== 特長 ===== -->
-    <section id="features">
-      <div class="container grid cols-3">
-        <div class="card"><h3>クロスプレイ歓迎</h3><p>Java/統合版プレイヤーが一緒に遊べる構成に対応。</p></div>
-        <div class="card"><h3>安心の保護</h3><p>土地・チェスト保護、毎日バックアップで安全。</p></div>
-        <div class="card"><h3>イベント豊富</h3><p>建築コンテスト、協力レイド、PvPトーナメントを定期開催。</p></div>
-      </div>
-    </section>
-
-    <!-- ===== ギャラリー ===== -->
-    <section id="gallery">
-      <div class="container">
-        <h2 class="section-title">コミュニティ・ギャラリー</h2>
-        <p class="lead">メンバー作品のピックアップ（ダミー画像）</p>
-        <div class="gallery">
-          <figure><img alt="Build A" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><defs><linearGradient id='g' x1='0' x2='0' y1='0' y2='1'><stop offset='0%' stop-color='%2366c6ff'/><stop offset='100%' stop-color='%2342b883'/></linearGradient></defs><rect width='100%' height='100%' fill='url(%23g)'/><text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Build A</text></svg>"/></figure>
-          <figure><img alt="Castle" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><rect width='100%' height='100%' fill='%236b4f2a'/><text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Castle</text></svg>"/></figure>
-          <figure><img alt="Redstone" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><rect width='100%' height='100%' fill='%237d7d7d'/><text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Redstone</text></svg>"/></figure>
-          <figure><img alt="Town" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='480'><rect width='100%' height='100%' fill='%2342b883'/><text x='50%' y='50%' fill='white' font-size='32' text-anchor='middle'>Town</text></svg>"/></figure>
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="pill">MCML - Minecraft Community in Japan</span>
+        <h1>マインクラフト好きがつながる場所<br/>MCML（マインクラフトコミュニティー）</h1>
+        <p class="lead">ビルド、レッドストーン、アドベンチャー、配布ワールド制作まで。初心者から上級者まで気軽に参加できます。</p>
+        <div class="cta">
+          <a class="btn" href="#join" aria-label="コミュニティに参加する">参加する
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn secondary" href="#servers">サーバー一覧</a>
         </div>
       </div>
-    </section>
-
-    <!-- ===== Discord ===== -->
-    <section id="discord">
-      <div class="container grid cols-2">
-        <div class="card">
-          <h2 class="section-title">Discordに参加</h2>
-          <p class="lead">運営連絡・雑談・取引はDiscordで。荒らし対策として入室認証とロール付与を行います。</p>
-          <a class="btn" href="/auth/discord/login">Discordでログイン</a>
+      <aside class="card">
+        <div class="content">
+          <h3 style="margin-bottom:8px">今週のハイライト</h3>
+          <ul style="display:grid; gap:10px">
+            <li>🧱 建築ジャム #12 – テーマ「近未来の村」</li>
+            <li>⚙️ レッドストーン勉強会 – 反復回路の基礎</li>
+            <li>🌐 新マルチサーバー <span class="kbd">mc.mcml.jp</span> を公開</li>
+          </ul>
         </div>
-        <div class="card">
-          <h3>参加手順</h3>
-          <ol>
-            <li>Discordへ参加</li>
-            <li>認証チャンネルでルールに同意</li>
-            <li>自己紹介→ロール付与→サーバーへIN！</li>
-          </ol>
-        </div>
-      </div>
-    </section>
+      </aside>
+    </div>
+  </section>
 
-    <!-- ===== Minecraft 接続情報 ===== -->
-    <section id="minecraft">
-      <div class="container grid cols-3">
-        <div class="card"><h3>接続情報</h3><p><strong>アドレス：</strong><span style="font-family:ui-monospace,Menlo,Consolas,monospace">mc.example.com</span></p><p>対応バージョン：<strong>1.20.x – 1.21.x</strong></p></div>
-        <div class="card"><h3>現在の状態</h3><p id="srvStatus">チェック待ち</p><button class="btn" id="checkBtn">ステータスをチェック</button></div>
-        <div class="card"><h3>ルール要点</h3><ul><li>荒らし・チート禁止</li><li>建築物を尊重</li><li>チャットのマナー</li></ul><a class="btn" href="/#faq">詳しいルールへ</a></div>
+  <!-- ===== News ===== -->
+  <section id="news">
+    <div class="container">
+      <h2>お知らせ</h2>
+      <div class="grid cols-3" style="margin-top:10px">
+        <article class="card"><div class="content"><h3>サイト公開</h3><p class="muted">MCMLの公式サイトを公開しました。ブックマーク推奨！</p></div></article>
+        <article class="card"><div class="content"><h3>コミュ規約を更新</h3><p class="muted">荒らし対策、配布物ライセンスを明文化しました。</p></div></article>
+        <article class="card"><div class="content"><h3>運営メンバー募集</h3><p class="muted">イベント運営・記事執筆・モデレーションに興味ある方を募集中。</p></div></article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== FAQ ===== -->
-    <section id="faq">
-      <div class="container grid cols-2">
-        <div class="card"><h2 class="section-title">FAQ</h2>
-          <details open><summary>初めてでも参加できますか？</summary><p>はい。初心者向けガイドと建築区画を用意しています。</p></details>
-          <details><summary>資源ワールドはありますか？</summary><p>あります。再生を考慮し定期リセットを行います。</p></details>
-        </div>
-        <div class="card"><h3>セキュリティ</h3><ul><li>土地/チェスト保護プラグイン</li><li>1日1回バックアップ</li></ul></div>
+  <!-- ===== Events ===== -->
+  <section id="events">
+    <div class="container">
+      <h2>イベント</h2>
+      <div class="grid cols-2" style="margin-top:10px">
+        <article class="card"><div class="content"><h3>建築ジャム #12</h3><p class="muted">日時：毎週土曜 20:00〜22:00（JST）<br>テーマに沿って90分で建築に挑む交流イベント。</p></div></article>
+        <article class="card"><div class="content"><h3>ビギナー歓迎会</h3><p class="muted">日時：隔週日曜 19:00〜20:00（JST）<br>導入から参加方法まで運営がサポートします。</p></div></article>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
+  <!-- ===== Servers ===== -->
+  <section id="servers">
+    <div class="container">
+      <h2>サーバー情報</h2>
+      <div class="grid cols-3" style="margin-top:10px">
+        <article class="card"><div class="content"><h3>Survival</h3><p class="muted">バニラ寄りサバイバル。軽い生活保護プラグイン導入。</p><p>アドレス：<span class="kbd">survival.mcml.jp</span></p></div></article>
+        <article class="card"><div class="content"><h3>Creative</h3><p class="muted">自由建築ワールド。プロット保護で安心。</p><p>アドレス：<span class="kbd">creative.mcml.jp</span></p></div></article>
+        <article class="card"><div class="content"><h3>Mini Games</h3><p class="muted">Parkour / Spleef / Bedwars（準備中）</p><p>アドレス：<span class="kbd">play.mcml.jp</span></p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Gallery (placeholder) ===== -->
+  <section id="gallery">
+    <div class="container">
+      <h2>ギャラリー</h2>
+      <div class="grid cols-3" style="margin-top:10px">
+        <div class="card"><div class="content"><p class="muted">作品スクショをここに掲載（後で差し替え可）</p></div></div>
+        <div class="card"><div class="content"><p class="muted">建築例 #2</p></div></div>
+        <div class="card"><div class="content"><p class="muted">建築例 #3</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Join ===== -->
+  <section id="join">
+    <div class="container">
+      <h2>参加方法</h2>
+      <div class="card" style="margin-top:10px"><div class="content">
+        <ol style="display:grid; gap:10px; padding-left:18px">
+          <li>公式Discordに参加（招待リンクをここに）</li>
+          <li>Minecraft Java版またはBedrock版を用意</li>
+          <li>ルールを確認して好きなサーバーにログイン</li>
+        </ol>
+        <p class="muted" style="margin-top:8px">不明点はDiscordでお気軽にご質問ください。</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
   <footer>
-    <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
-      <small>© <span id="year"></span> MCML. Not affiliated with Mojang/Microsoft.</small>
-      <div style="display:flex; gap:.6rem">
-        <a href="/#faq" style="color:inherit">利用規約</a>
-        <a href="/#faq" style="color:inherit">プライバシー</a>
-        <a href="/#discord" style="color:inherit">お問い合わせ</a>
+    <div class="container footer-grid">
+      <div>
+        <strong>MCML</strong>
+        <p class="tiny">© <span id="year"></span> MCML Community. 非公式のMinecraftコミュニティーサイトです。Minecraft は Mojang Studios の商標です。</p>
+      </div>
+      <div style="text-align:right">
+        <a class="pill" href="#news">トップへ戻る ↑</a>
       </div>
     </div>
   </footer>
 
   <script>
-    // スムーススクロール（ヘッダーはBase.html側で固定表示、高さは --header-h ）
-    document.querySelectorAll('a[href^="/#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const id = a.getAttribute('href').replace('/#','');
-        const el = document.getElementById(id);
-        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth', block:'start'}); }
-      });
-    });
-    // 年号
+    // ===== Load header from Base.html =====
+    (async () => {
+      const header = document.getElementById('site-header');
+      const fallback = document.getElementById('header-fallback');
+      try {
+        const res = await fetch('Base.html', { credentials: 'same-origin' });
+        if (!res.ok) throw new Error('Failed to fetch Base.html');
+        const html = await res.text();
+        // Basic sanitization: create a DOM fragment and only allow <header> content
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        const externalHeader = tmp.querySelector('header') || tmp.firstElementChild || tmp;
+        header.innerHTML = externalHeader.outerHTML || externalHeader.innerHTML || html;
+      } catch (err) {
+        console.warn('[MCML] ヘッダー読込に失敗:', err);
+        fallback.hidden = false; // Show minimal header
+      }
+    })();
+
+    // ===== Year in footer =====
     document.getElementById('year').textContent = new Date().getFullYear();
-    // デモ用サーバーステータス
-    const s = document.getElementById('srvStatus');
-    document.getElementById('checkBtn')?.addEventListener('click', async ()=>{
-      s.textContent = 'チェック中…'; await new Promise(r=>setTimeout(r,700));
-      s.textContent = Math.random()>.3 ? 'オンライン' : 'オフライン';
+
+    // ===== Smooth anchor scroll =====
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   </script>
 </body>
