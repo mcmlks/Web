@@ -266,27 +266,24 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
     <!-- CoreProtect 実践 -->
     <article id="coreprotect" class="card">
       <div class="inner">
-        <span class="badge">CoreProtect 実践</span>
-        <h2 class="h2" style="margin-top:6px">荒らし対策・復旧ワークフロー</h2>
+        <span class="badge">CoreProtect</span>
+        <h2 class="h2" style="margin-top:6px">ロールバック、荒らし特定</h2>
 
-        <p class="muted">基本の流れ：<b>証跡確保 → 調査（/co i, /co l）→ 影響範囲の特定 → ロールバック（/co rb）→ 検証 → 解除/報告</b></p>
+        <p class="muted">コマンドプレフィックス：/co</p>
 
         <details open>
-          <summary>① インスペクト（現地確認） <span class="tag">/co inspect</span></summary>
-          <div class="content">
-            <pre><button class="copy" data-copy="/co inspect">コピー</button>/co inspect   （短縮: /co i）
-/co inspect off</pre>
+          <summary>① 単体ブロックログ確認 <span class="tag">/co i</span></summary>
             <ul>
-              <li>ブロックを左/右クリックして履歴を確認。</li>
-              <li>看板・チェスト・かまど・額縁なども履歴が出ます。</li>
+              <li>ブロックを壊すと壊したブロックのログ、設置すると設置しようとした場所のログが確認可能です</li>
+              <li>もう一度同一コマンドを送信すると解除されます</li>
             </ul>
           </div>
         </details>
 
         <details>
-          <summary>② 変更の検索（lookup） <span class="tag">/co l</span></summary>
+          <summary>② 範囲検索 <span class="tag">/co l</span></summary>
           <div class="content">
-            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block +container'>コピー</button>/co lookup u:&lt;player&gt; t:&lt;期間&gt; r:&lt;半径&gt; a:&lt;アクション&gt;
+            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block +container'>コピー</button>例：/co lookup u: neco t: 5h r: 30 a:+block
 短縮: /co l u:Steve t:24h r:20 a:+block +container</pre>
             <table class="table">
               <tr><th>u:</th><td>ユーザー名（複数可）。<code>-user</code>で除外。</td></tr>
@@ -294,7 +291,20 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
               <tr><th>r:</th><td>半径（現在位置中心）。未指定で広範囲検索。</td></tr>
               <tr><th>a:</th><td>アクション。<code>+block</code>（設置/破壊）、<code>+container</code>（チェスト出し入れ）等。</td></tr>
             </table>
-            <p class="muted">結果が多いときは <code>page:&lt;数&gt;</code> でページ送り。</p>
+            <p>a:block	ブロックの設置/破壊	
+a:+block	ブロックの設置	
+a:-block	ブロックの破壊	
+a:click	クリック（ドアの開閉やレバーなど）	
+a:container	チェストなどからのアイテムの取り出しや収納	
+a:+container	チェストなどからのアイテムの収納	
+a:-container	チェストなどからのアイテムの取り出し	
+a:kill	mob/動物の殺害	
+a:chat	チャット	Adminのみ
+a:command	コマンド	Adminのみ
+a:session	プレイヤーのログイン/ログアウト	Adminのみ
+a:+session	プレイヤーのログイン	Adminのみ
+a:-session	プレイヤーのログアウト	Adminのみ
+a:username	ユーザーネームの変更</p>
           </div>
         </details>
 
