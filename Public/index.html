@@ -140,7 +140,7 @@
         <span class="pill">マインクラフトマルチ連盟</span>
         <h1>マイクラ好きがつながる場所<br/>MCML</h1>
         <p class="lead">～初心者から上級さんまで歓迎～</p>
-        <p class="lead">Ver3.0</p>
+        <p class="lead">Ver3.2</p>
         <div class="cta">
           <a class="btn" href="#discord" aria-label="コミュニティに参加する">参加する
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -552,5 +552,65 @@
     }
   });
   </script>
+
+
+
+
+  <!-- ===== X(Twitter) ===== -->
+<section id="twitter">
+  <div class="container">
+    <h2>最新情報（X）</h2>
+
+    <!-- カード調のラッパー：サイトの雰囲気に合わせる -->
+    <div class="card" style="margin-top:10px">
+      <div class="content">
+        <div class="tweetwrap"
+             style="
+               border-radius: var(--radius);
+               overflow: hidden;
+               background: var(--panel);
+               box-shadow: var(--shadow);
+               border: 1px solid rgba(255,255,255,.06);
+             ">
+
+          <!-- タイムライン本体 -->
+          <a class="twitter-timeline"
+             href="https://twitter.com/mcmlks"
+             data-theme="dark"
+             data-chrome="noheader nofooter noborders transparent"
+             data-dnt="true"
+             data-lang="ja"
+             data-tweet-limit="5"
+             data-width="100%"
+             data-height="600">
+            @mcmlks のポストを表示
+          </a>
+
+        </div>
+        <p class="muted" style="margin-top:8px">
+          もしタイムラインが表示されない場合は、
+          <a href="https://twitter.com/mcmlks" target="_blank" rel="noopener">X（@mcmlks）</a> を直接ご覧ください。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- widgets.js を1度だけ読み込む（重複防止付き） -->
+<script>
+(function(d, s, id){
+  if (d.getElementById(id)) return;  // 二重読み込み防止
+  var js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  d.body.appendChild(js);
+})(document, "script", "twitter-wjs");
+</script>
+
+
+
+  
+  
 </body>
 </html>
