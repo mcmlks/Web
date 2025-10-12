@@ -82,34 +82,15 @@
     }
 
     /* ===== Gallery (cards + horizontal scroller) ===== */
-    .imgcard{position:relative; overflow:hidden; border-radius:14px; border:1px solid rgba(255,255,255,.08); background:#0e152b; cursor:pointer}
-    .imgwrap{aspect-ratio: 16/9; width:100%; position:relative; overflow:hidden}
-    .imgwrap img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease}
-    .imgcard:hover img{transform:scale(1.03)}
-    .imgcap{padding:10px 12px; color:var(--muted); font-size:14px; border-top:1px solid rgba(255,255,255,.06)}
-    .imgph{width:100%; height:100%; display:grid; place-items:center; color:#9aa4b2; font-size:12px; background:linear-gradient(180deg,#101a33,#0e152b)}
-    /* 横スクロール・スナップ */
-    .hscroll{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(260px, 1fr); gap:var(--gap);
-             overflow-x:auto; padding-bottom:6px; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch}
-    .hscroll::-webkit-scrollbar{height:8px}
-    .hscroll > *{scroll-snap-align:start}
-    .autoScrollHint{color:var(--muted); font-size:12px; margin-top:8px}
-
-    /* ===== Lightbox (popup) ===== */
-    .lightbox{position:fixed; inset:0; background:rgba(5,8,15,.75); display:none; align-items:center; justify-content:center; z-index:1000; backdrop-filter:blur(3px)}
-    .lightbox.open{display:flex}
-    .lb-inner{position:relative; width:min(96vw, 1100px); max-height:90vh; display:grid; grid-template-rows: auto 1fr auto; gap:8px}
-    .lb-media{background:#0b1224; border:1px solid rgba(255,255,255,.12); border-radius:14px; overflow:hidden; display:grid; place-items:center}
-    .lb-media img{width:100%; height:100%; object-fit:contain; background:#0b1224}
-    .lb-caption{display:flex; justify-content:space-between; gap:12px; align-items:center; color:#c8d0dc; font-size:14px}
-    .lb-actions{position:absolute; inset:auto 0 50% 0; transform:translateY(50%); display:flex; justify-content:space-between; pointer-events:none}
-    .lb-btn{pointer-events:auto; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.18); color:#fff; width:44px; height:44px; display:grid; place-items:center; border-radius:10px; cursor:pointer}
-    .lb-btn:hover{background:rgba(0,0,0,.6)}
-    .lb-close{position:absolute; top:-12px; right:-12px; width:40px; height:40px; border-radius:999px; background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.18); color:#fff; display:grid; place-items:center; cursor:pointer}
-    @media (max-width:640px){
-      .lb-inner{width:96vw}
-      .lb-actions{inset:auto 6px 50% 6px}
-    }
+  <section id="gallery">
+    <div class="container">
+      <h2>ギャラリー</h2>
+      <div id="galleryGrid" class="grid cols-3" style="margin-top:10px"></div>
+      <div id="galleryHScroll" class="hscroll" style="margin-top:10px; display:none"></div>
+      <p class="autoScrollHint" id="autoScrollHint" style="display:none">写真が多いため自動で横スクロールしています。ホバーで一時停止できます。</p>
+      <p class="muted" style="margin-top:8px">※ 画像は <code>Public/gallery.txt</code> を編集すると反映されます（コメント可）。</p>
+    </div>
+  </section>
 
     /* ===== Footer ===== */
     footer{padding:28px 0 48px; color:var(--muted); border-top:1px solid rgba(255,255,255,.08)}
