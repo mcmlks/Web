@@ -69,6 +69,15 @@
     }
   },
   {
+    "before": {
+      "category": "拠点",
+      "coords": "X:434 Y:62 Z:-619",
+      "description": "",
+      "image_url": "https://i.imgur.com/JU7lFh0.png",
+      "link_url": "",
+      "name": "本拠地(キャッ島)",
+      "tags": []
+    },
     "created_at": 1760527542,
     "decided_at": 1760527912,
     "decided_by": {
@@ -98,6 +107,15 @@
     }
   },
   {
+    "before": {
+      "category": "拠点",
+      "coords": "X:434 Y:62 Z:-619",
+      "description": "",
+      "image_url": "https://i.imgur.com/JU7lFh0.png",
+      "link_url": "",
+      "name": "本拠地(キャッ島)",
+      "tags": []
+    },
     "created_at": 1760526871,
     "decided_at": 1760527357,
     "decided_by": {
@@ -125,6 +143,17 @@
     }
   },
   {
+    "before": {
+      "category": "拠点",
+      "coords": "X:198 Y:96 Z:210",
+      "description": "はるか昔、本拠地として利用されていた場所\nしかし、Nintendo Switchなどのプレイヤースペック不足によりがソフトエラーが起こる状態となったため、本拠地は移転した。",
+      "image_url": "https://i.imgur.com/8wT32Mk.png",
+      "link_url": "",
+      "name": "旧本拠地",
+      "tags": [
+        "拠点"
+      ]
+    },
     "created_at": 1760526759,
     "decided_at": 1760526811,
     "decided_by": {
