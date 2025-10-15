@@ -2,426 +2,450 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>利用可能施設（ピン固定対応・全員閲覧）</title>
-<meta name="color-scheme" content="light dark" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>利用可能施設</title>
 <style>
-:root{
-  --bg:#0b1020; --panel:#121b36; --panel2:#0e152b; --line:#1c2744;
-  --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --warn:#fde047; --danger:#ef4444;
-  --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --max:1120px;
-}
-@media (prefers-color-scheme: light){
-  :root{ --bg:#f6f8fb; --panel:#f1f5f9; --panel2:#ffffff; --line:#e6ebf2; --text:#0b1320; --muted:#55647a; --shadow:0 10px 22px rgba(2,6,23,.08) }
-}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,var(--bg),#091021);color:var(--text);font:15px/1.75 system-ui,-apple-system,Segoe UI,Inter,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:var(--max);margin:0 auto;padding:18px}
-.h1{font-size:clamp(22px,3.6vw,32px);margin:4px 0 12px;font-weight:900}
-
-.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 16px}
-input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in oklab,var(--text) 6%,transparent);color:var(--text)}
-.badge{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:color-mix(in oklab,var(--text) 7%,transparent);font-weight:700;font-size:12px;color:var(--muted)}
-.btn{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in oklab,var(--text) 6%,transparent);cursor:pointer}
-.btn.primary{background:color-mix(in oklab,var(--brand) 24%,transparent);border-color:color-mix(in oklab,var(--brand) 50%,var(--line))}
-.btn.danger{background:color-mix(in oklab,var(--danger) 24%,transparent);border-color:color-mix(in oklab,var(--danger) 50%,var(--line))}
-.help{color:var(--muted);font-size:13px}
-
-.section{margin:18px 0}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-.card>.inner{padding:16px 16px}
-
-.list{display:grid;gap:12px}
-.list.grid{grid-template-columns:repeat(2,1fr)}
-@media (max-width: 840px){ .list.grid{grid-template-columns:1fr} }
-
-/* 施設カード */
-.facility{cursor:pointer;border-radius:14px;transition:box-shadow .2s ease,transform .2s ease;position:relative}
-.facility:hover{transform:translateY(-1px)}
-.facility .head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.facility .avatar{width:28px;height:28px;border-radius:50%;background:#0001;flex:0 0 auto}
-.facility .name{font-weight:800;margin:0}
-.facility .meta{font-size:12px;color:var(--muted)}
-.facility .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.tag{font:700 11px/1 ui-sans-serif;padding:6px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:color-mix(in oklab,var(--text) 6%,transparent)}
-
-.facility .media{margin:8px 0 10px}
-.facility .media img{width:100%;max-height:140px;object-fit:cover;border-radius:12px;transition:max-height .25s ease}
-
-/* 説明：閉じてる時は1行に省略（拡大時は全表示） */
-.facility .desc{
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;
-  overflow:hidden;text-overflow:ellipsis;white-space:normal;
-}
-.facility.expanded .media img{max-height:360px}
-.facility.expanded .desc{-webkit-line-clamp:unset;display:block}
-
-/* ピンUI（編集は管理チームのみ） */
-.pinbar{display:flex;align-items:center;gap:10px;margin-top:6px}
-.pinned-zone{border:1px dashed var(--line);border-radius:12px;padding:8px}
-.pinned-zone .hint{color:var(--muted);font-size:13px;margin:0 0 6px}
-.pinned-list{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
-.pin-chip{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:color-mix(in oklab,var(--brand) 10%,transparent);cursor:grab;user-select:none}
-.pin-chip.dragging{opacity:.6}
-.pin-btn{position:absolute;top:10px;left:10px;font-size:12px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:color-mix(in oklab,var(--brand) 18%,transparent);display:none}
-.facility.canPin .pin-btn{display:inline-block}
-.facility .caret{position:absolute;top:10px;right:12px;font-size:12px;opacity:.7;user-select:none}
-.facility.expanded .caret{transform:rotate(90deg)}
-
-.guard{padding:10px 12px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
-.warn{color:var(--warn)}
+  :root{
+    --bg:#0f1115; --fg:#e7e7e9; --muted:#9aa0a6; --card:#151821; --accent:#6aa5ff; --danger:#ff6a6a; --ok:#39d98a; --warn:#ffc857;
+    --br:14px;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+  a{color:var(--accent);text-decoration:none}
+  header{position:sticky;top:0;background:linear-gradient(180deg,#0f1115 0%,rgba(15,17,21,.92) 100%);backdrop-filter:saturate(1.1) blur(6px);z-index:10;border-bottom:1px solid #1f2330}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .input, select{
+    background:#0e1420;border:1px solid #263048;color:var(--fg);padding:10px 12px;border-radius:10px;min-width:0
+  }
+  .btn{background:#1a2132;border:1px solid #2a3553;color:var(--fg);padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.primary{background:#20325a;border-color:#35518e}
+  .btn.ghost{background:transparent;border-color:#2a3553}
+  .btn.warn{background:#2a281a;border-color:#5f4c1a;color:#ffd27a}
+  .btn.ok{background:#133022;border-color:#235a3a;color:#a6f3c7}
+  .btn.danger{background:#2e1a1a;border-color:#5a2323;color:#ff9c9c}
+  .section-title{margin:18px 0 10px;color:#cbd0d6;font-size:14px;letter-spacing:.05em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid #202534;border-radius:var(--br);overflow:hidden;position:relative;transition:transform .12s ease, box-shadow .12s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#0c0f15;cursor:pointer}
+  .body{padding:12px;display:grid;gap:8px}
+  .title{font-weight:700}
+  .meta{color:var(--muted);font-size:12px}
+  .desc{color:#cfd4db;font-size:14px;line-height:1.5;max-height:3.1em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .card.expanded .desc{max-height:none;-webkit-line-clamp:unset}
+  .card.expanded{outline:2px solid #2f3b58}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:12px;color:#b7c1d5;background:#141a25;border:1px solid #263048;padding:3px 6px;border-radius:999px}
+  .row.small{gap:6px}
+  .pin-handle{display:none;position:absolute;top:8px;left:8px;background:#0e1420;border:1px dashed #41537a;padding:6px 8px;border-radius:10px;font-size:12px;cursor:grab;user-select:none}
+  .edit-btns{display:none;position:absolute;top:8px;right:8px;gap:6px}
+  .edit-btns .btn{padding:6px 10px;font-size:12px}
+  body.editing .pin-handle, body.editing .edit-btns{display:flex}
+  .pinned-area{border:1px dashed #2a3553;border-radius:var(--br);padding:12px}
+  .notice{background:#141a25;border:1px solid #263048;color:#dfe6f5;border-radius:12px;padding:10px}
+  /* admin queue */
+  .admin-box{display:none;margin:16px 0 0}
+  .admin-box.active{display:block}
+  .queue-item{background:#151a24;border:1px solid #2a3553;border-radius:12px;padding:10px;margin:8px 0}
+  .diff{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-size:12px;background:#0f141e;padding:8px;border-radius:8px;white-space:pre-wrap}
 </style>
 </head>
 <body>
-<main class="wrap">
-  <h1 class="h1">利用可能施設</h1>
+<header>
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="row">
+        <input id="q" class="input" placeholder="検索（名前・説明・タグなど全文）" />
+        <input id="tags" class="input" placeholder="タグ 絞り込み（例: 市場,鍛冶）" />
+        <select id="category">
+          <option value="">すべてのカテゴリ</option>
+          <option>商業</option><option>公共</option><option>農業</option><option>交通</option><option>その他</option>
+        </select>
+        <button id="btn-search" class="btn">検索</button>
+        <button id="btn-clear" class="btn ghost">クリア</button>
+      </div>
+      <div class="row">
+        <button id="btn-edit" class="btn warn" title="並び替えモード">並び替えモード</button>
+        <button id="btn-save-pins" class="btn ok" style="display:none">固定順を保存</button>
+      </div>
+      <div class="row">
+        <span id="me" class="meta">未ログイン</span>
+      </div>
+    </div>
+  </div>
+</header>
 
-  <div class="controls">
-    <input id="q" type="search" placeholder="施設名・説明・タグなどで検索">
-    <select id="category"><option value="">カテゴリ（すべて）</option></select>
-    <input id="tags" type="search" placeholder="タグ（, 区切りでAND）">
-    <button id="searchBtn" class="btn">検索</button>
-    <span id="mgmtBadge" class="badge" style="display:none">管理チーム</span>
+<main class="wrap">
+  <div id="adminQueue" class="admin-box">
+    <div class="notice">管理チーム向け：編集申請</div>
+    <div id="queueList"></div>
   </div>
 
-  <!-- ピン編集ツール：誰でも見えるが、編集操作は管理チームのみ -->
-  <section id="pinTool" class="section card">
-    <div class="inner">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <strong>固定表示（上部）</strong>
-        <div id="pinActions" style="display:none">
-          <button id="pinEditToggle" class="btn">編集モード</button>
-          <button id="pinSave" class="btn primary" style="display:none">順序を保存</button>
-          <button id="pinClear" class="btn danger" style="display:none">すべて外す</button>
-        </div>
-      </div>
-      <div class="pinned-zone" style="margin-top:10px">
-        <p class="hint" id="pinHint">並びは上から表示されます。<span id="pinHintEdit" style="display:none">チップをドラッグで並び替え。</span></p>
-        <div id="pinnedChips" class="pinned-list" aria-live="polite"></div>
-      </div>
-      <p id="pinGuard" class="guard" style="display:none">
-        <span class="warn">サーバ未対応:</span> <code>GET/POST /api/facilities/pins</code> が見つかりません。表示のみで保存はできません。
-      </p>
-    </div>
-  </section>
+  <div class="section-title">固定（上部表示）</div>
+  <div id="pinned" class="grid pinned-area"></div>
 
-  <!-- ピン表示のカード -->
-  <section class="section" id="pinnedSection" style="display:none">
-    <div class="card"><div class="inner">
-      <h2 style="margin:0 0 6px">固定表示</h2>
-      <div id="pinnedList" class="list grid"></div>
-    </div></div>
-  </section>
-
-  <!-- 通常リスト -->
-  <section class="section">
-    <div class="card"><div class="inner">
-      <h2 style="margin:0 0 6px">すべての施設</h2>
-      <div id="allList" class="list grid"></div>
-    </div></div>
-  </section>
+  <div class="section-title">すべて</div>
+  <div id="all" class="grid"></div>
 </main>
+
+<template id="tpl-card">
+  <div class="card" draggable="false">
+    <div class="pin-handle" title="ドラッグして順序変更">📌 固定</div>
+    <div class="edit-btns">
+      <button class="btn ghost btn-edit-card">編集</button>
+    </div>
+    <img class="thumb" />
+    <div class="body">
+      <div class="title"></div>
+      <div class="meta"></div>
+      <div class="desc"></div>
+      <div class="tags"></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-tag"><span class="tag"></span></template>
+
+<!-- 簡易編集モーダル -->
+<dialog id="editModal">
+  <form method="dialog" style="min-width:min(560px,90vw);background:#0f141e;color:#e8edf7;border:1px solid #2a3553;border-radius:12px;padding:16px">
+    <h3>施設を編集</h3>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_name" placeholder="名前" style="flex:1">
+      <input class="input" id="em_category" placeholder="カテゴリ（例: 商業）" style="width:180px">
+    </div>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_coords" placeholder="座標 X,Y,Z / 地点名" style="flex:1">
+    </div>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_image" placeholder="画像URL" style="flex:1">
+      <input class="input" id="em_link"  placeholder="リンクURL" style="flex:1">
+    </div>
+    <div style="margin:8px 0">
+      <textarea class="input" id="em_desc" placeholder="説明 / 利用用途（その他詳細）" style="width:100%;min-height:120px"></textarea>
+    </div>
+    <div style="margin:8px 0">
+      <input class="input" id="em_tags" placeholder="タグ（カンマ区切り：市場,鍛冶,取引）" style="width:100%">
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:10px">
+      <button class="btn ghost" value="cancel">閉じる</button>
+      <button class="btn primary" id="em_submit" value="default">送信</button>
+    </div>
+  </form>
+</dialog>
 
 <script>
 const $ = sel => document.querySelector(sel);
-const api = {
-  me:         () => fetch('/api/me', {cache:'no-store'}).then(r=>r.json()),
-  facilities: (params) => {
-    const u = new URL('/api/facilities', location.origin);
-    if (params?.q) u.searchParams.set('q', params.q);
-    if (params?.category) u.searchParams.set('category', params.category);
-    (params?.tags || []).forEach(t => u.searchParams.append('tag', t));
-    return fetch(u, {cache:'no-store'}).then(r=>r.json());
-  },
-  pinsGet:    () => fetch('/api/facilities/pins', {cache:'no-store'}),
-  pinsPost:   (order) => fetch('/api/facilities/pins', {
-                  method:'POST', headers:{'Content-Type':'application/json'},
-                  body: JSON.stringify({order})
-                })
-};
+const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-const state = {
-  canPin: false,           // 管理チームかどうか（/api/me.is_admin）
-  pinsAPI: {available:false, order:[]},
-  facilities: [],
-  filtered: [],
-  categories: new Set(),
-  pinned: [],
-  unpinned: [],
-};
+let ME = { logged_in:false, id:null, display_name:"", avatar_url:"", is_admin:false };
+let FAC = [];      // 取得済み施設
+let PIN_ORDER = []; // 現在のpin順（ID配列）
 
-(async function init(){
-  // 権限取得（全員閲覧OK。is_adminだけ見て編集UION/OFF）
-  try{
-    const me = await api.me();
-    state.canPin = !!me.is_admin;
-    if (state.canPin) $('#mgmtBadge').style.display = '';
-  }catch(e){ /* 無視（匿名でも閲覧OK） */ }
+async function api(path, opts={}) {
+  const r = await fetch(path, {credentials:'include', ...opts});
+  if (!r.ok) throw new Error(await r.text());
+  return r.json().catch(()=> ({}));
+}
 
-  // ピンAPIの有無
-  try{
-    const r = await api.pinsGet();
-    state.pinsAPI.available = r.ok;
-    if (r.ok){
-      const j = await r.json();
-      state.pinsAPI.order = Array.isArray(j?.order) ? j.order : [];
-    } else {
-      $('#pinGuard').style.display = '';
-    }
-  }catch(e){ $('#pinGuard').style.display = ''; }
-
-  // 初回ロード
-  await loadFacilities();
-  applyFiltersFromInputs();
-  renderAll();
-
-  // 検索UI
-  $('#searchBtn').addEventListener('click', applyAndRender);
-  $('#q').addEventListener('keydown', e=>{ if(e.key==='Enter') applyAndRender(); });
-  $('#category').addEventListener('change', applyAndRender);
-  $('#tags').addEventListener('keydown', e=>{ if(e.key==='Enter') applyAndRender(); });
-
-  // 編集UI（管理のみ見せる）
-  if (state.canPin){
-    $('#pinActions').style.display = '';
-    $('#pinHintEdit').style.display = '';
-    setupPinEditor();
-  }
-})();
-
-async function loadFacilities(){
-  const q = ($('#q').value||'').trim();
-  const category = $('#category').value || '';
-  const tags = ($('#tags').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-
-  const list = await api.facilities({q, category, tags});
-  state.facilities = Array.isArray(list) ? list : [];
-
-  // カテゴリ選択肢
-  state.categories = new Set(['', ...state.facilities.map(x => (x.category||'').trim()).filter(Boolean)]);
-  const sel = $('#category'); const cur = sel.value;
-  sel.innerHTML = '<option value="">カテゴリ（すべて）</option>' +
-    [...state.categories].filter(c=>c).map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-  [...sel.options].forEach(o=>{ if(o.value===cur) sel.value=cur; });
-
-  // ピン適用
-  state.pinned = [];
-  if (state.pinsAPI.order?.length){
-    const byId = Object.fromEntries(state.facilities.map(f=>[f.id,f]));
-    state.pinsAPI.order.forEach(id => { if(byId[id]) state.pinned.push(byId[id]); });
+async function loadMe(){
+  const me = await api('/api/me');
+  ME = {...me, is_admin: false};
+  // サーバ側 is_admin API が無い場合、ID許可リストがHTMLに無いので
+  // ここでは見た目だけ（通知ボックス表示はエラーにならない方式）
+  $('#me').textContent = me.logged_in ? `👤 ${me.display_name}` : '未ログイン';
+  // 管理者用通知ボックスの可視化は、実際のGETアクセスで403なら自動で隠す
+  try {
+    const q = await api('/api/facilities/queue');
+    $('#adminQueue').classList.add('active');
+    renderQueue(q);
+    ME.is_admin = true;
+  } catch(e) {
+    $('#adminQueue').classList.remove('active');
   }
 }
 
-function applyAndRender(){ applyFiltersFromInputs(); renderAll(); }
-function applyFiltersFromInputs(){
-  const q = ($('#q').value||'').trim().toLowerCase();
-  const category = ($('#category').value||'').trim().toLowerCase();
-  const tags = ($('#tags').value||'').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+function cardFrom(item){
+  const tpl = document.getElementById('tpl-card').content.firstElementChild.cloneNode(true);
+  tpl.dataset.id = item.id;
+  const thumb = tpl.querySelector('.thumb');
+  thumb.src = item.image_url || 'https://placehold.co/800x450?text=No+Image';
+  thumb.alt = item.name || '';
+  thumb.addEventListener('click', () => tpl.classList.toggle('expanded'));
 
-  const matches = (item) => {
-    if (category && (item.category||'').trim().toLowerCase() !== category) return false;
-    if (tags.length){
-      const its = (item.tags||[]).map(t=>String(t).trim().toLowerCase());
-      for (const t of tags) if (!its.includes(t)) return false;
+  tpl.querySelector('.title').textContent = item.name || '（名称未設定）';
+  tpl.querySelector('.meta').textContent = [
+    item.category || 'その他',
+    item.coords || ''
+  ].filter(Boolean).join(' / ');
+  tpl.querySelector('.desc').textContent = item.description || '';
+
+  const tags = item.tags || [];
+  const tg = tpl.querySelector('.tags');
+  tags.forEach(t=>{
+    const el = document.getElementById('tpl-tag').content.firstElementChild.cloneNode(true);
+    el.textContent = t;
+    tg.appendChild(el);
+  });
+
+  // 編集ボタン（ログイン時のみ表示。管理者は即時、一般は申請）
+  const ebtn = tpl.querySelector('.btn-edit-card');
+  ebtn.addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    openEditModal(item);
+  });
+
+  // 並び替えモード用 ドラッグ
+  const ph = tpl.querySelector('.pin-handle');
+  ph.addEventListener('mousedown', ()=> tpl.draggable = true);
+  tpl.addEventListener('dragstart', e=>{
+    if(!document.body.classList.contains('editing')){ e.preventDefault(); return; }
+    e.dataTransfer.setData('text/plain', item.id);
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  tpl.addEventListener('dragend', ()=> tpl.draggable = false);
+
+  return tpl;
+}
+
+function mountCards(list, targetEl){
+  targetEl.innerHTML = '';
+  list.forEach(it => targetEl.appendChild(cardFrom(it)));
+}
+
+function splitPinned(arr){
+  const pinned = arr.filter(x => x.pin === true).sort((a,b)=>{
+    const ao = (a.pin_order ?? 1e9), bo = (b.pin_order ?? 1e9);
+    return ao - bo || (b.created_at - a.created_at);
+  });
+  const normal = arr.filter(x => x.pin !== true).sort((a,b)=> b.created_at - a.created_at);
+  return {pinned, normal};
+}
+
+function applySearchFilter(arr){
+  const q = ($('#q').value || '').trim().toLowerCase();
+  const tags = ($('#tags').value || '').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const cat = ($('#category').value || '').trim().toLowerCase();
+  if(!q && !tags.length && !cat) return arr;
+
+  return arr.filter(it=>{
+    if(cat && (it.category||'').trim().toLowerCase() !== cat) return false;
+    if(tags.length){
+      const tset = new Set((it.tags||[]).map(x=> (x||'').trim().toLowerCase()));
+      for(const t of tags){ if(!tset.has(t)) return false; }
     }
-    if (q){
+    if(q){
       const hay = [
-        item.name, item.category, item.coords, item.description,
-        item.image_url, item.link_url, item.author_name, (item.tags||[]).join(' ')
+        it.name, it.category, it.coords, it.description,
+        it.image_url, it.link_url, it.author_name, (it.tags||[]).join(' ')
       ].map(x=> (x||'').toString().toLowerCase()).join(' ');
-      if (!hay.includes(q)) return false;
+      if(!hay.includes(q)) return false;
     }
     return true;
-  };
+  });
+}
 
-  state.filtered = state.facilities.filter(matches);
-
-  const pinnedIds = new Set(state.pinsAPI.order||[]);
-  state.unpinned = state.filtered.filter(x => !pinnedIds.has(x.id));
+async function loadFacilities(){
+  const params = new URLSearchParams();
+  // サーバ側検索を使う場合はこちら
+  if($('#q').value) params.set('q',$('#q').value);
+  if($('#category').value) params.set('category',$('#category').value);
+  if($('#tags').value) params.set('tags',$('#tags').value);
+  const arr = await api('/api/facilities' + (params.toString()?`?${params}`:'')); // サーバ検索
+  FAC = arr; // 保持
+  renderAll();
+  // ピン順の把握
+  try{
+    const p = await api('/api/facilities/pins');
+    PIN_ORDER = p.order || [];
+  }catch{}
 }
 
 function renderAll(){
-  // 上部ピン表示（誰でも見える）
-  const pinSec = $('#pinnedSection');
-  const pinList = $('#pinnedList');
-  pinList.innerHTML = '';
-  if ((state.pinsAPI.order||[]).length && state.filtered.length){
-    const ids = new Set(state.filtered.map(f=>f.id));
-    const shown = state.pinsAPI.order.filter(id => ids.has(id));
-    if (shown.length){
-      pinSec.style.display = '';
-      shown.map(id => state.filtered.find(x=>x.id===id)).forEach(item=>{
-        pinList.appendChild(renderFacilityCard(item, {canPin: state.canPin}));
-      });
-    } else pinSec.style.display = 'none';
-  } else pinSec.style.display = 'none';
-
-  // 通常リスト（ピンされていないもの）
-  const all = $('#allList');
-  all.innerHTML = '';
-  (state.unpinned||state.filtered).forEach(item=>{
-    all.appendChild(renderFacilityCard(item, {canPin: state.canPin}));
-  });
-
-  wireFacilityCards();
+  const filtered = applySearchFilter(FAC); // クライアント側でも最終フィルタ
+  const {pinned, normal} = splitPinned(filtered);
+  mountCards(pinned, $('#pinned'));
+  mountCards(normal, $('#all'));
 }
 
-function renderFacilityCard(item, {canPin=false}={}){
-  const el = document.createElement('article');
-  el.className = 'facility card';
-  if (canPin) el.classList.add('canPin');
-  el.dataset.id = item.id;
-  el.innerHTML = `
-    <button class="pin-btn" type="button" data-no-toggle data-id="${esc(item.id)}" title="固定/解除">📌 ピン</button>
-    <div class="caret">▶</div>
-    <div class="inner">
-      <div class="head">
-        <img class="avatar" src="${esc(item.author_avatar||'')}" alt="">
+function setEditing(on){
+  document.body.classList.toggle('editing', !!on);
+  $('#btn-save-pins').style.display = on ? '' : 'none';
+  // ドロップ領域（pinned内で並び替え / all→pinnedへ持ち上げ）
+  const pinned = $('#pinned');
+  pinned.addEventListener('dragover', e=>{
+    if(!document.body.classList.contains('editing')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  pinned.addEventListener('drop', e=>{
+    if(!document.body.classList.contains('editing')) return;
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text/plain');
+    // 既存カード or 通常側から移動
+    const card = document.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+    if(card){ pinned.prepend(card); }
+  });
+
+  // pinned内部の並び替え（ドラッグ先の前に挿入）
+  $$('#pinned .card').forEach(card=>{
+    card.addEventListener('dragover', e=>{
+      if(!document.body.classList.contains('editing')) return;
+      e.preventDefault();
+      const draggingId = e.dataTransfer.getData('text/plain');
+      const dragging = document.querySelector(`.card[data-id="${CSS.escape(draggingId)}"]`);
+      if(!dragging || dragging===card) return;
+      // マウス位置で前後に入れ替え
+      const rect = card.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height/2;
+      card.parentElement.insertBefore(dragging, before? card: card.nextSibling);
+    });
+  });
+}
+
+async function savePins(){
+  // pinned の順を収集
+  const ids = $$('#pinned .card').map(c=> c.dataset.id);
+  // 新規に上がってきたIDだけ order に入れる（既存ピンも維持）
+  // バックエンドは {order:[..]} のIDだけ pin=True + pin_order を更新、その他は維持
+  try{
+    await api('/api/facilities/pins', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({order: ids})
+    });
+    await loadFacilities();
+    alert('固定順を保存しました');
+  }catch(e){
+    alert('保存に失敗しました: ' + e.message);
+  }
+}
+
+function openEditModal(item){
+  const dlg = $('#editModal');
+  $('#em_name').value = item.name || '';
+  $('#em_category').value = item.category || '';
+  $('#em_coords').value = item.coords || '';
+  $('#em_image').value = item.image_url || '';
+  $('#em_link').value  = item.link_url || '';
+  $('#em_desc').value  = item.description || '';
+  $('#em_tags').value  = (item.tags||[]).join(',');
+
+  dlg.returnValue = '';
+  dlg.showModal();
+
+  $('#em_submit').onclick = async (ev)=>{
+    ev.preventDefault();
+    const patch = {
+      name: $('#em_name').value,
+      category: $('#em_category').value,
+      coords: $('#em_coords').value,
+      image_url: $('#em_image').value,
+      link_url: $('#em_link').value,
+      description: $('#em_desc').value,
+      tags: $('#em_tags').value
+    };
+    try{
+      const res = await api('/api/facilities/update', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({id: item.id, patch})
+      });
+      if(res.applied){
+        alert('変更を適用しました（管理者）');
+      }else if(res.queued){
+        alert('編集申請を送信しました（承認待ち）');
+      }else{
+        alert('応答: ' + JSON.stringify(res));
+      }
+      dlg.close();
+      await loadFacilities();
+    }catch(e){
+      alert('送信に失敗しました: ' + e.message);
+    }
+  };
+}
+
+function renderQueue(list){
+  const box = $('#queueList');
+  box.innerHTML = '';
+  (list||[]).filter(x=>x.status==='pending').forEach(it=>{
+    const before = FAC.find(f=> String(f.id)===String(it.facility_id)) || {};
+    const after = {...before, ...(it.patch||{})};
+    const el = document.createElement('div');
+    el.className = 'queue-item';
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
         <div>
-          <h3 class="name">${esc(item.name||'名称未設定')}</h3>
-          <div class="meta">${esc(item.category||'分類未設定')} ・ 投稿: ${esc(item.author_name||'Member')}</div>
+          <div><b>${before.name||'(名称不明)'} </b> に対する編集申請</div>
+          <div class="meta">申請者: ${it.submitter?.name||''}</div>
+        </div>
+        <div class="row small">
+          <button class="btn ok btn-apply">適用</button>
+          <button class="btn danger btn-reject">却下</button>
         </div>
       </div>
-      ${item.image_url ? `<div class="media"><img src="${esc(item.image_url)}" alt=""></div>`:''}
-      ${item.coords ? `<div class="meta">座標: ${esc(item.coords)}</div>`:''}
-      ${item.link_url ? `<div class="meta"><a href="${esc(item.link_url)}" target="_blank" rel="noopener" data-no-toggle>外部リンク</a></div>`:''}
-      <p class="desc">${esc(item.description||'')}</p>
-      ${Array.isArray(item.tags)&&item.tags.length? `<div class="tags">${item.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
-    </div>
-  `;
-  return el;
-}
+      <div class="diff" style="margin-top:8px"></div>
+    `;
+    const diff = el.querySelector('.diff');
+    diff.textContent =
+      '変更前:\n' + JSON.stringify({
+        name: before.name, category: before.category, coords: before.coords,
+        image_url: before.image_url, link_url: before.link_url,
+        description: before.description, tags: before.tags
+      }, null, 2)
+      + '\n\n変更後:\n' + JSON.stringify({
+        name: after.name, category: after.category, coords: after.coords,
+        image_url: after.image_url, link_url: after.link_url,
+        description: after.description, tags: after.tags
+      }, null, 2);
 
-function wireFacilityCards(){
-  document.querySelectorAll('.facility').forEach(card=>{
-    card.setAttribute('role','button');
-    if(!card.hasAttribute('tabindex')) card.setAttribute('tabindex','0');
-    if(!card.hasAttribute('aria-expanded')) card.setAttribute('aria-expanded','false');
-
-    const toggle = () => {
-      const expanded = card.classList.toggle('expanded');
-      card.setAttribute('aria-expanded', expanded?'true':'false');
+    el.querySelector('.btn-apply').onclick = async ()=>{
+      try{ await api(`/api/facilities/queue/${encodeURIComponent(it.req_id)}/apply`, {method:'POST'}); }
+      catch(e){ alert('適用に失敗: '+e.message); return; }
+      await Promise.all([loadFacilities(), loadQueue()]);
     };
-
-    card.addEventListener('click', e=>{
-      if (e.target.closest('[data-no-toggle],a,button,input,textarea,select,label')) return;
-      toggle();
-    });
-    card.addEventListener('keydown', e=>{
-      if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggle(); }
-    });
-
-    // 管理チームのみ：ピンボタン
-    const pinBtn = card.querySelector('.pin-btn');
-    if (pinBtn){
-      pinBtn.addEventListener('click', e=>{
-        e.stopPropagation();
-        if (!state.canPin) { alert('ピン編集は管理チームのみです'); return; }
-        const id = card.dataset.id;
-        const idx = (state.pinsAPI.order||[]).indexOf(id);
-        if (idx === -1) state.pinsAPI.order.unshift(id);
-        else state.pinsAPI.order.splice(idx,1);
-        applyFiltersFromInputs();
-        renderAll();
-        refreshPinEditor();
-      });
-    }
+    el.querySelector('.btn-reject').onclick = async ()=>{
+      const reason = prompt('却下理由（任意）') || '';
+      try{ await api(`/api/facilities/queue/${encodeURIComponent(it.req_id)}/reject`, {
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason})
+      }); }
+      catch(e){ alert('却下に失敗: '+e.message); return; }
+      await loadQueue();
+    };
+    box.appendChild(el);
   });
 }
 
-/* ====== ピンエディタ（管理のみ） ====== */
-function setupPinEditor(){
-  $('#pinEditToggle').addEventListener('click', ()=>{
-    const editing = document.body.classList.toggle('pin-editing');
-    $('#pinSave').style.display = editing ? '' : 'none';
-    $('#pinClear').style.display = editing ? '' : 'none';
-    refreshPinEditor();
-  });
-
-  $('#pinClear').addEventListener('click', ()=>{
-    if (!confirm('すべてのピンを外します。よろしいですか？')) return;
-    state.pinsAPI.order = [];
-    applyFiltersFromInputs();
-    renderAll();
-    refreshPinEditor();
-  });
-
-  $('#pinSave').addEventListener('click', async ()=>{
-    if (!state.pinsAPI.available){
-      alert('サーバがピン保存APIに未対応です。');
-      return;
-    }
-    try{
-      const res = await api.pinsPost(state.pinsAPI.order);
-      if (!res.ok) throw new Error(await res.text());
-      alert('保存しました。');
-    }catch(err){
-      alert('保存に失敗しました: ' + err.message);
-    }
-  });
-
-  refreshPinEditor();
+async function loadQueue(){
+  try{
+    const q = await api('/api/facilities/queue');
+    $('#adminQueue').classList.add('active');
+    renderQueue(q);
+  }catch{
+    $('#adminQueue').classList.remove('active');
+  }
 }
 
-function refreshPinEditor(){
-  const zone = $('#pinnedChips');
-  zone.innerHTML = '';
-  (state.pinsAPI.order||[]).forEach(id=>{
-    const item = state.facilities.find(x=>x.id===id);
-    if (!item) return;
-    const chip = document.createElement('div');
-    chip.className = 'pin-chip';
-    chip.draggable = true;
-    chip.dataset.id = id;
-    chip.textContent = item.name || '(無題)';
+// events
+$('#btn-search').addEventListener('click', loadFacilities);
+$('#btn-clear').addEventListener('click', ()=>{
+  $('#q').value=''; $('#tags').value=''; $('#category').value='';
+  loadFacilities();
+});
+$('#btn-edit').addEventListener('click', ()=>{
+  const on = !document.body.classList.contains('editing');
+  setEditing(on);
+  $('#btn-edit').textContent = on? '並び替えモード（ON）': '並び替えモード';
+});
+$('#btn-save-pins').addEventListener('click', savePins);
 
-    chip.addEventListener('dragstart', ()=> chip.classList.add('dragging'));
-    chip.addEventListener('dragend',   ()=> chip.classList.remove('dragging'));
-    zone.appendChild(chip);
-  });
-
-  zone.addEventListener('dragover', (e)=>{
-    if (!document.body.classList.contains('pin-editing')) return;
-    e.preventDefault();
-    const after = getDragAfterElement(zone, e.clientX, e.clientY);
-    const dragging = zone.querySelector('.dragging');
-    if (!dragging) return;
-    if (after == null) zone.appendChild(dragging);
-    else zone.insertBefore(dragging, after);
-  });
-
-  zone.addEventListener('drop', ()=>{
-    if (!document.body.classList.contains('pin-editing')) return;
-    state.pinsAPI.order = [...zone.querySelectorAll('.pin-chip')].map(n=>n.dataset.id);
-    applyFiltersFromInputs();
-    renderAll();
-  });
-
-  // 編集UIの可視状態（管理のみ）
-  $('#pinActions').style.display = state.canPin ? '' : 'none';
-  $('#pinHintEdit').style.display = state.canPin ? '' : 'none';
-  $('#pinGuard').style.display = (!state.pinsAPI.available && state.canPin) ? '' : 'none';
-
-  // 上部ピンセクションの表示
-  $('#pinnedSection').style.display = (state.pinsAPI.order||[]).length ? '' : 'none';
-}
-
-function getDragAfterElement(container, x, y){
-  const els = [...container.querySelectorAll('.pin-chip:not(.dragging)')];
-  return els.reduce((closest, child)=>{
-    const rect = child.getBoundingClientRect();
-    const offset = y - rect.top - rect.height/2;
-    if (offset < 0 && offset > closest.offset) return {offset, element: child};
-    else return closest;
-  }, {offset: Number.NEGATIVE_INFINITY}).element;
-}
-
-/* ====== 検索 ====== */
-function escapeHtml(s){ return (s??'').toString().replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-function esc(s){ return escapeHtml(s); }
-function applyAndRender(){ applyFiltersFromInputs(); renderAll(); }
-
+// init
+(async function init(){
+  await loadMe();
+  await loadFacilities();
+})();
 </script>
 </body>
 </html>
