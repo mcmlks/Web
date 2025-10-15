@@ -1,0 +1,24 @@
+[
+  {
+    "created_at": 1760526759,
+    "facility_id": "1760524720691",
+    "patch": {
+      "category": "拠点",
+      "coords": "X:198 Y:96 Z:210",
+      "description": "はるか昔、本拠地として利用されていた場所\nしかし、Nintendo Switchなどのプレイヤースペック不足によりがソフトエラーが起こる状態となったため、本拠地は移転した。",
+      "image_url": "https://i.imgur.com/8wT32Mk.png",
+      "link_url": "",
+      "name": "旧本拠地",
+      "tags": [
+        "拠点"
+      ]
+    },
+    "req_id": "1760526759264-1144916454437834772",
+    "status": "pending",
+    "submitter": {
+      "avatar": "https://cdn.discordapp.com/avatars/1144916454437834772/65cf1041a4099392e0027ee4473d38f9.png?size=64",
+      "id": "1144916454437834772",
+      "name": "MCML マインクラフトマルチ連盟"
+    }
+  }
+]
