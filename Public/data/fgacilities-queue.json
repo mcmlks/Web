@@ -1,6 +1,12 @@
 [
   {
     "created_at": 1760526759,
+    "decided_at": 1760526811,
+    "decided_by": {
+      "avatar": "https://cdn.discordapp.com/avatars/642335102055088128/a_3ac22542056e1916bbb2f8b1dfb99afb.png?size=64",
+      "id": "642335102055088128",
+      "name": "neco"
+    },
     "facility_id": "1760524720691",
     "patch": {
       "category": "拠点",
@@ -14,7 +20,7 @@
       ]
     },
     "req_id": "1760526759264-1144916454437834772",
-    "status": "pending",
+    "status": "applied",
     "submitter": {
       "avatar": "https://cdn.discordapp.com/avatars/1144916454437834772/65cf1041a4099392e0027ee4473d38f9.png?size=64",
       "id": "1144916454437834772",
