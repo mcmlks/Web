@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>施設一覧（ピン固定つき）</title>
-<meta name="color-scheme" content="light dark">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>利用可能施設（ピン固定対応・全員閲覧）</title>
+<meta name="color-scheme" content="light dark" />
 <style>
 :root{
   --bg:#0b1020; --panel:#121b36; --panel2:#0e152b; --line:#1c2744;
@@ -18,8 +18,8 @@
 body{margin:0;background:linear-gradient(180deg,var(--bg),#091021);color:var(--text);font:15px/1.75 system-ui,-apple-system,Segoe UI,Inter,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:var(--max);margin:0 auto;padding:18px}
-
 .h1{font-size:clamp(22px,3.6vw,32px);margin:4px 0 12px;font-weight:900}
+
 .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 16px}
 input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:color-mix(in oklab,var(--text) 6%,transparent);color:var(--text)}
 .badge{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:color-mix(in oklab,var(--text) 7%,transparent);font-weight:700;font-size:12px;color:var(--muted)}
@@ -49,7 +49,7 @@ input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px soli
 .facility .media{margin:8px 0 10px}
 .facility .media img{width:100%;max-height:140px;object-fit:cover;border-radius:12px;transition:max-height .25s ease}
 
-/* 説明：閉じてる時は1行に省略 */
+/* 説明：閉じてる時は1行に省略（拡大時は全表示） */
 .facility .desc{
   display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;
   overflow:hidden;text-overflow:ellipsis;white-space:normal;
@@ -57,7 +57,7 @@ input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px soli
 .facility.expanded .media img{max-height:360px}
 .facility.expanded .desc{-webkit-line-clamp:unset;display:block}
 
-/* ピンUI */
+/* ピンUI（編集は管理チームのみ） */
 .pinbar{display:flex;align-items:center;gap:10px;margin-top:6px}
 .pinned-zone{border:1px dashed var(--line);border-radius:12px;padding:8px}
 .pinned-zone .hint{color:var(--muted);font-size:13px;margin:0 0 6px}
@@ -65,11 +65,10 @@ input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px soli
 .pin-chip{padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:color-mix(in oklab,var(--brand) 10%,transparent);cursor:grab;user-select:none}
 .pin-chip.dragging{opacity:.6}
 .pin-btn{position:absolute;top:10px;left:10px;font-size:12px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:color-mix(in oklab,var(--brand) 18%,transparent);display:none}
-.facility.admin .pin-btn{display:inline-block}
+.facility.canPin .pin-btn{display:inline-block}
 .facility .caret{position:absolute;top:10px;right:12px;font-size:12px;opacity:.7;user-select:none}
 .facility.expanded .caret{transform:rotate(90deg)}
 
-/* 非管理者へのガード表示 */
 .guard{padding:10px 12px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13px}
 .warn{color:var(--warn)}
 </style>
@@ -83,31 +82,31 @@ input[type="search"],select{padding:10px 12px;border-radius:12px;border:1px soli
     <select id="category"><option value="">カテゴリ（すべて）</option></select>
     <input id="tags" type="search" placeholder="タグ（, 区切りでAND）">
     <button id="searchBtn" class="btn">検索</button>
-    <span id="adminBadge" class="badge" style="display:none">Admin</span>
+    <span id="mgmtBadge" class="badge" style="display:none">管理チーム</span>
   </div>
 
-  <!-- ピン編集ツール（管理者のみ表示） -->
-  <section id="pinTool" class="section card" style="display:none">
+  <!-- ピン編集ツール：誰でも見えるが、編集操作は管理チームのみ -->
+  <section id="pinTool" class="section card">
     <div class="inner">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <strong>ピン固定 管理</strong>
-        <div>
+        <strong>固定表示（上部）</strong>
+        <div id="pinActions" style="display:none">
           <button id="pinEditToggle" class="btn">編集モード</button>
           <button id="pinSave" class="btn primary" style="display:none">順序を保存</button>
           <button id="pinClear" class="btn danger" style="display:none">すべて外す</button>
         </div>
       </div>
       <div class="pinned-zone" style="margin-top:10px">
-        <p class="hint">ドラッグ＆ドロップで並べ替え。上から表示されます。</p>
+        <p class="hint" id="pinHint">並びは上から表示されます。<span id="pinHintEdit" style="display:none">チップをドラッグで並び替え。</span></p>
         <div id="pinnedChips" class="pinned-list" aria-live="polite"></div>
       </div>
       <p id="pinGuard" class="guard" style="display:none">
-        <span class="warn">サーバ未対応:</span> <code>GET/POST /api/facilities/pins</code> が見つかりません。ピン順は表示のみ・保存はできません。
+        <span class="warn">サーバ未対応:</span> <code>GET/POST /api/facilities/pins</code> が見つかりません。表示のみで保存はできません。
       </p>
     </div>
   </section>
 
-  <!-- ピン留めされた施設 -->
+  <!-- ピン表示のカード -->
   <section class="section" id="pinnedSection" style="display:none">
     <div class="card"><div class="inner">
       <h2 style="margin:0 0 6px">固定表示</h2>
@@ -143,23 +142,24 @@ const api = {
 };
 
 const state = {
-  isAdmin: false,
+  canPin: false,           // 管理チームかどうか（/api/me.is_admin）
   pinsAPI: {available:false, order:[]},
   facilities: [],
   filtered: [],
   categories: new Set(),
+  pinned: [],
+  unpinned: [],
 };
 
 (async function init(){
-  // 認証情報
+  // 権限取得（全員閲覧OK。is_adminだけ見て編集UION/OFF）
   try{
     const me = await api.me();
-    // Admin配下に置けば権限チェックはサーバ側で済むため、ここではログインしていればAdmin表示でOK
-    state.isAdmin = !!me.logged_in; 
-    if (state.isAdmin) $('#adminBadge').style.display = '';
-  }catch(e){}
+    state.canPin = !!me.is_admin;
+    if (state.canPin) $('#mgmtBadge').style.display = '';
+  }catch(e){ /* 無視（匿名でも閲覧OK） */ }
 
-  // ピンAPI存在確認
+  // ピンAPIの有無
   try{
     const r = await api.pinsGet();
     state.pinsAPI.available = r.ok;
@@ -169,24 +169,23 @@ const state = {
     } else {
       $('#pinGuard').style.display = '';
     }
-  }catch(e){
-    $('#pinGuard').style.display = '';
-  }
+  }catch(e){ $('#pinGuard').style.display = ''; }
 
-  // データ読み込み
+  // 初回ロード
   await loadFacilities();
   applyFiltersFromInputs();
   renderAll();
 
-  // UIイベント
+  // 検索UI
   $('#searchBtn').addEventListener('click', applyAndRender);
   $('#q').addEventListener('keydown', e=>{ if(e.key==='Enter') applyAndRender(); });
   $('#category').addEventListener('change', applyAndRender);
   $('#tags').addEventListener('keydown', e=>{ if(e.key==='Enter') applyAndRender(); });
 
-  // ピンUI（管理者のみ）
-  if (state.isAdmin){
-    $('#pinTool').style.display = '';
+  // 編集UI（管理のみ見せる）
+  if (state.canPin){
+    $('#pinActions').style.display = '';
+    $('#pinHintEdit').style.display = '';
     setupPinEditor();
   }
 })();
@@ -199,18 +198,14 @@ async function loadFacilities(){
   const list = await api.facilities({q, category, tags});
   state.facilities = Array.isArray(list) ? list : [];
 
-  // カテゴリ選択肢構築
+  // カテゴリ選択肢
   state.categories = new Set(['', ...state.facilities.map(x => (x.category||'').trim()).filter(Boolean)]);
-  const sel = $('#category');
-  const current = sel.value;
+  const sel = $('#category'); const cur = sel.value;
   sel.innerHTML = '<option value="">カテゴリ（すべて）</option>' +
-     [...state.categories].filter(c=>c).map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-  // 入力維持
-  [...sel.options].forEach(o=>{ if(o.value===current) sel.value=current; });
+    [...state.categories].filter(c=>c).map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  [...sel.options].forEach(o=>{ if(o.value===cur) sel.value=cur; });
 
-  // ピン順（存在すれば適用）
-  // - pinsAPI.order にないIDは「未ピン」として通常リストに回す
-  // - orderにあるが施設が見つからないIDは無視
+  // ピン適用
   state.pinned = [];
   if (state.pinsAPI.order?.length){
     const byId = Object.fromEntries(state.facilities.map(f=>[f.id,f]));
@@ -242,13 +237,12 @@ function applyFiltersFromInputs(){
 
   state.filtered = state.facilities.filter(matches);
 
-  // ピンされていない要素の抽出
   const pinnedIds = new Set(state.pinsAPI.order||[]);
   state.unpinned = state.filtered.filter(x => !pinnedIds.has(x.id));
 }
 
 function renderAll(){
-  // ピンセクション
+  // 上部ピン表示（誰でも見える）
   const pinSec = $('#pinnedSection');
   const pinList = $('#pinnedList');
   pinList.innerHTML = '';
@@ -258,30 +252,25 @@ function renderAll(){
     if (shown.length){
       pinSec.style.display = '';
       shown.map(id => state.filtered.find(x=>x.id===id)).forEach(item=>{
-        pinList.appendChild(renderFacilityCard(item, {admin: state.isAdmin}));
+        pinList.appendChild(renderFacilityCard(item, {canPin: state.canPin}));
       });
-    } else {
-      pinSec.style.display = 'none';
-    }
-  } else {
-    pinSec.style.display = 'none';
-  }
+    } else pinSec.style.display = 'none';
+  } else pinSec.style.display = 'none';
 
-  // 通常リスト
+  // 通常リスト（ピンされていないもの）
   const all = $('#allList');
   all.innerHTML = '';
   (state.unpinned||state.filtered).forEach(item=>{
-    all.appendChild(renderFacilityCard(item, {admin: state.isAdmin}));
+    all.appendChild(renderFacilityCard(item, {canPin: state.canPin}));
   });
 
-  // カードのインタラクション付与
   wireFacilityCards();
 }
 
-function renderFacilityCard(item, {admin=false}={}){
+function renderFacilityCard(item, {canPin=false}={}){
   const el = document.createElement('article');
   el.className = 'facility card';
-  if (admin) el.classList.add('admin');
+  if (canPin) el.classList.add('canPin');
   el.dataset.id = item.id;
   el.innerHTML = `
     <button class="pin-btn" type="button" data-no-toggle data-id="${esc(item.id)}" title="固定/解除">📌 ピン</button>
@@ -323,11 +312,12 @@ function wireFacilityCards(){
       if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggle(); }
     });
 
-    // ピンボタン
+    // 管理チームのみ：ピンボタン
     const pinBtn = card.querySelector('.pin-btn');
     if (pinBtn){
       pinBtn.addEventListener('click', e=>{
         e.stopPropagation();
+        if (!state.canPin) { alert('ピン編集は管理チームのみです'); return; }
         const id = card.dataset.id;
         const idx = (state.pinsAPI.order||[]).indexOf(id);
         if (idx === -1) state.pinsAPI.order.unshift(id);
@@ -338,11 +328,9 @@ function wireFacilityCards(){
       });
     }
   });
-
-  // 画像クリックで拡大はカード開閉と連動（expandedで背が伸びる）
 }
 
-/* ====== ピンエディタ ====== */
+/* ====== ピンエディタ（管理のみ） ====== */
 function setupPinEditor(){
   $('#pinEditToggle').addEventListener('click', ()=>{
     const editing = document.body.classList.toggle('pin-editing');
@@ -352,6 +340,7 @@ function setupPinEditor(){
   });
 
   $('#pinClear').addEventListener('click', ()=>{
+    if (!confirm('すべてのピンを外します。よろしいですか？')) return;
     state.pinsAPI.order = [];
     applyFiltersFromInputs();
     renderAll();
@@ -387,16 +376,13 @@ function refreshPinEditor(){
     chip.dataset.id = id;
     chip.textContent = item.name || '(無題)';
 
-    chip.addEventListener('dragstart', ()=>{
-      chip.classList.add('dragging');
-    });
-    chip.addEventListener('dragend', ()=>{
-      chip.classList.remove('dragging');
-    });
+    chip.addEventListener('dragstart', ()=> chip.classList.add('dragging'));
+    chip.addEventListener('dragend',   ()=> chip.classList.remove('dragging'));
     zone.appendChild(chip);
   });
 
   zone.addEventListener('dragover', (e)=>{
+    if (!document.body.classList.contains('pin-editing')) return;
     e.preventDefault();
     const after = getDragAfterElement(zone, e.clientX, e.clientY);
     const dragging = zone.querySelector('.dragging');
@@ -406,15 +392,18 @@ function refreshPinEditor(){
   });
 
   zone.addEventListener('drop', ()=>{
-    // 並び直しを状態へ反映
+    if (!document.body.classList.contains('pin-editing')) return;
     state.pinsAPI.order = [...zone.querySelectorAll('.pin-chip')].map(n=>n.dataset.id);
     applyFiltersFromInputs();
     renderAll();
   });
 
-  // AdminピンUIの表示ガード
-  $('#pinGuard').style.display = state.pinsAPI.available ? 'none':'';
-  // ピンセクション表示更新
+  // 編集UIの可視状態（管理のみ）
+  $('#pinActions').style.display = state.canPin ? '' : 'none';
+  $('#pinHintEdit').style.display = state.canPin ? '' : 'none';
+  $('#pinGuard').style.display = (!state.pinsAPI.available && state.canPin) ? '' : 'none';
+
+  // 上部ピンセクションの表示
   $('#pinnedSection').style.display = (state.pinsAPI.order||[]).length ? '' : 'none';
 }
 
@@ -431,7 +420,7 @@ function getDragAfterElement(container, x, y){
 /* ====== 検索 ====== */
 function escapeHtml(s){ return (s??'').toString().replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function esc(s){ return escapeHtml(s); }
-function applyFiltersFromInputsAndReload(){ applyFiltersFromInputs(); renderAll(); }
+function applyAndRender(){ applyFiltersFromInputs(); renderAll(); }
 
 </script>
 </body>
