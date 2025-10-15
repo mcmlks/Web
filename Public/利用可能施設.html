@@ -1,242 +1,451 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>施設 編集申請キュー</title>
-  <style>
-    :root { --bg:#0b0c10; --panel:#14161b; --muted:#8a8f98; --text:#e9edf1; --ok:#2ea043; --warn:#e3b341; --err:#d1395c; --border:#22252b; }
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;}
-    header{position:sticky;top:0;background:linear-gradient(180deg,#0b0c10,#0b0c10cc);backdrop-filter:blur(6px);z-index:10;border-bottom:1px solid var(--border)}
-    header .bar{display:flex;gap:.75rem;align-items:center;max-width:1100px;margin:0 auto;padding:10px 16px}
-    h1{font-size:18px;margin:0}
-    .me{margin-left:auto;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:.5rem}
-    .me img{width:22px;height:22px;border-radius:50%}
-    main{max-width:1100px;margin:18px auto;padding:0 16px}
-    .controls{display:flex;gap:.5rem;align-items:center;margin-bottom:14px}
-    .controls input{flex:1;padding:.5rem .6rem;border:1px solid var(--border);border-radius:.6rem;background:#0e1015;color:var(--text)}
-    .controls button{padding:.55rem .8rem;border:1px solid var(--border);background:#11141a;color:var(--text);border-radius:.6rem;cursor:pointer}
-    .controls button.primary{background:#1a3b1f;border-color:#244a2a}
-    .controls .hint{font-size:12px;color:var(--muted);margin-left:.4rem}
-    .list{display:grid;gap:12px}
-    .card{border:1px solid var(--border);background:var(--panel);border-radius:14px;padding:14px 14px}
-    .card h3{margin:.1rem 0 .4rem 0;font-size:16px}
-    .meta{display:flex;flex-wrap:wrap;gap:.75rem;color:var(--muted);font-size:12px;margin-bottom:.35rem}
-    .submitter{display:flex;align-items:center;gap:.4rem}
-    .submitter img{width:20px;height:20px;border-radius:50%}
-    .status{padding:.15rem .5rem;border-radius:999px;border:1px solid var(--border);font-size:11px}
-    .status.pending{background:#17140d;color:#e6c37a;border-color:#3b2f16}
-    .status.applied{background:#0f1a12;color:#8fe39a;border-color:#1e3a25}
-    .status.rejected{background:#1a0f12;color:#f3a7ba;border-color:#3a1e27}
-    .actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0 .6rem}
-    .actions button{padding:.45rem .7rem;border-radius:.5rem;border:1px solid var(--border);background:#11141a;color:var(--text);cursor:pointer}
-    .actions button.apply{background:#15331c;border-color:#22452a}
-    .actions button.reject{background:#32141e;border-color:#4a2330}
-    .diff{font-size:12px;color:#bfc6ce;margin:.25rem 0 .2rem}
-    details{border:1px dashed var(--border);border-radius:10px;padding:.3rem .6rem;background:#0e1116}
-    details > summary{cursor:pointer;list-style: none}
-    details > summary::-webkit-details-marker{display:none}
-    details pre{margin:.4rem 0 .2rem;white-space:pre-wrap;word-break:break-word}
-    pre{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,Monaco,monospace;background:#0c0f14;color:#e6eef6;padding:.6rem;border-radius:.6rem;border:1px solid var(--border);overflow:auto}
-    .empty{color:var(--muted);text-align:center;padding:30px 0}
-    .error{color:#ffc7d4;background:#3a1e27;border:1px solid #4a2330;padding:.6rem;border-radius:.6rem;margin:.6rem 0}
-    .pill{font-size:11px;padding:.1rem .45rem;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
-    footer{color:var(--muted);font-size:12px;text-align:center;padding:22px 0 28px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>利用可能施設</title>
+<style>
+  :root{
+    --bg:#0f1115; --fg:#e7e7e9; --muted:#9aa0a6; --card:#151821; --accent:#6aa5ff; --danger:#ff6a6a; --ok:#39d98a; --warn:#ffc857;
+    --br:14px;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+  a{color:var(--accent);text-decoration:none}
+  header{position:sticky;top:0;background:linear-gradient(180deg,#0f1115 0%,rgba(15,17,21,.92) 100%);backdrop-filter:saturate(1.1) blur(6px);z-index:10;border-bottom:1px solid #1f2330}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .input, select{
+    background:#0e1420;border:1px solid #263048;color:var(--fg);padding:10px 12px;border-radius:10px;min-width:0
+  }
+  .btn{background:#1a2132;border:1px solid #2a3553;color:var(--fg);padding:10px 14px;border-radius:10px;cursor:pointer}
+  .btn.primary{background:#20325a;border-color:#35518e}
+  .btn.ghost{background:transparent;border-color:#2a3553}
+  .btn.warn{background:#2a281a;border-color:#5f4c1a;color:#ffd27a}
+  .btn.ok{background:#133022;border-color:#235a3a;color:#a6f3c7}
+  .btn.danger{background:#2e1a1a;border-color:#5a2323;color:#ff9c9c}
+  .section-title{margin:18px 0 10px;color:#cbd0d6;font-size:14px;letter-spacing:.05em}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid #202534;border-radius:var(--br);overflow:hidden;position:relative;transition:transform .12s ease, box-shadow .12s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:#0c0f15;cursor:pointer}
+  .body{padding:12px;display:grid;gap:8px}
+  .title{font-weight:700}
+  .meta{color:var(--muted);font-size:12px}
+  .desc{color:#cfd4db;font-size:14px;line-height:1.5;max-height:3.1em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .card.expanded .desc{max-height:none;-webkit-line-clamp:unset}
+  .card.expanded{outline:2px solid #2f3b58}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{font-size:12px;color:#b7c1d5;background:#141a25;border:1px solid #263048;padding:3px 6px;border-radius:999px}
+  .row.small{gap:6px}
+  .pin-handle{display:none;position:absolute;top:8px;left:8px;background:#0e1420;border:1px dashed #41537a;padding:6px 8px;border-radius:10px;font-size:12px;cursor:grab;user-select:none}
+  .edit-btns{display:none;position:absolute;top:8px;right:8px;gap:6px}
+  .edit-btns .btn{padding:6px 10px;font-size:12px}
+  body.editing .pin-handle, body.editing .edit-btns{display:flex}
+  .pinned-area{border:1px dashed #2a3553;border-radius:var(--br);padding:12px}
+  .notice{background:#141a25;border:1px solid #263048;color:#dfe6f5;border-radius:12px;padding:10px}
+  /* admin queue */
+  .admin-box{display:none;margin:16px 0 0}
+  .admin-box.active{display:block}
+  .queue-item{background:#151a24;border:1px solid #2a3553;border-radius:12px;padding:10px;margin:8px 0}
+  .diff{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;font-size:12px;background:#0f141e;padding:8px;border-radius:8px;white-space:pre-wrap}
+</style>
 </head>
 <body>
-  <header>
-    <div class="bar">
-      <h1>施設・編集申請キュー</h1>
-      <div class="me" id="me"><span class="pill">未ログイン</span></div>
+<header>
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="row">
+        <input id="q" class="input" placeholder="検索（名前・説明・タグなど全文）" />
+        <input id="tags" class="input" placeholder="タグ 絞り込み（例: 市場,鍛冶）" />
+        <select id="category">
+          <option value="">すべてのカテゴリ</option>
+          <option>商業</option><option>公共</option><option>農業</option><option>交通</option><option>その他</option>
+        </select>
+        <button id="btn-search" class="btn">検索</button>
+        <button id="btn-clear" class="btn ghost">クリア</button>
+      </div>
+      <div class="row">
+        <button id="btn-edit" class="btn warn" title="並び替えモード">並び替えモード</button>
+        <button id="btn-save-pins" class="btn ok" style="display:none">固定順を保存</button>
+      </div>
+      <div class="row">
+        <span id="me" class="meta">未ログイン</span>
+      </div>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <div class="controls">
-      <input id="q" type="search" placeholder="検索: 施設名 / カテゴリ / タグ / 説明 など…" />
-      <button id="btnRefresh" class="primary">再読み込み</button>
-      <span class="hint">ステータス: pending / applied / rejected</span>
+<main class="wrap">
+  <div id="adminQueue" class="admin-box">
+    <div class="notice">管理チーム向け：編集申請</div>
+    <div id="queueList"></div>
+  </div>
+
+  <div class="section-title">固定（上部表示）</div>
+  <div id="pinned" class="grid pinned-area"></div>
+
+  <div class="section-title">すべて</div>
+  <div id="all" class="grid"></div>
+</main>
+
+<template id="tpl-card">
+  <div class="card" draggable="false">
+    <div class="pin-handle" title="ドラッグして順序変更">📌 固定</div>
+    <div class="edit-btns">
+      <button class="btn ghost btn-edit-card">編集</button>
     </div>
+    <img class="thumb" />
+    <div class="body">
+      <div class="title"></div>
+      <div class="meta"></div>
+      <div class="desc"></div>
+      <div class="tags"></div>
+    </div>
+  </div>
+</template>
 
-    <div id="err" class="error" style="display:none"></div>
-    <div id="list" class="list"></div>
-    <div id="empty" class="empty" style="display:none">申請はありません。</div>
+<template id="tpl-tag"><span class="tag"></span></template>
 
-    <footer>MCML Admin</footer>
-  </main>
+<!-- 簡易編集モーダル -->
+<dialog id="editModal">
+  <form method="dialog" style="min-width:min(560px,90vw);background:#0f141e;color:#e8edf7;border:1px solid #2a3553;border-radius:12px;padding:16px">
+    <h3>施設を編集</h3>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_name" placeholder="名前" style="flex:1">
+      <input class="input" id="em_category" placeholder="カテゴリ（例: 商業）" style="width:180px">
+    </div>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_coords" placeholder="座標 X,Y,Z / 地点名" style="flex:1">
+    </div>
+    <div class="row" style="margin:8px 0">
+      <input class="input" id="em_image" placeholder="画像URL" style="flex:1">
+      <input class="input" id="em_link"  placeholder="リンクURL" style="flex:1">
+    </div>
+    <div style="margin:8px 0">
+      <textarea class="input" id="em_desc" placeholder="説明 / 利用用途（その他詳細）" style="width:100%;min-height:120px"></textarea>
+    </div>
+    <div style="margin:8px 0">
+      <input class="input" id="em_tags" placeholder="タグ（カンマ区切り：市場,鍛冶,取引）" style="width:100%">
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:10px">
+      <button class="btn ghost" value="cancel">閉じる</button>
+      <button class="btn primary" id="em_submit" value="default">送信</button>
+    </div>
+  </form>
+</dialog>
 
-  <script>
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
-  const esc = (s) => (s ?? '').toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const fmtTime = (sec) => {
-    if (!sec) return '';
-    const d = new Date(Number(sec) * 1000);
-    const p = n=>String(n).padStart(2,'0');
-    return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-  };
+<script>
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-  const meBox = $('#me');
-  fetch('/api/me').then(r=>r.json()).then(me=>{
-    if (me?.logged_in) {
-      meBox.innerHTML = `<img src="${esc(me.avatar_url)}" alt=""><span>${esc(me.display_name)}</span>${me.is_admin?'<span class="pill">Admin</span>':'<span class="pill">Member</span>'}`;
-    } else {
-      meBox.innerHTML = `<span class="pill">未ログイン</span>`;
-    }
+let ME = { logged_in:false, id:null, display_name:"", avatar_url:"", is_admin:false };
+let FAC = [];      // 取得済み施設
+let PIN_ORDER = []; // 現在のpin順（ID配列）
+
+async function api(path, opts={}) {
+  const r = await fetch(path, {credentials:'include', ...opts});
+  if (!r.ok) throw new Error(await r.text());
+  return r.json().catch(()=> ({}));
+}
+
+async function loadMe(){
+  const me = await api('/api/me');
+  ME = {...me, is_admin: false};
+  // サーバ側 is_admin API が無い場合、ID許可リストがHTMLに無いので
+  // ここでは見た目だけ（通知ボックス表示はエラーにならない方式）
+  $('#me').textContent = me.logged_in ? `👤 ${me.display_name}` : '未ログイン';
+  // 管理者用通知ボックスの可視化は、実際のGETアクセスで403なら自動で隠す
+  try {
+    const q = await api('/api/facilities/queue');
+    $('#adminQueue').classList.add('active');
+    renderQueue(q);
+    ME.is_admin = true;
+  } catch(e) {
+    $('#adminQueue').classList.remove('active');
+  }
+}
+
+function cardFrom(item){
+  const tpl = document.getElementById('tpl-card').content.firstElementChild.cloneNode(true);
+  tpl.dataset.id = item.id;
+  const thumb = tpl.querySelector('.thumb');
+  thumb.src = item.image_url || 'https://placehold.co/800x450?text=No+Image';
+  thumb.alt = item.name || '';
+  thumb.addEventListener('click', () => tpl.classList.toggle('expanded'));
+
+  tpl.querySelector('.title').textContent = item.name || '（名称未設定）';
+  tpl.querySelector('.meta').textContent = [
+    item.category || 'その他',
+    item.coords || ''
+  ].filter(Boolean).join(' / ');
+  tpl.querySelector('.desc').textContent = item.description || '';
+
+  const tags = item.tags || [];
+  const tg = tpl.querySelector('.tags');
+  tags.forEach(t=>{
+    const el = document.getElementById('tpl-tag').content.firstElementChild.cloneNode(true);
+    el.textContent = t;
+    tg.appendChild(el);
   });
 
-  let QUEUE = [];
-  let FILTER = '';
+  // 編集ボタン（ログイン時のみ表示。管理者は即時、一般は申請）
+  const ebtn = tpl.querySelector('.btn-edit-card');
+  ebtn.addEventListener('click', (ev)=>{
+    ev.stopPropagation();
+    openEditModal(item);
+  });
 
-  $('#q').addEventListener('input', (e)=>{ FILTER = (e.target.value||'').toLowerCase(); render(); });
-  $('#btnRefresh').addEventListener('click', ()=> loadQueue());
+  // 並び替えモード用 ドラッグ
+  const ph = tpl.querySelector('.pin-handle');
+  ph.addEventListener('mousedown', ()=> tpl.draggable = true);
+  tpl.addEventListener('dragstart', e=>{
+    if(!document.body.classList.contains('editing')){ e.preventDefault(); return; }
+    e.dataTransfer.setData('text/plain', item.id);
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  tpl.addEventListener('dragend', ()=> tpl.draggable = false);
 
-  async function loadQueue() {
-    showErr(); // clear
-    $('#list').innerHTML = '';
-    $('#empty').style.display = 'none';
-    try {
-      const res = await fetch('/api/facilities/queue');
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`GET /api/facilities/queue → ${res.status}: ${txt}`);
-      }
-      QUEUE = await res.json();
-      render();
-    } catch (e) {
-      showErr(e.message || e);
+  return tpl;
+}
+
+function mountCards(list, targetEl){
+  targetEl.innerHTML = '';
+  list.forEach(it => targetEl.appendChild(cardFrom(it)));
+}
+
+function splitPinned(arr){
+  const pinned = arr.filter(x => x.pin === true).sort((a,b)=>{
+    const ao = (a.pin_order ?? 1e9), bo = (b.pin_order ?? 1e9);
+    return ao - bo || (b.created_at - a.created_at);
+  });
+  const normal = arr.filter(x => x.pin !== true).sort((a,b)=> b.created_at - a.created_at);
+  return {pinned, normal};
+}
+
+function applySearchFilter(arr){
+  const q = ($('#q').value || '').trim().toLowerCase();
+  const tags = ($('#tags').value || '').split(',').map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const cat = ($('#category').value || '').trim().toLowerCase();
+  if(!q && !tags.length && !cat) return arr;
+
+  return arr.filter(it=>{
+    if(cat && (it.category||'').trim().toLowerCase() !== cat) return false;
+    if(tags.length){
+      const tset = new Set((it.tags||[]).map(x=> (x||'').trim().toLowerCase()));
+      for(const t of tags){ if(!tset.has(t)) return false; }
     }
-  }
-
-  function showErr(msg='') {
-    const box = $('#err');
-    if (!msg) { box.style.display = 'none'; box.textContent = ''; return; }
-    box.style.display = '';
-    box.textContent = msg;
-  }
-
-  function render() {
-    const list = $('#list');
-    list.innerHTML = '';
-    const kw = FILTER;
-    const items = QUEUE.filter(it=>{
-      if (!kw) return true;
-      const before = JSON.stringify(it.before || {});
-      const patch  = JSON.stringify(it.patch  || {});
+    if(q){
       const hay = [
-        it.title, it.target_name, it.target_category, it.status,
-        it.submitter?.name, before, patch
-      ].join(' ').toLowerCase();
-      return hay.includes(kw);
-    });
-
-    if (!items.length) {
-      $('#empty').style.display = '';
-      return;
+        it.name, it.category, it.coords, it.description,
+        it.image_url, it.link_url, it.author_name, (it.tags||[]).join(' ')
+      ].map(x=> (x||'').toString().toLowerCase()).join(' ');
+      if(!hay.includes(q)) return false;
     }
-    $('#empty').style.display = 'none';
+    return true;
+  });
+}
 
-    for (const req of items) {
-      const before = req.before || {};
-      const after  = req.patch  || {};
-      const title  = req.title || req.target_name || before.name || '(名称不明)';
-      const status = (req.status || 'pending').toLowerCase();
+async function loadFacilities(){
+  const params = new URLSearchParams();
+  // サーバ側検索を使う場合はこちら
+  if($('#q').value) params.set('q',$('#q').value);
+  if($('#category').value) params.set('category',$('#category').value);
+  if($('#tags').value) params.set('tags',$('#tags').value);
+  const arr = await api('/api/facilities' + (params.toString()?`?${params}`:'')); // サーバ検索
+  FAC = arr; // 保持
+  renderAll();
+  // ピン順の把握
+  try{
+    const p = await api('/api/facilities/pins');
+    PIN_ORDER = p.order || [];
+  }catch{}
+}
 
-      const changedKeys = Object.keys(after).filter(k => JSON.stringify(before?.[k]) !== JSON.stringify(after[k]));
+function renderAll(){
+  const filtered = applySearchFilter(FAC); // クライアント側でも最終フィルタ
+  const {pinned, normal} = splitPinned(filtered);
+  mountCards(pinned, $('#pinned'));
+  mountCards(normal, $('#all'));
+}
 
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.innerHTML = `
-        <h3>${esc(title)} に対する編集申請</h3>
-        <div class="meta">
-          <span class="status ${esc(status)}">${esc(status)}</span>
-          <span>施設ID: <code>${esc(req.facility_id)}</code></span>
-          <span>申請ID: <code>${esc(req.req_id)}</code></span>
-          ${req.created_at ? `<span>作成: ${esc(fmtTime(req.created_at))}</span>`:''}
-          ${req.decided_at ? `<span>決定: ${esc(fmtTime(req.decided_at))}</span>`:''}
-          <span class="submitter">
-            ${req.submitter?.avatar ? `<img src="${esc(req.submitter.avatar)}" alt="">` : ''}
-            申請者: ${esc(req.submitter?.name || 'Member')}
-          </span>
-          ${req.decided_by ? `<span>決定者: ${esc(req.decided_by.name||'')}</span>`:''}
-          ${req.reason ? `<span>理由: ${esc(req.reason)}</span>`:''}
-        </div>
-
-        <div class="actions">
-          <button class="apply"  data-apply="${esc(req.req_id)}" ${status!=='pending'?'disabled':''}>適用</button>
-          <button class="reject" data-reject="${esc(req.req_id)}" ${status!=='pending'?'disabled':''}>却下</button>
-        </div>
-
-        ${changedKeys.length ? `<div class="diff">変更フィールド: ${changedKeys.map(k=>`<code>${esc(k)}</code>`).join(' ')}</div>` : `<div class="diff">変更フィールド: なし</div>`}
-
-        <details open>
-          <summary><strong>変更後（patch）</strong></summary>
-          <pre id="after-${esc(req.req_id)}"></pre>
-        </details>
-        <details>
-          <summary><strong>変更前（before）</strong></summary>
-          <pre id="before-${esc(req.req_id)}"></pre>
-        </details>
-      `;
-      list.appendChild(card);
-
-      // JSONは必ず textContent で（XSS防止）
-      $(`#after-${CSS.escape(req.req_id)}`).textContent  = JSON.stringify(after,  null, 2);
-      $(`#before-${CSS.escape(req.req_id)}`).textContent = JSON.stringify(before, null, 2);
-    }
-  }
-
-  // ボタン（適用／却下）
-  document.addEventListener('click', async (ev) => {
-    const btn = ev.target.closest('button[data-apply],button[data-reject]');
-    if (!btn) return;
-
-    const isApply = btn.hasAttribute('data-apply');
-    const reqId = btn.getAttribute(isApply ? 'data-apply' : 'data-reject');
-    btn.disabled = true;
-
-    try {
-      if (isApply) {
-        await doApply(reqId);
-      } else {
-        const reason = prompt('却下理由（任意）を入力してください：') ?? '';
-        await doReject(reqId, reason.trim());
-      }
-      await loadQueue(); // 成功後に再読込
-    } catch (e) {
-      showErr(e.message || e);
-    } finally {
-      btn.disabled = false;
-    }
+function setEditing(on){
+  document.body.classList.toggle('editing', !!on);
+  $('#btn-save-pins').style.display = on ? '' : 'none';
+  // ドロップ領域（pinned内で並び替え / all→pinnedへ持ち上げ）
+  const pinned = $('#pinned');
+  pinned.addEventListener('dragover', e=>{
+    if(!document.body.classList.contains('editing')) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  pinned.addEventListener('drop', e=>{
+    if(!document.body.classList.contains('editing')) return;
+    e.preventDefault();
+    const id = e.dataTransfer.getData('text/plain');
+    // 既存カード or 通常側から移動
+    const card = document.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+    if(card){ pinned.prepend(card); }
   });
 
-  async function doApply(reqId) {
-    const res = await fetch(`/api/facilities/queue/${encodeURIComponent(reqId)}/apply`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}' // 空でもOK。明示しておく
+  // pinned内部の並び替え（ドラッグ先の前に挿入）
+  $$('#pinned .card').forEach(card=>{
+    card.addEventListener('dragover', e=>{
+      if(!document.body.classList.contains('editing')) return;
+      e.preventDefault();
+      const draggingId = e.dataTransfer.getData('text/plain');
+      const dragging = document.querySelector(`.card[data-id="${CSS.escape(draggingId)}"]`);
+      if(!dragging || dragging===card) return;
+      // マウス位置で前後に入れ替え
+      const rect = card.getBoundingClientRect();
+      const before = (e.clientY - rect.top) < rect.height/2;
+      card.parentElement.insertBefore(dragging, before? card: card.nextSibling);
     });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`apply失敗 (${res.status}): ${txt}`);
-    }
-  }
+  });
+}
 
-  async function doReject(reqId, reason) {
-    const res = await fetch(`/api/facilities/queue/${encodeURIComponent(reqId)}/reject`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+async function savePins(){
+  // pinned の順を収集
+  const ids = $$('#pinned .card').map(c=> c.dataset.id);
+  // 新規に上がってきたIDだけ order に入れる（既存ピンも維持）
+  // バックエンドは {order:[..]} のIDだけ pin=True + pin_order を更新、その他は維持
+  try{
+    await api('/api/facilities/pins', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({order: ids})
     });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`reject失敗 (${res.status}): ${txt}`);
-    }
+    await loadFacilities();
+    alert('固定順を保存しました');
+  }catch(e){
+    alert('保存に失敗しました: ' + e.message);
   }
+}
 
-  // 初回ロード
-  loadQueue();
-  </script>
+function openEditModal(item){
+  const dlg = $('#editModal');
+  $('#em_name').value = item.name || '';
+  $('#em_category').value = item.category || '';
+  $('#em_coords').value = item.coords || '';
+  $('#em_image').value = item.image_url || '';
+  $('#em_link').value  = item.link_url || '';
+  $('#em_desc').value  = item.description || '';
+  $('#em_tags').value  = (item.tags||[]).join(',');
+
+  dlg.returnValue = '';
+  dlg.showModal();
+
+  $('#em_submit').onclick = async (ev)=>{
+    ev.preventDefault();
+    const patch = {
+      name: $('#em_name').value,
+      category: $('#em_category').value,
+      coords: $('#em_coords').value,
+      image_url: $('#em_image').value,
+      link_url: $('#em_link').value,
+      description: $('#em_desc').value,
+      tags: $('#em_tags').value
+    };
+    try{
+      const res = await api('/api/facilities/update', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({id: item.id, patch})
+      });
+      if(res.applied){
+        alert('変更を適用しました（管理者）');
+      }else if(res.queued){
+        alert('編集申請を送信しました（承認待ち）');
+      }else{
+        alert('応答: ' + JSON.stringify(res));
+      }
+      dlg.close();
+      await loadFacilities();
+    }catch(e){
+      alert('送信に失敗しました: ' + e.message);
+    }
+  };
+}
+
+function renderQueue(list){
+  const box = $('#queueList');
+  box.innerHTML = '';
+  (list||[]).filter(x=>x.status==='pending').forEach(it=>{
+    const before = FAC.find(f=> String(f.id)===String(it.facility_id)) || {};
+    const after = {...before, ...(it.patch||{})};
+    const el = document.createElement('div');
+    el.className = 'queue-item';
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+        <div>
+          <div><b>${before.name||'(名称不明)'} </b> に対する編集申請</div>
+          <div class="meta">申請者: ${it.submitter?.name||''}</div>
+        </div>
+        <div class="row small">
+          <button class="btn ok btn-apply">適用</button>
+          <button class="btn danger btn-reject">却下</button>
+        </div>
+      </div>
+      <div class="diff" style="margin-top:8px"></div>
+    `;
+    const diff = el.querySelector('.diff');
+    diff.textContent =
+      '変更前:\n' + JSON.stringify({
+        name: before.name, category: before.category, coords: before.coords,
+        image_url: before.image_url, link_url: before.link_url,
+        description: before.description, tags: before.tags
+      }, null, 2)
+      + '\n\n変更後:\n' + JSON.stringify({
+        name: after.name, category: after.category, coords: after.coords,
+        image_url: after.image_url, link_url: after.link_url,
+        description: after.description, tags: after.tags
+      }, null, 2);
+
+    el.querySelector('.btn-apply').onclick = async ()=>{
+      try{ await api(`/api/facilities/queue/${encodeURIComponent(it.req_id)}/apply`, {method:'POST'}); }
+      catch(e){ alert('適用に失敗: '+e.message); return; }
+      await Promise.all([loadFacilities(), loadQueue()]);
+    };
+    el.querySelector('.btn-reject').onclick = async ()=>{
+      const reason = prompt('却下理由（任意）') || '';
+      try{ await api(`/api/facilities/queue/${encodeURIComponent(it.req_id)}/reject`, {
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason})
+      }); }
+      catch(e){ alert('却下に失敗: '+e.message); return; }
+      await loadQueue();
+    };
+    box.appendChild(el);
+  });
+}
+
+async function loadQueue(){
+  try{
+    const q = await api('/api/facilities/queue');
+    $('#adminQueue').classList.add('active');
+    renderQueue(q);
+  }catch{
+    $('#adminQueue').classList.remove('active');
+  }
+}
+
+// events
+$('#btn-search').addEventListener('click', loadFacilities);
+$('#btn-clear').addEventListener('click', ()=>{
+  $('#q').value=''; $('#tags').value=''; $('#category').value='';
+  loadFacilities();
+});
+$('#btn-edit').addEventListener('click', ()=>{
+  const on = !document.body.classList.contains('editing');
+  setEditing(on);
+  $('#btn-edit').textContent = on? '並び替えモード（ON）': '並び替えモード';
+});
+$('#btn-save-pins').addEventListener('click', savePins);
+
+// init
+(async function init(){
+  await loadMe();
+  await loadFacilities();
+})();
+</script>
 </body>
 </html>
