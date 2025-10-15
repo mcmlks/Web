@@ -10,6 +10,12 @@
       "tags": []
     },
     "created_at": 1760528273,
+    "decided_at": 1760528989,
+    "decided_by": {
+      "avatar": "https://cdn.discordapp.com/avatars/642335102055088128/a_3ac22542056e1916bbb2f8b1dfb99afb.png?size=64",
+      "id": "642335102055088128",
+      "name": "neco"
+    },
     "facility_id": "1760524543994",
     "patch": {
       "category": "拠点",
@@ -22,8 +28,9 @@
         "拠点"
       ]
     },
+    "reason": "test",
     "req_id": "1760528273514-1144916454437834772",
-    "status": "pending",
+    "status": "rejected",
     "submitter": {
       "avatar": "https://cdn.discordapp.com/avatars/1144916454437834772/65cf1041a4099392e0027ee4473d38f9.png?size=64",
       "id": "1144916454437834772",
