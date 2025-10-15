@@ -11,6 +11,8 @@
     "image_url": "https://i.imgur.com/8wT32Mk.png",
     "link_url": "",
     "name": "旧本拠地",
+    "pin": false,
+    "pin_order": null,
     "tags": []
   },
   {
@@ -25,6 +27,8 @@
     "image_url": "https://i.imgur.com/JU7lFh0.png",
     "link_url": "",
     "name": "本拠地(キャッ島)",
+    "pin": false,
+    "pin_order": null,
     "tags": []
   }
 ]
