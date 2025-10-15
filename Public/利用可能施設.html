@@ -1,76 +1,55 @@
+<!-- /Public/利用可能施設.html -->
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MCML 施設一覧・登録</title>
-<meta name="description" content="MCML内で利用可能な施設（ショップ、公共施設、鉄道、ポータルなど）を一覧・登録できます。Discordログイン済みのメンバーのみ投稿可。">
+<title>MCML | 利用可能施設</title>
 <meta name="color-scheme" content="light dark">
 <style>
-/* ========== Mini reset ========== */
-*,*::before,*::after{box-sizing:border-box}
-html,body{height:100%} body{margin:0;font:15px/1.7 system-ui, -apple-system, Segoe UI, Inter, Roboto,"Noto Sans JP",sans-serif}
-img{display:block;max-width:100%} a{text-decoration:none;color:inherit}
+  :root{
+    --bg:#0b1020; --panel:#111a31; --panel2:#0d1426; --line:#1c2744;
+    --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --danger:#ef4444;
+    --radius:16px; --shadow:0 12px 32px rgba(0,0,0,.35); --max:1100px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f7f9fc; --panel:#eef2f8; --panel2:#ffffff; --line:#e5ebf4; --text:#101727; --muted:#58657a; --shadow:0 10px 28px rgba(2,6,23,.08) }
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font:15px/1.7 system-ui,-apple-system,"Segoe UI",Inter,Roboto,"Noto Sans JP",sans-serif; color:var(--text); background:linear-gradient(180deg,var(--bg),#0a0f1b);}
+  .wrap{max-width:var(--max); margin:0 auto; padding:24px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
+  .inner{padding:18px 20px}
+  .h1{font-size:clamp(22px,3.6vw,32px); font-weight:900; margin:0 0 4px}
+  .lead{color:var(--muted); margin:6px 0 0}
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; background:var(--brand); color:#061018; font-weight:800; border:0; cursor:pointer}
+  .btn.ghost{background:transparent; border:1px solid var(--line); color:var(--text)}
+  .grid{display:grid; gap:14px}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  @media (max-width: 900px){ .cols-3{grid-template-columns:1fr 1fr} }
+  @media (max-width: 640px){ .cols-3{grid-template-columns:1fr} }
+  .item{display:flex; gap:12px}
+  .thumb{flex:0 0 96px; height:72px; border-radius:12px; background:#0d172b center/cover no-repeat; border:1px solid var(--line)}
+  .meta b{display:block; font-weight:900}
+  .meta small{color:var(--muted)}
+  .author{display:flex; align-items:center; gap:8px; color:var(--muted)}
+  .author img{width:20px; height:20px; border-radius:999px}
 
-/* ========== Theme ========== */
-:root{
-  --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
-  --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --danger:#ef4444;
-  --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --max:1100px; --gap:14px;
-}
-@media (prefers-color-scheme: light){
-  :root{ --bg:#f6f8fb; --panel:#f1f5f9; --panel2:#ffffff; --line:#e1e7ef; --text:#0b1320; --muted:#55647a; --shadow:0 10px 22px rgba(2,6,23,.08) }
-}
-html{background:var(--bg)}
-body{color:var(--text); background:
-  radial-gradient(1000px 520px at 10% -10%, rgba(34,211,238,.10), transparent 60%),
-  radial-gradient(1000px 520px at 90% -20%, rgba(52,211,153,.08), transparent 60%),
-  var(--bg);
-}
-.container{max-width:var(--max);margin:0 auto;padding:20px}
-
-/* 共通ヘッダーは Base.html をインクルード（サーバ側） */
-header{position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-
-/* ========== Page ========== */
-.h1{font-size:clamp(22px,4.5vw,34px);font-weight:900;margin:0 0 6px}
-.lead{color:var(--muted);margin:0 0 12px}
-.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 16px}
-select,input[type="search"]{
-  background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px
-}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);
-     background:linear-gradient(180deg,var(--brand),#1aa8c1);color:#06232a;font-weight:800;cursor:pointer}
-.btn.ghost{background:transparent;color:var(--text)}
-.badge{display:inline-block;padding:6px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:12px}
-
-/* ========== Grid/list ========== */
-.grid{display:grid;gap:var(--gap);grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:980px){ .grid{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:640px){ .grid{grid-template-columns:1fr}}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.card .inner{padding:14px}
-.meta{display:flex;gap:10px;align-items:center}
-.meta img{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#111}
-.meta .who{font-weight:800}
-.kbd{font:600 12px ui-monospace;background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px}
-.tag{font:700 11px/1 ui-sans-serif;border:1px solid var(--line);border-radius:999px;padding:6px 8px;color:var(--muted)}
-
-/* ========== Modal (投稿) ========== */
-.modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55)}
-.modal.open{display:grid}
-.dialog{width:min(680px,92vw);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-.dialog .head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
-.dialog .body{padding:16px}
-.dialog .foot{padding:12px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin:8px 0}
-@media (max-width:560px){ .row{grid-template-columns:1fr} .row label{font-weight:800}}
-input[type="text"],input[type="url"],textarea,select{
-  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text)
-}
-textarea{min-height:88px;resize:vertical}
-.err{color:var(--danger);font-weight:700}
-.empty{color:var(--muted);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:12px}
+  /* Modal */
+  .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.5); z-index:60}
+  .modal.open{display:grid}
+  .sheet{width:min(720px, 94vw); background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow)}
+  .sheet .head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line)}
+  .sheet .body{padding:16px}
+  .sheet .row{display:grid; grid-template-columns:120px 1fr; gap:12px; align-items:center; margin:10px 0}
+  .sheet input,.sheet textarea{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:color-mix(in oklab,var(--text) 6%, transparent); color:var(--text)}
+  .sheet textarea{min-height:96px; resize:vertical}
+  .close{background:transparent; border:1px solid var(--line); border-radius:10px; padding:6px 10px; cursor:pointer}
+  .who{display:flex; align-items:center; gap:8px}
+  .who img{width:28px; height:28px; border-radius:999px; border:1px solid var(--line)}
+  .actions{display:flex; justify-content:flex-end; gap:10px; padding:0 16px 16px}
+  .err{color:var(--danger); font-weight:700; font-size:13px}
+  .toast{position:fixed; left:50%; top:14px; transform:translateX(-50%); background:#000c; color:#fff; padding:10px 14px; border-radius:12px; z-index:80}
 </style>
 </head>
 <body>
@@ -78,184 +57,142 @@ textarea{min-height:88px;resize:vertical}
 <!-- 共通ヘッダー -->
 <!--#include "/Public/Base.html" -->
 
-<main class="container">
-  <header class="container" style="padding:0 0 10px">
-    <h1 class="h1">施設一覧</h1>
-    <p class="lead">MCML内で利用可能な施設をまとめています。Discordでログイン済みのメンバーは施設情報を登録できます。</p>
-
-    <div class="toolbar">
-      <span class="badge" id="meBadge">未ログイン</span>
-      <select id="filterCat" aria-label="カテゴリで絞り込み">
-        <option value="">すべてのカテゴリ</option>
-        <option>ショップ</option><option>公共施設</option><option>鉄道/交通</option>
-        <option>ネザー/エンド</option><option>観光/名所</option><option>その他</option>
-      </select>
-      <input id="q" type="search" placeholder="キーワード検索（名称・説明・座標）">
-      <button id="btnNew" class="btn">＋ 施設を登録</button>
+<main class="wrap">
+  <section class="card">
+    <div class="inner" style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+      <div>
+        <h1 class="h1">利用可能施設</h1>
+        <p class="lead">サーバー内で使える施設（ショップ、トラップ、公共施設など）をみんなで共有します。</p>
+      </div>
+      <div id="who" class="who" style="display:none">
+        <img id="whoAvatar" alt="">
+        <span id="whoName" class="lead"></span>
+      </div>
+      <div>
+        <button id="openNew" class="btn">+ 施設を登録</button>
+      </div>
     </div>
-  </header>
+  </section>
 
-  <!-- 一覧 -->
-  <section id="list" class="grid" aria-live="polite"></section>
-  <div id="empty" class="empty" style="display:none">まだ登録がありません。最初の施設を追加しましょう！</div>
-
-  <footer style="margin-top:14px;color:var(--muted)">
-    データはMCMLサーバのAPI経由で保存されます。投稿者の名前・アイコンはDiscordのプロフィールが自動で付与されます。
-  </footer>
+  <section class="wrap" style="padding:0">
+    <div id="list" class="grid cols-3"></div>
+  </section>
 </main>
 
-<!-- 投稿モーダル -->
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
-  <div class="dialog">
+<!-- Modal -->
+<div id="modal" class="modal" aria-modal="true" role="dialog">
+  <div class="sheet" role="document">
     <div class="head">
-      <h2 id="dlgTitle" style="margin:0">施設を登録</h2>
-      <button id="close" class="btn ghost" aria-label="閉じる">✕</button>
+      <strong>施設を登録</strong>
+      <div class="who"><img id="mAvatar" alt=""><span id="mName"></span></div>
+      <button id="closeModal" class="close">✕</button>
     </div>
     <div class="body">
-      <p id="postWarn" class="err" style="display:none">投稿にはDiscordログインが必要です。</p>
-      <div class="row"><label for="name">名称</label><input id="name" type="text" maxlength="80" placeholder="例）中央駅 西口改札"></div>
-      <div class="row">
-        <label for="cat">カテゴリ</label>
-        <select id="cat">
-          <option>ショップ</option><option>公共施設</option><option>鉄道/交通</option>
-          <option>ネザー/エンド</option><option>観光/名所</option><option>その他</option>
-        </select>
-      </div>
-      <div class="row"><label for="coords">座標</label><input id="coords" type="text" maxlength="64" placeholder="例）Overworld 123, 64, -210"></div>
-      <div class="row"><label for="desc">説明</label><textarea id="desc" maxlength="500" placeholder="施設の概要や注意事項など"></textarea></div>
-      <div class="row"><label for="img">画像URL</label><input id="img" type="url" placeholder="https://...（任意）"></div>
-      <div class="row"><label for="link">外部リンク</label><input id="link" type="url" placeholder="Wiki/案内など（任意）"></div>
+      <div class="row"><label>名称*</label><input id="fName" maxlength="80" required></div>
+      <div class="row"><label>カテゴリ</label><input id="fCat" placeholder="例: トラップ / 店舗 / 公共施設"></div>
+      <div class="row"><label>座標</label><input id="fCoords" placeholder="例: X:123 Y:64 Z:-456"></div>
+      <div class="row"><label>URL</label><input id="fLink" placeholder="案内スレ/地図/説明のリンク等"></div>
+      <div class="row"><label>画像URL</label><input id="fImg" placeholder="サムネに使う画像URL（任意）"></div>
+      <div class="row" style="grid-template-columns:1fr"><textarea id="fDesc" placeholder="説明（500文字まで）" maxlength="500"></textarea></div>
+      <div id="err" class="err" style="display:none"></div>
     </div>
-    <div class="foot">
-      <button id="submit" class="btn">登録する</button>
+    <div class="actions">
       <button id="cancel" class="btn ghost">キャンセル</button>
+      <button id="submit" class="btn">保存して公開</button>
     </div>
   </div>
 </div>
 
 <script>
-const $ = s => document.querySelector(s);
-const list = $('#list'), empty = $('#empty');
-const modal = $('#modal'), closeBtn = $('#close'), cancelBtn = $('#cancel'), newBtn = $('#btnNew');
-const meBadge = $('#meBadge'), warn = $('#postWarn');
-const inputs = {
-  name: $('#name'), cat: $('#cat'), coords: $('#coords'), desc: $('#desc'),
-  img: $('#img'), link: $('#link'),
-};
-const filterCat = $('#filterCat'), q = $('#q');
+  const $ = s => document.querySelector(s);
+  let me = null;
 
-let ME = null;      // { logged_in, display_name, avatar_url, id }
-let DATA = [];      // facilities array
+  function toast(msg){ const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; },1100); setTimeout(()=>t.remove(),1500); }
 
-function openModal(){
-  if(!ME?.logged_in){ warn.style.display='block'; return; }
-  warn.style.display='none';
-  modal.classList.add('open');
-}
-function closeModal(){ modal.classList.remove('open'); }
-closeBtn.onclick = cancelBtn.onclick = () => closeModal();
-modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
-newBtn.onclick = openModal;
-
-function card(item){
-  const el = document.createElement('article');
-  el.className='card';
-  const imgHTML = item.image_url ? `<img src="${item.image_url}" alt="" style="aspect-ratio:16/9;object-fit:cover;border-bottom:1px solid var(--line);background:#111">` : '';
-  el.innerHTML = `
-    ${imgHTML}
-    <div class="inner">
-      <div class="meta" style="margin-bottom:8px">
-        <img src="${item.author_avatar}" alt="">
-        <div>
-          <div class="who">${item.name}</div>
-          <div class="muted" style="color:var(--muted);font-size:12px">
-            by ${item.author_name} ・ <span class="tag">${item.category}</span>
-          </div>
-        </div>
-      </div>
-      ${item.coords ? `<div style="margin:6px 0">座標：<span class="kbd">${item.coords}</span></div>` : ''}
-      ${item.description ? `<p style="margin:6px 0;color:var(--muted)">${item.description}</p>` : ''}
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-        ${item.link_url ? `<a class="badge" href="${item.link_url}" target="_blank" rel="noopener">リンク</a>` : ''}
-      </div>
-    </div>`;
-  return el;
-}
-
-function render(){
-  const cat = filterCat.value;
-  const kw = q.value.trim().toLowerCase();
-  const filtered = DATA.filter(it => {
-    const okCat = !cat || it.category === cat;
-    const text = (it.name + ' ' + it.description + ' ' + it.coords).toLowerCase();
-    const okKw = !kw || text.includes(kw);
-    return okCat && okKw;
-  });
-  list.innerHTML = '';
-  if(filtered.length === 0){ empty.style.display='block'; return; }
-  empty.style.display='none';
-  filtered.forEach(it => list.appendChild(card(it)));
-}
-
-async function fetchMe(){
-  try{
-    const res = await fetch('/api/me', {credentials:'include'});
-    if(!res.ok) throw 0;
-    const me = await res.json();
-    ME = me;
-    if(me.logged_in){
-      meBadge.textContent = `ようこそ ${me.display_name} さん`;
-      meBadge.classList.add('ok');
-      meBadge.style.borderColor = 'rgba(34,211,238,.5)';
-    }else{
-      meBadge.textContent = '未ログイン（ヘッダーのログインから）';
-    }
-  }catch{}
-}
-async function fetchFacilities(){
-  try{
-    const res = await fetch('/api/facilities', {credentials:'include', cache:'no-store'});
-    if(!res.ok) throw 0;
-    DATA = await res.json();
-    render();
-  }catch{
-    DATA = [];
-    render();
+  async function fetchJSON(url, opt){
+    const r = await fetch(url, Object.assign({credentials:'same-origin'}, opt));
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
   }
-}
-async function submitFacility(){
-  const payload = {
-    name: inputs.name.value.trim(),
-    category: inputs.cat.value,
-    coords: inputs.coords.value.trim(),
-    description: inputs.desc.value.trim(),
-    image_url: inputs.img.value.trim(),
-    link_url: inputs.link.value.trim(),
-  };
-  if(!payload.name){ alert('名称は必須です'); return; }
-  try{
-    const res = await fetch('/api/facilities', {
-      method:'POST', credentials:'include',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+
+  function renderList(items){
+    const el = $("#list"); el.innerHTML = "";
+    if(!Array.isArray(items) || items.length===0){
+      const d = document.createElement('div');
+      d.className='card inner'; d.textContent = "まだ登録はありません。右上の「+ 施設を登録」からどうぞ。";
+      el.appendChild(d); return;
+    }
+    items.forEach(it=>{
+      const card = document.createElement('div'); card.className='card inner item';
+      const th = document.createElement('div'); th.className='thumb'; if(it.image_url) th.style.backgroundImage=`url('${it.image_url}')`;
+      const meta = document.createElement('div'); meta.className='meta';
+      const a = document.createElement('a'); a.href = it.link_url || "#"; a.target = it.link_url ? "_blank" : "";
+      a.innerHTML = `<b>${it.name}</b><small>${it.category||"その他"}・${it.coords||""}</small><p style="margin:.3rem 0 0">${(it.description||"").replace(/[<>]/g,'')}</p>`;
+      meta.appendChild(a);
+      const au = document.createElement('div'); au.className='author';
+      au.innerHTML = `<img src="${it.author_avatar||''}" alt=""><small>${it.author_name||'Member'}</small>`;
+      meta.appendChild(au);
+      card.appendChild(th); card.appendChild(meta);
+      el.appendChild(card);
     });
-    if(res.status === 401){ alert('投稿にはDiscordログインが必要です'); return; }
-    if(!res.ok){ const t=await res.text(); throw new Error(t||'投稿に失敗しました'); }
-    const created = await res.json();
-    DATA.unshift(created); // 先頭に追加
-    render();
-    closeModal();
-    Object.values(inputs).forEach(i => i.value='');
-  }catch(e){ alert(e.message||'投稿に失敗しました'); }
-}
+  }
 
-// events
-$('#submit').onclick = submitFacility;
-filterCat.onchange = render;
-q.oninput = () => { render(); };
+  function setWho(u){
+    if(!u) { $("#who").style.display='none'; return; }
+    $("#whoAvatar").src = u.avatar_url; $("#whoName").textContent = u.display_name; $("#who").style.display='';
+    $("#mAvatar").src = u.avatar_url; $("#mName").textContent = u.display_name;
+  }
 
-// boot
-fetchMe().then(fetchFacilities);
+  async function load(){
+    me = await fetchJSON("/api/me");
+    if(!me.logged_in){
+      $("#openNew").onclick = () => { toast("投稿にはログインが必要です"); location.href="/auth/discord/login?next="+encodeURIComponent(location.pathname); };
+      setWho(null);
+    }else{
+      $("#openNew").onclick = () => openModal();
+      setWho(me);
+    }
+    const items = await fetchJSON("/api/facilities");
+    renderList(items);
+  }
+
+  function openModal(){ $("#modal").classList.add("open"); document.body.style.overflow="hidden"; }
+  function closeModal(){ $("#modal").classList.remove("open"); document.body.style.overflow=""; $("#err").style.display='none'; }
+  $("#closeModal").onclick = closeModal;
+  $("#cancel").onclick = closeModal;
+  $("#modal").addEventListener('click', e=>{ if(e.target.id==="modal") closeModal(); });
+
+  $("#submit").addEventListener('click', async ()=>{
+    if(!me || !me.logged_in){ toast("ログインしてください"); return; }
+    const name = $("#fName").value.trim();
+    if(!name){ $("#err").textContent="名称は必須です"; $("#err").style.display='block'; return; }
+    const payload = {
+      name,
+      category: $("#fCat").value,
+      coords: $("#fCoords").value,
+      description: $("#fDesc").value,
+      image_url: $("#fImg").value,
+      link_url: $("#fLink").value
+    };
+    $("#err").style.display='none';
+    try{
+      const r = await fetch("/api/facilities", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)});
+      if(!r.ok) throw new Error(await r.text());
+      const item = await r.json();
+      toast("登録しました");
+      // 先頭に反映
+      const cur = await fetchJSON("/api/facilities");
+      renderList(cur);
+      closeModal();
+      // 初期化
+      ["#fName","#fCat","#fCoords","#fDesc","#fImg","#fLink"].forEach(s=>$(s).value="");
+    }catch(e){
+      $("#err").textContent = "保存に失敗しました: " + (e.message||e);
+      $("#err").style.display='block';
+    }
+  });
+
+  load();
 </script>
 </body>
 </html>
