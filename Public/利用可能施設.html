@@ -60,7 +60,7 @@
         <input id="tags" class="input" placeholder="タグ 絞り込み（例: 市場,鍛冶）" />
         <select id="category">
           <option value="">すべてのカテゴリ</option>
-          <option>商業</option><option>公共</option><option>農業</option><option>交通</option><option>その他</option>
+          <!-- 初期表示で空でもOK。取得後に動的に埋める -->
         </select>
         <button id="btn-search" class="btn">検索</button>
         <button id="btn-clear" class="btn ghost">クリア</button>
@@ -140,7 +140,7 @@ const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 
 let ME = { logged_in:false, id:null, display_name:"", avatar_url:"", is_admin:false };
-let FAC = [];      // 取得済み施設
+let FAC = [];       // 取得済み施設
 let PIN_ORDER = []; // 現在のpin順（ID配列）
 
 async function api(path, opts={}) {
@@ -151,17 +151,17 @@ async function api(path, opts={}) {
 
 async function loadMe(){
   const me = await api('/api/me');
-  ME = {...me, is_admin: false};
-  // サーバ側 is_admin API が無い場合、ID許可リストがHTMLに無いので
-  // ここでは見た目だけ（通知ボックス表示はエラーにならない方式）
+  ME = me;
   $('#me').textContent = me.logged_in ? `👤 ${me.display_name}` : '未ログイン';
-  // 管理者用通知ボックスの可視化は、実際のGETアクセスで403なら自動で隠す
-  try {
-    const q = await api('/api/facilities/queue');
-    $('#adminQueue').classList.add('active');
-    renderQueue(q);
-    ME.is_admin = true;
-  } catch(e) {
+  if (me.is_admin) {
+    try {
+      const q = await api('/api/facilities/queue');
+      $('#adminQueue').classList.add('active');
+      renderQueue(q);
+    } catch(e) {
+      $('#adminQueue').classList.remove('active');
+    }
+  } else {
     $('#adminQueue').classList.remove('active');
   }
 }
@@ -189,7 +189,7 @@ function cardFrom(item){
     tg.appendChild(el);
   });
 
-  // 編集ボタン（ログイン時のみ表示。管理者は即時、一般は申請）
+  // 編集ボタン（並び替えモードで表示）
   const ebtn = tpl.querySelector('.btn-edit-card');
   ebtn.addEventListener('click', (ev)=>{
     ev.stopPropagation();
@@ -246,16 +246,26 @@ function applySearchFilter(arr){
   });
 }
 
+function refreshCategoryOptions(){
+  const cats = Array.from(new Set(FAC.map(x=>x.category).filter(Boolean)));
+  if (!cats.includes('拠点')) cats.push('拠点'); // 念のため既定カテゴリを補完
+  cats.sort((a,b)=> a.localeCompare(b,'ja'));
+  const sel = $('#category');
+  const keep = sel.value;
+  sel.innerHTML = '<option value="">すべてのカテゴリ</option>' +
+                  cats.map(c=>`<option>${c}</option>`).join('');
+  if (keep && cats.includes(keep)) sel.value = keep;
+}
+
 async function loadFacilities(){
   const params = new URLSearchParams();
-  // サーバ側検索を使う場合はこちら
   if($('#q').value) params.set('q',$('#q').value);
   if($('#category').value) params.set('category',$('#category').value);
   if($('#tags').value) params.set('tags',$('#tags').value);
   const arr = await api('/api/facilities' + (params.toString()?`?${params}`:'')); // サーバ検索
   FAC = arr; // 保持
+  refreshCategoryOptions(); // ★ カテゴリを動的構築
   renderAll();
-  // ピン順の把握
   try{
     const p = await api('/api/facilities/pins');
     PIN_ORDER = p.order || [];
@@ -263,7 +273,7 @@ async function loadFacilities(){
 }
 
 function renderAll(){
-  const filtered = applySearchFilter(FAC); // クライアント側でも最終フィルタ
+  const filtered = applySearchFilter(FAC);
   const {pinned, normal} = splitPinned(filtered);
   mountCards(pinned, $('#pinned'));
   mountCards(normal, $('#all'));
@@ -283,7 +293,6 @@ function setEditing(on){
     if(!document.body.classList.contains('editing')) return;
     e.preventDefault();
     const id = e.dataTransfer.getData('text/plain');
-    // 既存カード or 通常側から移動
     const card = document.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
     if(card){ pinned.prepend(card); }
   });
@@ -296,7 +305,6 @@ function setEditing(on){
       const draggingId = e.dataTransfer.getData('text/plain');
       const dragging = document.querySelector(`.card[data-id="${CSS.escape(draggingId)}"]`);
       if(!dragging || dragging===card) return;
-      // マウス位置で前後に入れ替え
       const rect = card.getBoundingClientRect();
       const before = (e.clientY - rect.top) < rect.height/2;
       card.parentElement.insertBefore(dragging, before? card: card.nextSibling);
@@ -305,10 +313,7 @@ function setEditing(on){
 }
 
 async function savePins(){
-  // pinned の順を収集
   const ids = $$('#pinned .card').map(c=> c.dataset.id);
-  // 新規に上がってきたIDだけ order に入れる（既存ピンも維持）
-  // バックエンドは {order:[..]} のIDだけ pin=True + pin_order を更新、その他は維持
   try{
     await api('/api/facilities/pins', {
       method:'POST',
@@ -361,6 +366,7 @@ function openEditModal(item){
       }
       dlg.close();
       await loadFacilities();
+      if(ME.is_admin) await loadQueue();
     }catch(e){
       alert('送信に失敗しました: ' + e.message);
     }
@@ -371,14 +377,17 @@ function renderQueue(list){
   const box = $('#queueList');
   box.innerHTML = '';
   (list||[]).filter(x=>x.status==='pending').forEach(it=>{
-    const before = FAC.find(f=> String(f.id)===String(it.facility_id)) || {};
-    const after = {...before, ...(it.patch||{})};
+    // ★ APIが返すスナップショット/タイトルを優先
+    const before = it.before || {};
+    const after  = {...before, ...(it.patch||{})};
+    const title  = it.title || it.target_name || before.name || '(名称不明)';
+
     const el = document.createElement('div');
     el.className = 'queue-item';
     el.innerHTML = `
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
         <div>
-          <div><b>${before.name||'(名称不明)'} </b> に対する編集申請</div>
+          <div><b>${title}</b> に対する編集申請</div>
           <div class="meta">申請者: ${it.submitter?.name||''}</div>
         </div>
         <div class="row small">
@@ -419,6 +428,7 @@ function renderQueue(list){
 }
 
 async function loadQueue(){
+  if (!ME.is_admin) { $('#adminQueue').classList.remove('active'); return; }
   try{
     const q = await api('/api/facilities/queue');
     $('#adminQueue').classList.add('active');
