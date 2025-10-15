@@ -12,7 +12,7 @@
     "link_url": "",
     "name": "旧本拠地",
     "pin": true,
-    "pin_order": 1,
+    "pin_order": 2,
     "tags": []
   },
   {
@@ -27,8 +27,8 @@
     "image_url": "https://i.imgur.com/JU7lFh0.png",
     "link_url": "",
     "name": "本拠地(キャッ島)",
-    "pin": false,
-    "pin_order": null,
+    "pin": true,
+    "pin_order": 1,
     "tags": []
   }
 ]
