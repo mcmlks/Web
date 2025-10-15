@@ -11,8 +11,8 @@
     "image_url": "https://i.imgur.com/8wT32Mk.png",
     "link_url": "",
     "name": "旧本拠地",
-    "pin": false,
-    "pin_order": null,
+    "pin": true,
+    "pin_order": 1,
     "tags": []
   },
   {
