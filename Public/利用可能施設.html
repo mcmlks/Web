@@ -1,354 +1,261 @@
-<!-- /Public/facilities.html (images + lightbox 対応版) -->
 <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MCML | 利用可能施設 一覧 & 登録ジェネレーター</title>
-<meta name="description" content="MCMLのメンバー向け施設一覧。Discordログイン済みのメンバーは、フォームから施設情報を作成し、GitHubへPRとして提出できます。">
+<title>MCML 施設一覧・登録</title>
+<meta name="description" content="MCML内で利用可能な施設（ショップ、公共施設、鉄道、ポータルなど）を一覧・登録できます。Discordログイン済みのメンバーのみ投稿可。">
 <meta name="color-scheme" content="light dark">
 <style>
+/* ========== Mini reset ========== */
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%} body{margin:0;font:15px/1.7 system-ui, -apple-system, Segoe UI, Inter, Roboto,"Noto Sans JP",sans-serif}
+img{display:block;max-width:100%} a{text-decoration:none;color:inherit}
+
+/* ========== Theme ========== */
 :root{
   --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
   --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --danger:#ef4444;
-  --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --max:1100px;
+  --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35); --max:1100px; --gap:14px;
 }
 @media (prefers-color-scheme: light){
   :root{ --bg:#f6f8fb; --panel:#f1f5f9; --panel2:#ffffff; --line:#e1e7ef; --text:#0b1320; --muted:#55647a; --shadow:0 10px 22px rgba(2,6,23,.08) }
 }
-*{box-sizing:border-box}
-html,body{height:100%} html{background:var(--bg)}
-body{margin:0; font:15px/1.75 system-ui,-apple-system,Segoe UI,Inter,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
-     color:var(--text); background:
-     radial-gradient(1000px 520px at 10% -10%, rgba(34,211,238,.10), transparent 60%),
-     radial-gradient(1000px 520px at 90% -20%, rgba(52,211,153,.08), transparent 60%),
-     var(--bg);}
-a{color:inherit;text-decoration:none}
-code,kbd,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-kbd{background:rgba(255,255,255,.07); padding:2px 6px; border-radius:6px}
-.wrap{max-width:var(--max); margin:0 auto; padding:22px}
-.card{background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)}
-.inner{padding:18px 20px}
-.h1{font-size:clamp(24px,3.6vw,34px); font-weight:900; margin:0 0 6px}
-.h2{font-size:clamp(18px,2.6vw,24px); font-weight:900; margin:0 0 10px}
-.muted{color:var(--muted)}
-.grid{display:grid; gap:14px}
-.cols-3{grid-template-columns:repeat(3,1fr)}
-@media (max-width:900px){ .cols-3{grid-template-columns:1fr 1fr} }
-@media (max-width:640px){ .cols-3{grid-template-columns:1fr} }
-.input, select, textarea{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--text)}
-.row{display:grid; gap:10px; grid-template-columns:1fr 1fr}
-@media (max-width:700px){ .row{grid-template-columns:1fr} }
-.btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); cursor:pointer; font-weight:800}
-.btn.primary{background:linear-gradient(180deg, color-mix(in oklab, var(--brand) 88%, #fff 4%), var(--brand)); color:#081019; border-color:transparent}
-.badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:var(--muted); font-weight:700; font-size:12px}
-table{width:100%; border-collapse:separate; border-spacing:0 10px}
-tr td{background:rgba(255,255,255,.04); border:1px solid var(--line); padding:10px 12px; border-radius:12px}
+html{background:var(--bg)}
+body{color:var(--text); background:
+  radial-gradient(1000px 520px at 10% -10%, rgba(34,211,238,.10), transparent 60%),
+  radial-gradient(1000px 520px at 90% -20%, rgba(52,211,153,.08), transparent 60%),
+  var(--bg);
+}
+.container{max-width:var(--max);margin:0 auto;padding:20px}
 
-/* 施設行のレイアウト */
-.fac-row{display:grid; grid-template-columns:88px 1fr; gap:12px; align-items:start}
-.fac-thumb{width:88px; aspect-ratio:1/1; border-radius:10px; border:1px solid var(--line); overflow:hidden; background:#0d1526; display:grid; place-items:center; color:var(--muted); font-size:12px}
-.fac-thumb img{width:100%; height:100%; object-fit:cover; display:block}
-.fac-head{display:flex; gap:8px; justify-content:space-between; align-items:center; margin-bottom:6px}
-.fac-tags{display:flex; gap:6px; flex-wrap:wrap}
-.tag{font:700 11px/1 ui-sans-serif; padding:6px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:rgba(255,255,255,.06)}
-.fac-meta{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:13px}
-.fac-desc{margin-top:6px}
-.usr{display:flex; align-items:center; gap:8px}
-.usr img{width:20px; height:20px; border-radius:50%}
+/* 共通ヘッダーは Base.html をインクルード（サーバ側） */
+header{position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 
-/* Lightbox */
-.lb{position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; place-items:center; z-index:1000}
-.lb.open{display:grid}
-.lb-panel{max-width:min(92vw, 1100px); width:100%; background:linear-gradient(180deg,var(--panel),var(--panel2)); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); overflow:hidden}
-.lb-media{position:relative; background:#000}
-.lb-media img{width:100%; max-height:70vh; object-fit:contain; display:block}
-.lb-bar{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 12px; border-top:1px solid var(--line)}
-.lb-ctrls{display:flex; gap:8px}
-.lb-btn{padding:8px 10px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.06); cursor:pointer}
+/* ========== Page ========== */
+.h1{font-size:clamp(22px,4.5vw,34px);font-weight:900;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 12px}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 16px}
+select,input[type="search"]{
+  background:var(--panel2); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 10px
+}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);
+     background:linear-gradient(180deg,var(--brand),#1aa8c1);color:#06232a;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--text)}
+.badge{display:inline-block;padding:6px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:12px}
+
+/* ========== Grid/list ========== */
+.grid{display:grid;gap:var(--gap);grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:980px){ .grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){ .grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card .inner{padding:14px}
+.meta{display:flex;gap:10px;align-items:center}
+.meta img{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#111}
+.meta .who{font-weight:800}
+.kbd{font:600 12px ui-monospace;background:rgba(255,255,255,.08);padding:2px 6px;border-radius:6px}
+.tag{font:700 11px/1 ui-sans-serif;border:1px solid var(--line);border-radius:999px;padding:6px 8px;color:var(--muted)}
+
+/* ========== Modal (投稿) ========== */
+.modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.55)}
+.modal.open{display:grid}
+.dialog{width:min(680px,92vw);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.dialog .head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dialog .body{padding:16px}
+.dialog .foot{padding:12px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;margin:8px 0}
+@media (max-width:560px){ .row{grid-template-columns:1fr} .row label{font-weight:800}}
+input[type="text"],input[type="url"],textarea,select{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text)
+}
+textarea{min-height:88px;resize:vertical}
+.err{color:var(--danger);font-weight:700}
+.empty{color:var(--muted);text-align:center;padding:24px;border:1px dashed var(--line);border-radius:12px}
 </style>
 </head>
 <body>
 
-  <!-- 共通ヘッダー -->
-  <!--#include "/Public/Base.html" -->
+<!-- 共通ヘッダー -->
+<!--#include "/Public/Base.html" -->
 
-<main class="wrap">
-  <section class="card"><div class="inner">
-    <h1 class="h1">利用可能施設 一覧</h1>
-    <p class="muted">このページは <code>/Public/施設登録.json</code> を元に表示されます。変更は GitHub でPRを作成してください（下部のジェネレーターが便利）。</p>
-  </div></section>
+<main class="container">
+  <header class="container" style="padding:0 0 10px">
+    <h1 class="h1">施設一覧</h1>
+    <p class="lead">MCML内で利用可能な施設をまとめています。Discordでログイン済みのメンバーは施設情報を登録できます。</p>
 
-  <!-- フィルタ -->
-  <section class="card" style="margin-top:12px"><div class="inner">
-    <div class="row">
-      <input id="q" class="input" type="search" placeholder="検索（名称・説明・タグを対象）">
-      <select id="cat" class="input">
+    <div class="toolbar">
+      <span class="badge" id="meBadge">未ログイン</span>
+      <select id="filterCat" aria-label="カテゴリで絞り込み">
         <option value="">すべてのカテゴリ</option>
-        <option>建築</option><option>イベント</option><option>学習</option><option>資源</option><option>その他</option>
+        <option>ショップ</option><option>公共施設</option><option>鉄道/交通</option>
+        <option>ネザー/エンド</option><option>観光/名所</option><option>その他</option>
       </select>
+      <input id="q" type="search" placeholder="キーワード検索（名称・説明・座標）">
+      <button id="btnNew" class="btn">＋ 施設を登録</button>
     </div>
-  </div></section>
+  </header>
 
   <!-- 一覧 -->
-  <section class="card" style="margin-top:12px"><div class="inner">
-    <table id="facTable" aria-label="施設一覧"></table>
-    <p id="emptyMsg" class="muted" style="display:none; margin-top:6px">該当する施設がありません。</p>
-  </div></section>
+  <section id="list" class="grid" aria-live="polite"></section>
+  <div id="empty" class="empty" style="display:none">まだ登録がありません。最初の施設を追加しましょう！</div>
 
-  <!-- 投稿ジェネレーター（ログイン時のみ） -->
-  <section class="card" id="genSection" style="margin-top:12px; display:none"><div class="inner">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
-      <h2 class="h2">登録ジェネレーター（PR用）</h2>
-      <div id="me" class="usr muted"><img id="meAva" alt="" src="https://cdn.discordapp.com/embed/avatars/0.png"><span id="meName">…</span></div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div>
-        <label>名称</label>
-        <input id="fName" class="input" placeholder="例：共用作業場（Spawn南）">
-      </div>
-      <div>
-        <label>カテゴリ</label>
-        <select id="fCat" class="input">
-          <option>建築</option><option>イベント</option><option>学習</option><option>資源</option><option>その他</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div>
-        <label>場所 / 座標（任意）</label>
-        <input id="fCoord" class="input" placeholder="例：Overworld X:120 Y:64 Z:-45">
-      </div>
-      <div>
-        <label>外部リンク（任意）</label>
-        <input id="fLink" class="input" placeholder="例：https://map.example.com/?x=120&z=-45">
-      </div>
-    </div>
-
-    <div style="margin-top:10px">
-      <label>説明</label>
-      <textarea id="fDesc" class="input" rows="4" placeholder="施設の概要、使い方、注意事項など"></textarea>
-    </div>
-
-    <div class="row" style="margin-top:10px">
-      <div>
-        <label>タグ（カンマ区切り）</label>
-        <input id="fTags" class="input" placeholder="例：自動釣り, 初心者歓迎, 24h">
-      </div>
-      <div>
-        <label>画像URL（カンマ区切り, 任意）</label>
-        <input id="fImages" class="input" placeholder="例：https://.../img1.jpg, https://.../img2.png">
-      </div>
-    </div>
-
-    <div class="muted" style="margin-top:6px">※ 送信は直接ではなく、<b>GitHubのPR</b>として提出します。内容は下のJSONにプレビューされます。</div>
-
-    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
-      <button id="btnPreview" class="btn">JSONを生成</button>
-      <button id="btnPR" class="btn primary" disabled>GitHubでPRを作成</button>
-      <button id="btnCopy" class="btn" disabled>JSONをコピー</button>
-    </div>
-
-    <pre id="preview" class="preview" aria-live="polite" aria-label="投稿プレビュー"></pre>
-  </div></section>
-
-  <footer class="wrap" style="padding:0; margin-top:14px">
-    <div class="muted" style="opacity:.8">© <span id="year"></span> MCML</div>
+  <footer style="margin-top:14px;color:var(--muted)">
+    データはMCMLサーバのAPI経由で保存されます。投稿者の名前・アイコンはDiscordのプロフィールが自動で付与されます。
   </footer>
 </main>
 
-<!-- ライトボックス（拡大表示） -->
-<div class="lb" id="lb" role="dialog" aria-modal="true">
-  <div class="lb-panel">
-    <div class="lb-media"><img id="lbImg" alt="施設画像"></div>
-    <div class="lb-bar">
-      <div id="lbCaption" class="muted">画像</div>
-      <div class="lb-ctrls">
-        <button class="lb-btn" id="lbPrev" aria-label="前へ">‹</button>
-        <button class="lb-btn" id="lbNext" aria-label="次へ">›</button>
-        <button class="lb-btn" id="lbClose" aria-label="閉じる">✕</button>
+<!-- 投稿モーダル -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+  <div class="dialog">
+    <div class="head">
+      <h2 id="dlgTitle" style="margin:0">施設を登録</h2>
+      <button id="close" class="btn ghost" aria-label="閉じる">✕</button>
+    </div>
+    <div class="body">
+      <p id="postWarn" class="err" style="display:none">投稿にはDiscordログインが必要です。</p>
+      <div class="row"><label for="name">名称</label><input id="name" type="text" maxlength="80" placeholder="例）中央駅 西口改札"></div>
+      <div class="row">
+        <label for="cat">カテゴリ</label>
+        <select id="cat">
+          <option>ショップ</option><option>公共施設</option><option>鉄道/交通</option>
+          <option>ネザー/エンド</option><option>観光/名所</option><option>その他</option>
+        </select>
       </div>
+      <div class="row"><label for="coords">座標</label><input id="coords" type="text" maxlength="64" placeholder="例）Overworld 123, 64, -210"></div>
+      <div class="row"><label for="desc">説明</label><textarea id="desc" maxlength="500" placeholder="施設の概要や注意事項など"></textarea></div>
+      <div class="row"><label for="img">画像URL</label><input id="img" type="url" placeholder="https://...（任意）"></div>
+      <div class="row"><label for="link">外部リンク</label><input id="link" type="url" placeholder="Wiki/案内など（任意）"></div>
+    </div>
+    <div class="foot">
+      <button id="submit" class="btn">登録する</button>
+      <button id="cancel" class="btn ghost">キャンセル</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ===== 設定 ===== */
-const GITHUB_OWNER  = "yourname";
-const GITHUB_REPO   = "yourrepo";
-const GITHUB_BRANCH = "main";
-const FACILITIES_JSON_PATH = "Public/施設登録.json";
+const $ = s => document.querySelector(s);
+const list = $('#list'), empty = $('#empty');
+const modal = $('#modal'), closeBtn = $('#close'), cancelBtn = $('#cancel'), newBtn = $('#btnNew');
+const meBadge = $('#meBadge'), warn = $('#postWarn');
+const inputs = {
+  name: $('#name'), cat: $('#cat'), coords: $('#coords'), desc: $('#desc'),
+  img: $('#img'), link: $('#link'),
+};
+const filterCat = $('#filterCat'), q = $('#q');
 
-/* ===== ユーティリティ ===== */
-const $ = s=>document.querySelector(s);
-const $$= s=>Array.from(document.querySelectorAll(s));
-$("#year").textContent = new Date().getFullYear();
-function escapeHtml(s){return s.replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+let ME = null;      // { logged_in, display_name, avatar_url, id }
+let DATA = [];      // facilities array
 
+function openModal(){
+  if(!ME?.logged_in){ warn.style.display='block'; return; }
+  warn.style.display='none';
+  modal.classList.add('open');
+}
+function closeModal(){ modal.classList.remove('open'); }
+closeBtn.onclick = cancelBtn.onclick = () => closeModal();
+modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
+newBtn.onclick = openModal;
 
-/* ===== ログイン確認 ===== */
-let ME=null;
-(async()=>{
+function card(item){
+  const el = document.createElement('article');
+  el.className='card';
+  const imgHTML = item.image_url ? `<img src="${item.image_url}" alt="" style="aspect-ratio:16/9;object-fit:cover;border-bottom:1px solid var(--line);background:#111">` : '';
+  el.innerHTML = `
+    ${imgHTML}
+    <div class="inner">
+      <div class="meta" style="margin-bottom:8px">
+        <img src="${item.author_avatar}" alt="">
+        <div>
+          <div class="who">${item.name}</div>
+          <div class="muted" style="color:var(--muted);font-size:12px">
+            by ${item.author_name} ・ <span class="tag">${item.category}</span>
+          </div>
+        </div>
+      </div>
+      ${item.coords ? `<div style="margin:6px 0">座標：<span class="kbd">${item.coords}</span></div>` : ''}
+      ${item.description ? `<p style="margin:6px 0;color:var(--muted)">${item.description}</p>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        ${item.link_url ? `<a class="badge" href="${item.link_url}" target="_blank" rel="noopener">リンク</a>` : ''}
+      </div>
+    </div>`;
+  return el;
+}
+
+function render(){
+  const cat = filterCat.value;
+  const kw = q.value.trim().toLowerCase();
+  const filtered = DATA.filter(it => {
+    const okCat = !cat || it.category === cat;
+    const text = (it.name + ' ' + it.description + ' ' + it.coords).toLowerCase();
+    const okKw = !kw || text.includes(kw);
+    return okCat && okKw;
+  });
+  list.innerHTML = '';
+  if(filtered.length === 0){ empty.style.display='block'; return; }
+  empty.style.display='none';
+  filtered.forEach(it => list.appendChild(card(it)));
+}
+
+async function fetchMe(){
   try{
-    const r=await fetch('/auth/me',{credentials:'same-origin'});
-    if(!r.ok) return;
-    const j=await r.json();
-    if(j && j.logged_in){
-      ME=j;
-      $("#genSection").style.display='';
-      $("#meName").textContent=j.global_name||j.username||'(no name)';
-      $("#meAva").src = j.avatar ? `https://cdn.discordapp.com/avatars/${j.id}/${j.avatar}.png?size=64`
-                                  : 'https://cdn.discordapp.com/embed/avatars/0.png';
+    const res = await fetch('/api/me', {credentials:'include'});
+    if(!res.ok) throw 0;
+    const me = await res.json();
+    ME = me;
+    if(me.logged_in){
+      meBadge.textContent = `ようこそ ${me.display_name} さん`;
+      meBadge.classList.add('ok');
+      meBadge.style.borderColor = 'rgba(34,211,238,.5)';
+    }else{
+      meBadge.textContent = '未ログイン（ヘッダーのログインから）';
     }
   }catch{}
-})();
-
-/* ===== 一覧のロード/描画 ===== */
-let Facilities=[];
-async function loadFacilities(){
+}
+async function fetchFacilities(){
   try{
-    const r = await fetch('/Public/施設登録.json', {cache:'no-store', credentials:'same-origin'});
-    Facilities = r.ok ? await r.json() : [];
-  }catch{ Facilities=[]; }
-  renderList();
+    const res = await fetch('/api/facilities', {credentials:'include', cache:'no-store'});
+    if(!res.ok) throw 0;
+    DATA = await res.json();
+    render();
+  }catch{
+    DATA = [];
+    render();
+  }
 }
-function renderList(){
-  const q=$("#q").value.trim().toLowerCase();
-  const cat=$("#cat").value;
-  const tbl=$("#facTable"); tbl.innerHTML='';
-  let items=Facilities||[];
-  if(cat) items=items.filter(x=> (x.category||'')===cat);
-  if(q){ items=items.filter(x=>{
-    const hay = `${x.name||''}\n${x.description||''}\n${(x.tags||[]).join(' ')}`.toLowerCase(); return hay.includes(q);
-  });}
-  $("#emptyMsg").style.display = items.length? "none":"";
-  items.forEach((it, idx)=>{
-    const tr=document.createElement('tr'); const td=document.createElement('td'); tr.appendChild(td);
-    const row=document.createElement('div'); row.className='fac-row'; td.appendChild(row);
-
-    // thumb
-    const th=document.createElement('div'); th.className='fac-thumb';
-    const firstImg=(it.images&&it.images[0])||null;
-    if(firstImg){ const img=new Image(); img.src=firstImg; img.alt='サムネイル'; th.appendChild(img); }
-    else{ th.textContent='No Image'; }
-    row.appendChild(th);
-
-    // body
-    const body=document.createElement('div');
-    const head=document.createElement('div'); head.className='fac-head';
-    const left=document.createElement('div'); left.innerHTML=`<strong>${escapeHtml(it.name||'(名称未設定)')}</strong>`;
-    const right=document.createElement('div'); right.className='fac-tags';
-    (it.tags||[]).forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; right.appendChild(s); });
-    head.appendChild(left); head.appendChild(right);
-
-    const meta=document.createElement('div'); meta.className='fac-meta';
-    if(it.category) meta.appendChild(spanMeta('カテゴリ', it.category));
-    if(it.coord)    meta.appendChild(spanMeta('場所', it.coord));
-    if(it.link)     meta.appendChild(spanLink('リンク', it.link));
-    if(it.submitted_by){
-      const sb=document.createElement('div'); sb.className='usr';
-      const ava=document.createElement('img'); ava.src=it.submitted_by.avatar||'https://cdn.discordapp.com/embed/avatars/0.png'; ava.alt='';
-      const nm=document.createElement('span'); nm.textContent=it.submitted_by.global_name||it.submitted_by.username||it.submitted_by.id||'unknown';
-      sb.appendChild(ava); sb.appendChild(nm); meta.appendChild(sb);
-    }
-
-    const desc=document.createElement('div'); desc.className='fac-desc'; desc.textContent=it.description||'';
-
-    body.appendChild(head); body.appendChild(meta); body.appendChild(desc); row.appendChild(body);
-
-    // クリックで詳細（拡大）
-    td.style.cursor='pointer';
-    td.addEventListener('click', ()=> openLightbox(it));
-    tbl.appendChild(tr);
-  });
-}
-function spanMeta(label, text){
-  const s=document.createElement('span'); s.innerHTML=`<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(text)}`; return s;
-}
-function spanLink(label, url){
-  const s=document.createElement('a'); s.href=url; s.target="_blank"; s.rel="noopener noreferrer";
-  s.innerHTML=`<span class="muted">${escapeHtml(label)}:</span> ${escapeHtml(url)}`; return s;
-}
-$("#q").addEventListener('input', renderList);
-$("#cat").addEventListener('change', renderList);
-loadFacilities();
-
-/* ===== ライトボックス ===== */
-const lb=$("#lb"), lbImg=$("#lbImg"), lbCap=$("#lbCaption"), lbPrev=$("#lbPrev"), lbNext=$("#lbNext"), lbClose=$("#lbClose");
-let lbImages=[], lbIdx=0, lbTitle='';
-function openLightbox(item){
-  lbImages = Array.isArray(item.images) && item.images.length ? item.images : [];
-  lbIdx = 0; lbTitle = item.name || '';
-  updateLB();
-  lb.classList.add('open'); document.body.style.overflow='hidden';
-}
-function updateLB(){
-  if(!lbImages.length){ lbImg.src=''; lbCap.textContent= `${lbTitle}（画像なし）`; return; }
-  lbImg.src = lbImages[lbIdx];
-  lbCap.textContent = `${lbTitle} — ${lbIdx+1}/${lbImages.length}`;
-  // 近傍プリロード
-  const n = new Image(); n.src = lbImages[(lbIdx+1)%lbImages.length];
-  const p = new Image(); p.src = lbImages[(lbIdx-1+lbImages.length)%lbImages.length];
-}
-lbPrev.addEventListener('click', e=>{ e.stopPropagation(); if(lbImages.length){ lbIdx=(lbIdx-1+lbImages.length)%lbImages.length; updateLB(); }});
-lbNext.addEventListener('click', e=>{ e.stopPropagation(); if(lbImages.length){ lbIdx=(lbIdx+1)%lbImages.length; updateLB(); }});
-lbClose.addEventListener('click', closeLB);
-lb.addEventListener('click', e=>{ if(e.target===lb) closeLB(); });
-document.addEventListener('keydown', e=>{
-  if(!lb.classList.contains('open')) return;
-  if(e.key==='Escape') closeLB();
-  if(e.key==='ArrowLeft') lbPrev.click();
-  if(e.key==='ArrowRight') lbNext.click();
-});
-function closeLB(){ lb.classList.remove('open'); document.body.style.overflow=''; }
-
-/* ===== PR ジェネレーター ===== */
-function buildEntry(){
-  const name=$("#fName").value.trim();
-  const category=$("#fCat").value.trim();
-  const coord=$("#fCoord").value.trim();
-  const link=$("#fLink").value.trim();
-  const description=$("#fDesc").value.trim();
-  const tags=$("#fTags").value.split(",").map(s=>s.trim()).filter(Boolean);
-  const images=$("#fImages").value.split(",").map(s=>s.trim()).filter(Boolean);
-  if(!name){ alert("名称は必須です"); return null; }
-  const now=new Date().toISOString();
-  const entry={
-    name, category,
-    coord: coord || undefined,
-    link:  link  || undefined,
-    description,
-    tags,
-    images: images.length ? images : undefined,
-    submitted_by: ME ? {
-      id: ME.id, username: ME.username||null, global_name: ME.global_name||null,
-      avatar: ME.avatar ? `https://cdn.discordapp.com/avatars/${ME.id}/${ME.avatar}.png?size=64` : null
-    } : { id:null },
-    submitted_at: now
+async function submitFacility(){
+  const payload = {
+    name: inputs.name.value.trim(),
+    category: inputs.cat.value,
+    coords: inputs.coords.value.trim(),
+    description: inputs.desc.value.trim(),
+    image_url: inputs.img.value.trim(),
+    link_url: inputs.link.value.trim(),
   };
-  return entry;
+  if(!payload.name){ alert('名称は必須です'); return; }
+  try{
+    const res = await fetch('/api/facilities', {
+      method:'POST', credentials:'include',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(res.status === 401){ alert('投稿にはDiscordログインが必要です'); return; }
+    if(!res.ok){ const t=await res.text(); throw new Error(t||'投稿に失敗しました'); }
+    const created = await res.json();
+    DATA.unshift(created); // 先頭に追加
+    render();
+    closeModal();
+    Object.values(inputs).forEach(i => i.value='');
+  }catch(e){ alert(e.message||'投稿に失敗しました'); }
 }
-function prettyJson(o){ return JSON.stringify(o,null,2); }
-$("#btnPreview").addEventListener('click', ()=>{
-  const e=buildEntry(); if(!e) return;
-  const preview = prettyJson([e]) + "\n";
-  $("#preview").textContent = preview;
-  $("#btnPR").disabled = false;
-  $("#btnCopy").disabled = false;
-});
-$("#btnCopy").addEventListener('click', async()=>{
-  try{ await navigator.clipboard.writeText($("#preview").textContent); alert("コピーしました"); }
-  catch{ alert("コピーに失敗しました"); }
-});
-$("#btnPR").addEventListener('click', ()=>{
-  const e=buildEntry(); if(!e) return;
-  const value = prettyJson([e]) + "\n";
-  const path = encodeURIComponent(FACILITIES_JSON_PATH);
-  const url = `https://github.com/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/new/${encodeURIComponent(GITHUB_BRANCH)}/Public?filename=${path}&value=${encodeURIComponent(value)}&message=${encodeURIComponent('Add facility: '+e.name)}`;
-  window.open(url,"_blank","noopener,noreferrer");
-});
+
+// events
+$('#submit').onclick = submitFacility;
+filterCat.onchange = render;
+q.oninput = () => { render(); };
+
+// boot
+fetchMe().then(fetchFacilities);
 </script>
 </body>
 </html>
