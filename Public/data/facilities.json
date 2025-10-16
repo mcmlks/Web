@@ -445,7 +445,7 @@
     "author_avatar": "",
     "author_id": "",
     "author_name": "Aokiip",
-    "category": "施設",
+    "category": "設備",
     "coords": "X:348 Y:59 Z:-127",
     "created_at": 1760571917,
     "description": "",
@@ -455,6 +455,8 @@
     "name": "竹回収機",
     "pin": false,
     "pin_order": 0,
-    "tags": []
+    "tags": [
+      "設備"
+    ]
   }
 ]
