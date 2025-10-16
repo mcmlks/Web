@@ -10,7 +10,7 @@
     "id": "1760571891000",
     "image_url": "",
     "link_url": "",
-    "name": "本拠地",
+    "name": "本拠地（キャッ島）",
     "pin": true,
     "pin_order": 1,
     "tags": [
@@ -28,7 +28,7 @@
     "id": "1760571891000",
     "image_url": "",
     "link_url": "",
-    "name": "本拠地",
+    "name": "旧本拠地",
     "pin": true,
     "pin_order": 1,
     "tags": [
@@ -48,7 +48,7 @@
     "link_url": "",
     "name": "全自動高速かまど",
     "pin": false,
-    "pin_order": 2,
+    "pin_order": 0,
     "tags": [
       "設備"
     ]
@@ -115,8 +115,8 @@
     "image_url": "",
     "link_url": "",
     "name": "共有畑",
-    "pin": true,
-    "pin_order": 3,
+    "pin": false,
+    "pin_order": 0,
     "tags": [
       "設備"
     ]
@@ -133,8 +133,8 @@
     "image_url": "",
     "link_url": "",
     "name": "共有植林場",
-    "pin": true,
-    "pin_order": 4,
+    "pin": false,
+    "pin_order": 0,
     "tags": [
       "設備"
     ]
