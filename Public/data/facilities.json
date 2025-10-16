@@ -439,7 +439,9 @@
     "name": "64連かまど",
     "pin": false,
     "pin_order": 0,
-    "tags": []
+    "tags": [
+      "設備"
+    ]
   },
   {
     "author_avatar": "",
