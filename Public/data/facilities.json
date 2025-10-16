@@ -423,7 +423,9 @@
     "name": "カジノ [ドンベガス]",
     "pin": false,
     "pin_order": 0,
-    "tags": []
+    "tags": [
+      "施設"
+    ]
   },
   {
     "author_avatar": "",
