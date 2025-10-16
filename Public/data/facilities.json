@@ -47,7 +47,7 @@
     "image_url": "",
     "link_url": "",
     "name": "全自動高速かまど",
-    "pin": true,
+    "pin": false,
     "pin_order": 2,
     "tags": [
       "設備"
