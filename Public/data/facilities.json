@@ -89,7 +89,7 @@
     "author_avatar": "",
     "author_id": "",
     "author_name": "hokechan",
-    "category": "拠点",
+    "category": "設備",
     "coords": "X:468 Y:63 Z:-705",
     "created_at": 1760571896,
     "description": "",
@@ -100,7 +100,7 @@
     "pin": true,
     "pin_order": 3,
     "tags": [
-      "拠点"
+      "設備"
     ]
   },
   {
