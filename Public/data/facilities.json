@@ -39,6 +39,24 @@
     "author_avatar": "https://cdn.discordapp.com/avatars/642335102055088128/a_3ac22542056e1916bbb2f8b1dfb99afb.png?size=64",
     "author_id": "642335102055088128",
     "author_name": "neco",
+    "category": "拠点",
+    "coords": "X:446 Y:64 Z:-623",
+    "created_at": 1760571891,
+    "description": "",
+    "id": "1760571891000",
+    "image_url": "",
+    "link_url": "",
+    "name": "本拠地（キャッ島）",
+    "pin": true,
+    "pin_order": 1,
+    "tags": [
+      "拠点"
+    ]
+  },
+  {
+    "author_avatar": "https://cdn.discordapp.com/avatars/642335102055088128/a_3ac22542056e1916bbb2f8b1dfb99afb.png?size=64",
+    "author_id": "642335102055088128",
+    "author_name": "neco",
     "category": "設備",
     "coords": "X:21 Y:73 Z:35",
     "created_at": 1760571892,
