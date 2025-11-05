@@ -141,9 +141,7 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
       </button>
       <div class="badge">MCML OfficeAdmin</div>
 
-      <a class="sec" href="#roles" title="① 猫察事務のお仕事内容">
-        <span class="icon">①</span><span class="label">猫察事務のお仕事内容</span>
-      </a>
+      
       <a href="#ops" title="各種SNSの投稿">
         <span class="icon">⚑</span><span class="label">各種SNSの投稿</span>
       </a>
@@ -162,51 +160,6 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
       </div>
     </article>
 
-    <!-- ① 役職別の業務 -->
-    <article id="roles" class="card">
-      <div class="inner">
-        <span class="badge">① 役職別の業務</span>
-        <h2 class="h2" style="margin-top:6px">役割と責任</h2>
-        <div class="grid cols-2">
-          <div>
-            <h3 class="h3">マネージャー</h3>
-            <ul>
-              <li>Discordの垢BAN</li>
-              <li>マイクラの垢BAN</li>
-              <li>ロールバック</li>
-              <li>統合版のアップデート</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="h3">モデレーター</h3>
-            <ul>
-              <li>マイクラのkick</li>
-              <li>統合版のアップデート</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- ▼ 非表示にしたい場合のメモ（閉じタグは外に残す）
-        <h3 id="ops" class="h3" style="margin-top:14px">運営ルール / 連絡</h3>
-        <table class="table">
-          <tr><th>連絡窓口</th><td>緊急時は管理者Discordチャンネルへ。重大事案は @Owner をメンション。</td></tr>
-          <tr><th>インシデント</th><td>証跡を残す（スクショ・動画・/co lookup 結果）。復旧前に必ず現状記録。</td></tr>
-          <tr><th>変更管理</th><td>設定/サイトは GitHub で PR。コミットメッセージに変更理由・影響範囲を明記。</td></tr>
-          <tr><th>秘密情報</th><td>クライアントID/Secret は <code>config.json</code> 管理。HTML/JS には絶対埋め込まない。</td></tr>
-        </table>
-        ▲ コメント終了 ▲ -->
-      </div>
-    </article>
-
-    <!-- ② 管理コマンド基礎（※このセクションを空のまま公開。丸ごと隠すなら <article> から </article> までを一括コメントアウトしてください） -->
-    <article id="mc-commands" class="card">
-      <div class="inner">
-        <!-- ここにコンテンツを戻す場合は、cmdSearch と details 群を復活させてください -->
-      </div>
-    </article>
-
-
-
 
 
 
@@ -214,36 +167,15 @@ footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); marg
 
 
     
-    <!-- CoreProtect 実践 -->
+    <!-- 各種SNSの投稿 -->
     <article id="coreprotect" class="card">
       <div class="inner">
-        <span class="badge">CoreProtect</span>
-        <h2 class="h2" style="margin-top:6px">ロールバック、荒らし特定</h2>
-
-        <p class="muted">コマンドプレフィックス：/co</p>
-
-        <details open>
-          <summary>① 単体ブロックログ確認 <span class="tag">/co i</span></summary>
-          <div class="content">
-            <ul>
-              <pre><button class="copy" data-copy="/co i">コピー</button>/co i
-              <li>ブロックを壊すと壊したブロックのログ、設置すると設置しようとした場所のログが確認可能です。</li>
-              <li>もう一度同一コマンドを送信すると解除されます。</li>
-            </ul>
-          </div>
-        </details>
+        <span class="badge">SNSの投稿方法</span>
+        <h2 class="h2" style="margin-top:6px">Xの投稿者</h2>
 
         <details>
-          <summary>② 範囲検索 <span class="tag">/co l</span></summary>
+          <summary>𝕏の投稿方法<span class="tag">/co l</span></summary>
           <div class="content">
-            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block'>コピー</button>例：/co lookup u: neco t: 5h r: 30 a:+block
-短縮: /co l u:Steve t:24h r:20 a:+block +container</pre>
-            <table class="table">
-              <tr><th>u:</th><td>ユーザー名（複数可）。<code>-user</code>で除外。</td></tr>
-              <tr><th>t:</th><td>時間。例 <code>1h</code>, <code>24h</code>, <code>7d</code>.</td></tr>
-              <tr><th>r:</th><td>半径（現在位置中心）。未指定で広範囲検索。</td></tr>
-              <tr><th>a:</th><td>アクション。<code>+block</code>（設置/破壊）、<code>+container</code>（チェスト出し入れ）等。</td></tr>
-            </table>
             <p class="muted">
 a:block — ブロックの設置/破壊<br>
 a:+block — ブロックの設置<br>
