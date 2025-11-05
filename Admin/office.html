@@ -1,0 +1,472 @@
+<!-- /Admin/index.html -->
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCML 管理ハンドブック（Admin）</title>
+<meta name="description" content="MCML 管理者向けハンドブック。役職別の業務内容、運営ルール、Minecraft管理コマンド、CoreProtectの使い方など。">
+
+<!-- ダーク固定（端末の自動ダーク化を抑止） -->
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b1020">
+
+<style>
+/* ================= Theme / Layout ================= */
+:root{
+  --bg:#0b1020; --panel:#11182b; --panel2:#0d1527; --line:#19243e;
+  --text:#e5e7eb; --muted:#9aa4b2; --brand:#22d3ee; --ok:#34d399; --warn:#fde047; --danger:#ef4444;
+  --radius:16px; --shadow:0 10px 28px rgba(0,0,0,.35);
+  --max:1180px; --side:280px; --side-min:56px;
+  --elev-1:rgba(255,255,255,.04); --elev-2:rgba(255,255,255,.06); --elev-3:rgba(255,255,255,.08);
+}
+html{color-scheme:dark; background-color:#0b1020; background-color:var(--bg)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font:15px/1.75 system-ui,-apple-system,Segoe UI,Inter,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1000px 520px at 10% -10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(1000px 520px at 90% -20%, rgba(52,211,153,.08), transparent 60%),
+    var(--bg);
+}
+
+/* ===== Header（外部 Base.html を使う） ===== */
+header{
+  position:sticky; top:0; z-index:50;
+  backdrop-filter:saturate(120%) blur(10px);
+  background:rgba(8,12,24,.72);
+  border-bottom:1px solid var(--line);
+}
+@supports not (backdrop-filter: blur(1px)){
+  header{backdrop-filter:none; background:rgba(8,12,24,.95)}
+}
+
+/* ===== Page ===== */
+.wrap{max-width:var(--max); margin:0 auto; display:grid;
+      grid-template-columns: var(--side) 1fr; gap:18px; padding:22px}
+body.toc-collapsed .wrap{grid-template-columns: var(--side-min) 1fr}
+@media (max-width:980px){
+  .wrap{grid-template-columns:1fr}
+  body.toc-collapsed .wrap{grid-template-columns:1fr}
+}
+
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow)
+}
+.card>.inner{padding:18px 20px}
+.h1{font-size:clamp(24px,3.6vw,34px); font-weight:900; margin:0 0 6px}
+.lead{color:var(--muted); margin:6px 0 0}
+.h2{font-size:clamp(18px,2.6vw,24px); margin:0 0 8px; font-weight:900}
+.h3{font-size:16px; margin:0 0 6px; font-weight:800}
+.badge{
+  display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line); background:var(--elev-1);
+  font-weight:700; font-size:12px; color:var(--muted)
+}
+.grid{display:grid; gap:12px}
+.cols-2{grid-template-columns:1fr 1fr} .cols-3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:900px){ .cols-2,.cols-3{grid-template-columns:1fr} }
+
+/* ===== Sidenav（最小化対応） ===== */
+nav.sidenav{position:sticky; top:70px; align-self:start; overflow:hidden}
+nav.sidenav .inner{position:sticky; top:70px}
+nav.sidenav a{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:10px; white-space:nowrap
+}
+nav.sidenav a:hover{background:var(--elev-2)}
+nav.sidenav .sec{font-weight:800; margin-top:6px}
+nav.sidenav .icon{width:22px; text-align:center; opacity:.9; font-weight:800}
+nav.sidenav .label{flex:1}
+
+.toc-toggle{
+  width:100%; margin-bottom:8px;
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line); background:var(--elev-2); font-weight:800;
+}
+.toc-toggle .icon{width:22px; text-align:center}
+
+body.toc-collapsed nav.sidenav{width:var(--side-min)}
+body.toc-collapsed nav.sidenav .label{display:none}
+body.toc-collapsed nav.sidenav .badge{justify-content:center}
+body.toc-collapsed .toc-toggle .text{display:none}
+
+/* モバイル時は通常のブロック表示。最小化ボタンはそのまま機能 */
+@media (max-width:980px){
+  nav.sidenav{position:static}
+  nav.sidenav .inner{position:static}
+}
+
+/* ===== Details ===== */
+details{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--elev-1)}
+summary{cursor:pointer; padding:10px 12px; font-weight:800; background:var(--elev-2)}
+details .content{padding:12px 14px}
+summary .tag{
+  font:700 11px/1 ui-sans-serif; padding:6px 8px; border-radius:999px;
+  border:1px solid var(--line); margin-left:8px; color:var(--muted); background:var(--elev-1)
+}
+
+/* ===== Tables ===== */
+.table{width:100%; border-collapse:collapse; font-size:14px}
+.table th,.table td{border-top:1px dashed var(--line); padding:8px 10px; vertical-align:top}
+.table th{white-space:nowrap; color:var(--muted); text-align:left}
+
+/* ===== Code blocks ===== */
+pre{margin:8px 0; padding:12px 14px; background:#0c1426; border:1px solid #14223f; border-radius:10px; overflow:auto}
+.copy{float:right; font-size:12px; padding:4px 8px; border-radius:8px; border:1px solid var(--line); background:var(--elev-2); cursor:pointer}
+.hl{color:#93c5fd}
+
+/* ===== Search ===== */
+#cmdSearch{width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--elev-1); color:var(--text)}
+
+/* ===== Footer ===== */
+footer{padding:24px; color:var(--muted); border-top:1px dashed var(--line); margin-top:18px}
+</style>
+</head>
+<body>
+
+<!-- 共通ヘッダー -->
+<!--#include "/Public/Base.html" -->
+
+<main class="wrap">
+  <!-- ===== Side Nav（目次） ===== -->
+  <nav class="sidenav card" aria-label="目次">
+    <div class="inner">
+      <button id="tocToggle" class="toc-toggle" type="button" aria-expanded="true">
+        <span class="icon">≡</span><span class="text">目次を最小化</span>
+      </button>
+      <div class="badge">MCML OfficeAdmin</div>
+
+      <a class="sec" href="#roles" title="① 猫察事務のお仕事内容">
+        <span class="icon">①</span><span class="label">猫察事務のお仕事内容</span>
+      </a>
+      <a href="#ops" title="各種SNSの投稿">
+        <span class="icon">⚑</span><span class="label">各種SNSの投稿</span>
+      </a>
+      <a class="sec" href="#mc-commands" title="② 投げ銭得点の付与">
+        <span class="icon">②</span><span class="label">投げ銭得点の付与</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ===== Content ===== -->
+  <section class="content">
+    <article class="card">
+      <div class="inner">
+        <h1 class="h1">管理ハンドブック</h1>
+        <p class="lead">このページは<strong>管理者アカウントのみ</strong>に公開されています<strong></strong></p>
+      </div>
+    </article>
+
+    <!-- ① 役職別の業務 -->
+    <article id="roles" class="card">
+      <div class="inner">
+        <span class="badge">① 役職別の業務</span>
+        <h2 class="h2" style="margin-top:6px">役割と責任</h2>
+        <div class="grid cols-2">
+          <div>
+            <h3 class="h3">マネージャー</h3>
+            <ul>
+              <li>Discordの垢BAN</li>
+              <li>マイクラの垢BAN</li>
+              <li>ロールバック</li>
+              <li>統合版のアップデート</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="h3">モデレーター</h3>
+            <ul>
+              <li>マイクラのkick</li>
+              <li>統合版のアップデート</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ▼ 非表示にしたい場合のメモ（閉じタグは外に残す）
+        <h3 id="ops" class="h3" style="margin-top:14px">運営ルール / 連絡</h3>
+        <table class="table">
+          <tr><th>連絡窓口</th><td>緊急時は管理者Discordチャンネルへ。重大事案は @Owner をメンション。</td></tr>
+          <tr><th>インシデント</th><td>証跡を残す（スクショ・動画・/co lookup 結果）。復旧前に必ず現状記録。</td></tr>
+          <tr><th>変更管理</th><td>設定/サイトは GitHub で PR。コミットメッセージに変更理由・影響範囲を明記。</td></tr>
+          <tr><th>秘密情報</th><td>クライアントID/Secret は <code>config.json</code> 管理。HTML/JS には絶対埋め込まない。</td></tr>
+        </table>
+        ▲ コメント終了 ▲ -->
+      </div>
+    </article>
+
+    <!-- ② 管理コマンド基礎（※このセクションを空のまま公開。丸ごと隠すなら <article> から </article> までを一括コメントアウトしてください） -->
+    <article id="mc-commands" class="card">
+      <div class="inner">
+        <!-- ここにコンテンツを戻す場合は、cmdSearch と details 群を復活させてください -->
+      </div>
+    </article>
+
+
+
+
+
+
+
+
+
+    
+    <!-- CoreProtect 実践 -->
+    <article id="coreprotect" class="card">
+      <div class="inner">
+        <span class="badge">CoreProtect</span>
+        <h2 class="h2" style="margin-top:6px">ロールバック、荒らし特定</h2>
+
+        <p class="muted">コマンドプレフィックス：/co</p>
+
+        <details open>
+          <summary>① 単体ブロックログ確認 <span class="tag">/co i</span></summary>
+          <div class="content">
+            <ul>
+              <pre><button class="copy" data-copy="/co i">コピー</button>/co i
+              <li>ブロックを壊すと壊したブロックのログ、設置すると設置しようとした場所のログが確認可能です。</li>
+              <li>もう一度同一コマンドを送信すると解除されます。</li>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>② 範囲検索 <span class="tag">/co l</span></summary>
+          <div class="content">
+            <pre><button class="copy" data-copy='/co l u:Player t:24h r:20 a:+block'>コピー</button>例：/co lookup u: neco t: 5h r: 30 a:+block
+短縮: /co l u:Steve t:24h r:20 a:+block +container</pre>
+            <table class="table">
+              <tr><th>u:</th><td>ユーザー名（複数可）。<code>-user</code>で除外。</td></tr>
+              <tr><th>t:</th><td>時間。例 <code>1h</code>, <code>24h</code>, <code>7d</code>.</td></tr>
+              <tr><th>r:</th><td>半径（現在位置中心）。未指定で広範囲検索。</td></tr>
+              <tr><th>a:</th><td>アクション。<code>+block</code>（設置/破壊）、<code>+container</code>（チェスト出し入れ）等。</td></tr>
+            </table>
+            <p class="muted">
+a:block — ブロックの設置/破壊<br>
+a:+block — ブロックの設置<br>
+a:-block — ブロックの破壊<br>
+a:click — クリック（ドアの開閉やレバーなど）<br>
+a:container — チェストなどからの出し入れ<br>
+a:+container — 収納 / a:-container — 取り出し<br>
+a:kill — mob/動物の殺害<br>
+a:chat, a:command, a:session — 管理者向け<br>
+a:username — ユーザーネームの変更
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>③ ロールバック / 復元 <span class="tag">/co rb, /co rs</span></summary>
+          <div class="content">
+            <pre><button class="copy" data-copy="/co rollback u:Steve t:1h r:15">コピー</button>/co rollback u:Steve t:1h r:15
+（取り消し）/co restore u:&lt;player&gt; t:&lt;期間&gt; r:&lt;半径&gt;</pre>
+            <ul>
+            <p class="muted">
+a:block — ブロックの設置/破壊<br>
+a:+block — ブロックの設置<br>
+a:-block — ブロックの破壊<br>
+a:click — クリック（ドアの開閉やレバーなど）<br>
+a:container — チェストなどからの出し入れ<br>
+a:+container — 収納 / a:-container — 取り出し<br>
+a:kill — mob/動物の殺害<br>
+a:chat, a:command, a:session — 管理者向け<br>
+a:username — ユーザーネームの変更
+            </p>
+            </ul>
+          </div>
+        </details>
+
+        <details>
+          <summary>失敗した時は？</summary>
+          <div class="content">
+            <ul>
+              <li><b>焦らないでください。次のコマンドを使用して操作をキャンセルしましょう（1つしか戻れません）</b></li>
+              <li><pre><button class="copy" data-copy="/co undo">コピー</button>/co undo</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </article>
+
+
+
+
+
+
+
+<!-- BANコマンド -->
+<article id="ban" class="card">
+  <div class="inner">
+    <span class="badge">モデレート</span>
+    <h2 class="h2" style="margin-top:6px">BANやKickなど</h2>
+
+    <details open>
+      <summary>① 基本ルール（統合版 / Java版）</summary>
+      <div class="content">
+        <ul>
+          <li><b>まず必ず、統合版かJava版かを確認</b>してからコマンドを書いてください。</li>
+          <li>Java版はゲームタグ（ユーザー名）をそのまま記載します。</li>
+          <li>統合版（Bedrock）は<b>ゲームタグの先頭に「.（ドット）」</b>を付けます。</li>
+        </ul>
+        <pre>
+例：
+Java版 … <code>gametag123</code>
+統合版 … <code>.gametag123</code>
+        </pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>② ユーザーをBANする <span class="tag">/ban &lt;ゲームタグ&gt; @テンプレ</span></summary>
+      <div class="content">
+        <ul>
+          <li>テンプレ指定で理由を明確化します（下の「テンプレ一覧」を参照）。</li>
+          <li><code>/ban</code>のみ送信すると、使い方やテンプレ一覧が表示されます。</li>
+        </ul>
+        <pre><button class="copy" data-copy="/ban &lt;ゲームタグ&gt; @troll">コピー</button>/ban &lt;ゲームタグ&gt; @troll</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>③ テンプレの使用を強制（@テンプレ）</summary>
+      <div class="content">
+        <ul>
+          <li><code>@penalty</code>  … ユーザー操作待ち</li>
+          <li><code>@troll</code>    … 大規模な荒らし（<b>永久BAN</b>）</li>
+          <li><code>@cheat</code>    … チートツールの悪用（<b>永久BAN</b>）</li>
+          <li><code>@check</code>    … 怪しい人を一時的に止める</li>
+          <li><code>@many</code>     … 違反行為の繰り返し</li>
+          <li><code>@manytheft</code> … 窃盗行為の繰り返し</li>
+        </ul>
+        <pre><button class="copy" data-copy="/ban &lt;ゲームタグ&gt; @many">コピー</button>/ban &lt;ゲームタグ&gt; @many</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary>④ 一時BAN（TEMPBAN） <span class="tag">/tempban &lt;ゲームタグ&gt; &lt;時間&gt; @ptime</span></summary>
+      <div class="content">
+        <pre><button class="copy" data-copy="/tempban &lt;ゲームタグ&gt; 1h @ptime">コピー</button>/tempban &lt;ゲームタグ&gt; 1h @ptime</pre>
+        <table class="table">
+          <tr><th>指定</th><th>意味</th></tr>
+          <tr><td><code>1s</code></td><td>1秒</td></tr>
+          <tr><td><code>1m</code></td><td>1分</td></tr>
+          <tr><td><code>1h</code></td><td>1時間</td></tr>
+          <tr><td><code>1d</code></td><td>1日</td></tr>
+        </table>
+        <p class="muted">※<code>@ptime</code> は処罰時間の記録・可視化に使用します。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>ヘルプ /ban の使い方を確認</summary>
+      <div class="content">
+        <p><code>/ban</code> だけを送信すると、コマンドの使い方やテンプレート一覧がチャットに表示されます。</p>
+        <pre><button class="copy" data-copy="/ban">コピー</button>/ban</pre>
+      </div>
+    </details>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+
+
+
+<!-- GeyserUpdate -->
+<article id="geyserupdate" class="card">
+  <div class="inner">
+    <span class="badge">Geyser</span>
+    <h2 class="h2" style="margin-top:6px">統合版のアップデート</h2>
+
+    <p class="muted">コマンドプレフィックス：<code>/geyserupdate</code></p>
+
+    <details open>
+      <summary>① 統合版をアップデートする <span class="tag">/geyserupdate</span></summary>
+      <div class="content">
+        <pre><button class="copy" data-copy="/geyserupdate">コピー</button>/geyserupdate</pre>
+        <ul>
+          <li>統合版のサーバーをアップデートします</li>
+          <li>統合版のみ全員切断されるため注意してください</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>② 実行に失敗した場合</summary>
+      <div class="content">
+        <ul>
+          <li>管理人にお問い合わせください</li>
+        </ul>
+      </div>
+    </details>
+
+  </div>
+</article>
+
+
+
+
+
+
+
+
+    
+
+<script>
+/* 年表示 */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* 目次最小化：bodyにフラグを付けてレイアウトを切替。状態は保存 */
+const tocToggle = document.getElementById('tocToggle');
+const LS_KEY = 'mcml.tocCollapsed';
+function applyTocState(collapsed){
+  document.body.classList.toggle('toc-collapsed', collapsed);
+  tocToggle.setAttribute('aria-expanded', String(!collapsed));
+  tocToggle.querySelector('.text').textContent = collapsed ? '目次を展開' : '目次を最小化';
+}
+applyTocState(localStorage.getItem(LS_KEY)==='1');
+tocToggle.addEventListener('click', ()=>{
+  const next = !document.body.classList.contains('toc-collapsed');
+  applyTocState(next);
+  localStorage.setItem(LS_KEY, next ? '1' : '0');
+});
+
+/* コマンド検索フィルタ（要素が存在する時だけ有効化） */
+const search = document.getElementById('cmdSearch');
+if (search){
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    document.querySelectorAll('#mc-commands details').forEach(d => {
+      if (!q){
+        d.style.display='';
+        d.open = d.hasAttribute('open');
+        return;
+      }
+      const txt = d.textContent.toLowerCase();
+      const hit = txt.includes(q);
+      d.style.display = hit ? '' : 'none';
+      d.open = hit;
+    });
+  });
+}
+
+/* コードコピー */
+document.addEventListener('click', e=>{
+  const btn = e.target.closest('.copy'); if(!btn) return;
+  const text = btn.dataset.copy || btn.parentElement.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = 'コピー済み ✔';
+    setTimeout(()=> btn.textContent='コピー', 1200);
+  });
+});
+</script>
+</body>
+</html>
