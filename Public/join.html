@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCML | マイクラ PlayStation 参加方法</title>
+  <meta name="description" content="MCMLのマインクラフト PlayStation版 参加方法ガイド。ネットワーク設定からサーバー接続まで手順を解説します。" />
+  <meta name="theme-color" content="#1f2937" />
+
+  <style>
+    /* ===== Reset ===== */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body,h1,h2,h3,h4,p,ul,ol,li,figure,figcaption,blockquote,dl,dd{margin:0;padding:0}
+    ul{list-style:none}
+    img{max-width:100%;display:block}
+    a{color:inherit;text-decoration:none}
+
+    /* ===== Theme（本体に合わせた色） ===== */
+    :root{
+      --bg:#0b1020;
+      --panel:#121b36;
+      --panel-2:#0e152b;
+      --text:#e5e7eb;
+      --muted:#9aa4b2;
+      --brand:#22d3ee;
+      --brand-2:#34d399;
+      --radius:16px;
+      --gap:16px;
+      --max:1100px;
+    }
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", Helvetica, Arial, sans-serif;
+      background:#0b1020;
+      color:var(--text);
+      line-height:1.7;
+    }
+    .container{
+      width:min(var(--max), 92vw);
+      margin-inline:auto;
+    }
+
+    /* ===== Page layout ===== */
+    main{
+      padding:32px 0 40px;
+    }
+    .page-head{
+      margin-bottom:24px;
+    }
+    .page-head h1{
+      font-size:clamp(22px, 4vw, 30px);
+      margin-bottom:6px;
+    }
+    .page-head p{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    section{
+      padding:20px 0;
+      border-top:1px solid rgba(148,163,184,.3);
+      margin-top:8px;
+    }
+    section:first-of-type{
+      border-top:none;
+      padding-top:0;
+      margin-top:0;
+    }
+    section h2{
+      font-size:1.1rem;
+      margin-bottom:8px;
+    }
+
+    .card{
+      background:var(--panel);
+      border-radius:var(--radius);
+      border:1px solid rgba(148,163,184,.35);
+      padding:14px 16px;
+      font-size:.95rem;
+    }
+
+    .toc-title{
+      font-weight:600;
+      margin-bottom:6px;
+      font-size:.95rem;
+    }
+    .toc-list{
+      list-style:decimal;
+      padding-left:18px;
+      display:grid;
+      gap:4px;
+      font-size:.92rem;
+    }
+    .toc-list a{
+      text-decoration:none;
+      color:var(--brand);
+    }
+    .toc-list a:hover{
+      text-decoration:underline;
+    }
+
+    .muted{color:var(--muted);}
+    .note{
+      border-left:3px solid rgba(148,163,184,.95);
+      padding:8px 10px;
+      margin-top:10px;
+      background:var(--panel-2);
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    ol.steps{
+      padding-left:20px;
+      display:grid;
+      gap:6px;
+      font-size:.95rem;
+    }
+    ol.steps > li{
+      margin-bottom:2px;
+    }
+
+    ul.sublist{
+      list-style:disc;
+      padding-left:18px;
+      margin-top:4px;
+    }
+
+    .kbd{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:.85rem;
+      background:rgba(15,23,42,1);
+      padding:2px 6px;
+      border-radius:6px;
+      border:1px solid rgba(148,163,184,.6);
+    }
+
+    .dns-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:640px){
+      .dns-grid{grid-template-columns:1fr;}
+    }
+    .dns-item{
+      background:var(--panel-2);
+      border-radius:12px;
+      border:1px solid rgba(148,163,184,.4);
+      padding:10px 12px;
+      font-size:.9rem;
+    }
+    .dns-label{
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--muted);
+      margin-bottom:4px;
+    }
+    .dns-value{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:4px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.6);
+      font-size:.78rem;
+      color:var(--muted);
+      cursor:pointer;
+    }
+
+    .btn-copy{
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.7);
+      background:transparent;
+      color:var(--text);
+      padding:3px 8px;
+      font-size:.75rem;
+      cursor:pointer;
+    }
+    .btn-copy:hover{
+      background:rgba(15,23,42,.8);
+    }
+
+    footer{
+      padding:16px 0 30px;
+      border-top:1px solid rgba(148,163,184,.35);
+      margin-top:24px;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <!-- 共通ヘッダー（MCML本体と同じもの） -->
+  <!--#include "/Public/Base.html" -->
+
+  <main>
+    <div class="container">
+      <!-- ページタイトル -->
+      <header class="page-head" id="top">
+        <h1>マイクラ PlayStation 参加方法</h1>
+        <p>PS4 / PS5 の Minecraft からサーバーに参加するための設定手順です。</p>
+      </header>
+
+      <!-- 目次 -->
+      <div class="card" aria-label="このページの目次">
+        <div class="toc-title">目次</div>
+        <ol class="toc-list">
+          <li><a href="#ps-network">PlayStation のネットワーク設定</a></li>
+          <li><a href="#dns">DNS 設定の変更</a></li>
+          <li><a href="#minecraft">マインクラフトから接続</a></li>
+        </ol>
+      </div>
+
+      <!-- ① ネットワーク設定 -->
+      <section id="ps-network">
+        <h2>① PlayStation のネットワーク設定</h2>
+        <p class="muted">まずは PS 本体のネットワーク設定を開き、インターネット接続の設定を「カスタム」で進めます。</p>
+
+        <ol class="steps" style="margin-top:8px;">
+          <li>
+            ホーム画面から <strong>「設定」</strong> を開きます。
+          </li>
+          <li>
+            設定メニューから <strong>「ネットワーク」</strong> を選択します。
+          </li>
+          <li>
+            <strong>「インターネット接続を設定する」</strong> を開きます。
+          </li>
+          <li>
+            接続方法の選択画面で <strong>「カスタム」</strong> を選びます。
+          </li>
+          <li>
+            それ以外の項目（IPアドレス設定など）は、基本的に
+            <strong>「自動」や「推奨」など上の選択肢</strong> を選んで問題ありません。
+          </li>
+        </ol>
+
+        <div class="note">
+          お使いの PS4 / PS5 のバージョンによって、画面の表示やボタン名が少し異なる場合がありますが、<br>
+          「設定」→「ネットワーク」→「インターネット接続を設定する」→「カスタム」という流れは共通です。
+        </div>
+      </section>
+
+      <!-- ② DNS設定 -->
+      <section id="dns">
+        <h2>② DNS 設定を変更する</h2>
+        <p class="muted">DNS 設定だけ「手動」に切り替え、指定された数値を入力します。</p>
+
+        <ol class="steps" style="margin-top:8px;">
+          <li>
+            設定項目の中の <strong>「DNS 設定」</strong> を <strong>「手動」</strong> にします。
+          </li>
+          <li>
+            表示された DNS の値を、次のように入力します。
+          </li>
+        </ol>
+
+        <div class="dns-grid">
+          <div class="dns-item">
+            <div class="dns-label">プライマリー DNS</div>
+            <div class="dns-value">
+              <span class="kbd" data-copy="45.55.68.52">45.55.68.52</span>
+              <button class="btn-copy" type="button" data-copy="45.55.68.52">コピー</button>
+            </div>
+            <p class="muted">プライマリー DNS は必ずこの値を入力してください。</p>
+          </div>
+
+          <div class="dns-item">
+            <div class="dns-label">セカンダリー DNS</div>
+            <div class="dns-value">
+              <span class="kbd" data-copy="8.8.8.8">8.8.8.8</span>
+              <button class="btn-copy" type="button" data-copy="8.8.8.8">コピー</button>
+            </div>
+            <p class="muted">以下の値でも代用できます：</p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+              <span class="chip" data-copy="1.1.1.1">1.1.1.1</span>
+              <span class="chip" data-copy="9.9.9.9">9.9.9.9</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          設定画面のレイアウトが違う場合は、PS 本体のヘルプや公式ガイドもあわせて確認してください。<br>
+          うまくいかないときは、いったん DNS をもとの設定（自動など）に戻してやり直すと解決することがあります。
+        </div>
+      </section>
+
+      <!-- ③ マイクラから接続 -->
+      <section id="minecraft">
+        <h2>③ マインクラフトからサーバーに接続</h2>
+        <p class="muted">DNS 設定が完了したら、Minecraft を起動してサーバーに参加します。</p>
+
+        <ol class="steps" style="margin-top:8px;">
+          <li>
+            PlayStation で <strong>マインクラフト</strong> を起動します。
+          </li>
+          <li>
+            タイトル画面から <strong>いずれかの特集サーバー（Featured Server）</strong> を選んで開きます。<br>
+            （どのサーバーを選んでも構いません）
+          </li>
+          <li>
+            サーバー選択画面で <strong>「connect server」</strong> を選択します。
+          </li>
+          <li>
+            表示された入力欄に、次の情報を入力します。
+            <ul class="sublist">
+              <li>上段：<strong>サーバーアドレス</strong>（IPアドレス / ドメイン）</li>
+              <li>中段：<strong>ポート番号</strong></li>
+              <li>下段：<strong>自分のデバイスに表示される名前</strong></li>
+            </ul>
+          </li>
+          <li>
+            <strong>「Add to server list」</strong> にチェックを入れます。
+          </li>
+          <li>
+            一番下の <strong>「送信」ボタン</strong> を押すと、サーバーがリストに追加されます。
+          </li>
+          <li>
+            サーバー一覧から追加したサーバーを選ぶと、参加できます。
+          </li>
+        </ol>
+
+        <div class="note">
+          <ul class="sublist">
+            <li>最初から入力されている数字は、そのまま上書きして構いません。</li>
+            <li>名前欄では <strong>漢字・ひらがな・カタカナは使用できません</strong>。英数字のみ使用できます。</li>
+          </ul>
+          接続できない場合は、DNS 設定が正しいか・ネットワークが安定しているか確認し、<br>
+          本体やゲームを再起動してから再度お試しください。
+        </div>
+      </section>
+
+      <footer>
+        <p>このページの内容に誤りや追記が必要な場合は、MCML 管理者までお知らせください。</p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    // 目次などの #リンクをなめらかスクロールにする
+    document.addEventListener('click', (e)=>{
+      const a = e.target.closest('a[href^="#"]');
+      if(!a) return;
+      const id = a.getAttribute('href').slice(1);
+      const target = id ? document.getElementById(id) : null;
+      if(!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top, behavior:"smooth" });
+    });
+
+    // DNS 値のコピー（kbd, ボタン, チップの data-copy 属性を利用）
+    function copyText(text){
+      if(!navigator.clipboard){
+        alert(text + "\n\nこの文字列をコピーしてください。");
+        return;
+      }
+      navigator.clipboard.writeText(text).catch(()=>{
+        alert(text + "\n\nこの文字列をコピーしてください。");
+      });
+    }
+
+    document.addEventListener('click',(e)=>{
+      const copyEl = e.target.closest('[data-copy]');
+      if(!copyEl) return;
+      const val = copyEl.getAttribute('data-copy');
+      if(!val) return;
+      e.preventDefault();
+      copyText(val);
+    });
+  </script>
+</body>
+</html>
