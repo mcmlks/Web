@@ -1,0 +1,349 @@
+{
+  "bootstrapInfo": {
+    "listeners": [
+      {
+        "ip": "0.0.0.0",
+        "port": 22222
+      }
+    ],
+    "onlineMode": true,
+    "platform": {
+      "platformName": "BungeeCord"
+    },
+    "platformName": "BungeeCord",
+    "platformVersion": "git:BungeeCord-Bootstrap:1.21-R0.5-SNAPSHOT:0bc4587:2011",
+    "plugins": [
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.reconnect.yaml.PluginYaml",
+        "name": "reconnect_yaml",
+        "version": "git:reconnect_yaml:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      },
+      {
+        "authors": [
+          "Luck"
+        ],
+        "enabled": true,
+        "main": "me.lucko.luckperms.bungee.loader.BungeeLoaderPlugin",
+        "name": "LuckPerms",
+        "version": "5.4.134"
+      },
+      {
+        "authors": [
+          "nova27"
+        ],
+        "enabled": true,
+        "main": "work.novablog.mcplugin.discordconnect.DiscordConnect",
+        "name": "DiscordConnect",
+        "version": "2.5"
+      },
+      {
+        "authors": [
+          "iSnakeBuzz_ & gatogamer_"
+        ],
+        "enabled": true,
+        "main": "rip.snake.antivpn.bungee.ServerAntiVPN",
+        "name": "ServerAntiVPN",
+        "version": "1.5.3-BETA-b1"
+      },
+      {
+        "authors": [
+          "GeyserMC"
+        ],
+        "enabled": true,
+        "main": "org.geysermc.geyser.platform.bungeecord.GeyserBungeePlugin",
+        "name": "Geyser-BungeeCord",
+        "version": "2.9.2-SNAPSHOT"
+      },
+      {
+        "authors": [
+          "KejonaMC"
+        ],
+        "enabled": true,
+        "main": "com.projectg.geyserupdater.bungee.BungeeUpdater",
+        "name": "GeyserUpdater",
+        "version": "1.6.4"
+      },
+      {
+        "authors": [
+          "Luck"
+        ],
+        "enabled": true,
+        "main": "me.lucko.bungeeguard.bungee.BungeeGuardProxyPlugin",
+        "name": "BungeeGuard",
+        "version": "1.3-SNAPSHOT"
+      },
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.cmd.list.PluginList",
+        "name": "cmd_list",
+        "version": "git:cmd_list:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      },
+      {
+        "authors": [
+          "Sheidy"
+        ],
+        "enabled": true,
+        "main": "org.spicord.bungee.SpicordBungee",
+        "name": "Spicord",
+        "version": "5.0.1"
+      },
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.cmd.find.PluginFind",
+        "name": "cmd_find",
+        "version": "git:cmd_find:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      },
+      {
+        "authors": [
+          "Leoko"
+        ],
+        "enabled": true,
+        "main": "me.leoko.advancedban.bungee.BungeeMain",
+        "name": "AdvancedBan",
+        "version": "2.3.0"
+      },
+      {
+        "authors": [
+          null
+        ],
+        "enabled": true,
+        "main": "bungeecord.BungeeUpdate",
+        "name": "AutoUpdatePlugins",
+        "version": "12.1.3"
+      },
+      {
+        "authors": [
+          "rtm516"
+        ],
+        "enabled": true,
+        "main": "com.rtm516.BungeeWeb.BungeeWeb",
+        "name": "BungeeWeb",
+        "version": "0.0.1-SNAPSHOT"
+      },
+      {
+        "authors": [
+          "PmzHero"
+        ],
+        "enabled": true,
+        "main": "ir.pmzhero.banswebhook.bungeecord.BansWebhookBungee",
+        "name": "BansWebhook",
+        "version": "2.1.1"
+      },
+      {
+        "authors": [
+          "Vik1395"
+        ],
+        "enabled": true,
+        "main": "me.vik1395.BungeeKick.BungeeKick",
+        "name": "BungeeKick",
+        "version": "1.2"
+      },
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.cmd.server.PluginServer",
+        "name": "cmd_server",
+        "version": "git:cmd_server:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      },
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.cmd.alert.PluginAlert",
+        "name": "cmd_alert",
+        "version": "git:cmd_alert:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      },
+      {
+        "authors": [
+          "GeyserMC"
+        ],
+        "enabled": true,
+        "main": "org.geysermc.floodgate.BungeePlugin",
+        "name": "floodgate",
+        "version": "2.2.5-SNAPSHOT (b121-55a85ec)"
+      },
+      {
+        "authors": [
+          "SpigotMC"
+        ],
+        "enabled": true,
+        "main": "net.md_5.bungee.module.cmd.send.PluginSend",
+        "name": "cmd_send",
+        "version": "git:cmd_send:1.21-R0.5-SNAPSHOT:0bc4587:2011"
+      }
+    ]
+  },
+  "config": {
+    "advanced": {
+      "add-team-suggestions": true,
+      "bedrock": {
+        "broadcast-port": 22222,
+        "compression-level": 9,
+        "haproxy-protocol-whitelisted-ips": [],
+        "mtu": 1400,
+        "use-haproxy-protocol": false,
+        "validate-bedrock-login": true
+      },
+      "cache-images": 0,
+      "floodgate-key-file": "key.pem",
+      "java": {
+        "disable-compression": true,
+        "use-direct-connection": true,
+        "use-haproxy-protocol": false
+      },
+      "resource-pack-urls": [],
+      "scoreboard-packet-threshold": 20
+    },
+    "bedrock": {
+      "address": "0.0.0.0",
+      "clone-remote-port": true,
+      "port": 22222
+    },
+    "config-version": 5,
+    "debug-mode": false,
+    "default-locale": "system",
+    "enable-metrics": true,
+    "gameplay": {
+      "command-suggestions": true,
+      "custom-skull-render-distance": 32,
+      "disable-bedrock-scaffolding": false,
+      "emotes-enabled": true,
+      "enable-custom-content": true,
+      "enable-integrated-pack": true,
+      "force-resource-packs": true,
+      "forward-player-ping": false,
+      "max-visible-custom-skulls": 128,
+      "nether-roof-workaround": true,
+      "server-name": "MCML",
+      "show-cooldown": "TITLE",
+      "show-coordinates": true,
+      "unusable-space-block": "minecraft:barrier",
+      "xbox-achievements-enabled": false
+    },
+    "java": {
+      "auth-type": "FLOODGATE"
+    },
+    "log-player-ip-addresses": true,
+    "metrics-uuid": "926b218a-d027-46ec-90fa-5a729c644274",
+    "motd": {
+      "integrated-ping-passthrough": true,
+      "max-players": 100,
+      "passthrough-motd": true,
+      "passthrough-player-counts": true,
+      "ping-passthrough-interval": 10,
+      "primary-motd": "MCMLサーバー",
+      "secondary-motd": "MCMLサーバー."
+    },
+    "notify-on-new-bedrock-update": true,
+    "pending-authentication-timeout": 120,
+    "saved-user-logins": [
+      "ThisExampleUsernameShouldBeLongEnoughToNeverBeAnXboxUsername",
+      "ThisOtherExampleUsernameShouldAlsoBeLongEnough"
+    ]
+  },
+  "cpuCount": 3,
+  "cpuName": "Intel Core Processor (Broadwell)",
+  "flagsInfo": {
+    "flags": [
+      "-Xms128M",
+      "-Xmx1024M"
+    ]
+  },
+  "gitInfo": {
+    "buildNumber": "1004",
+    "git.branch": "master",
+    "git.commit.id": "e4c11401db49c7660626a90b5d6c435e4e2e0af3",
+    "git.commit.id.abbrev": "e4c1140",
+    "git.remote.origin.url": "https://github.com/GeyserMC/Geyser"
+  },
+  "hash": "91421a5f3ba9e4ef0e90953c34c3495c5ef6b04e7b7bcbe59a370bc08bf87787",
+  "mappingInfo": {
+    "customBlocks": 6,
+    "customItems": 6,
+    "customSkulls": 6
+  },
+  "packInfo": [
+    {
+      "name": "Geyser Player Skull Resource Pack",
+      "type": "GeyserPathPackCodec"
+    },
+    {
+      "name": "GeyserIntegratedPack",
+      "type": "GeyserPathPackCodec"
+    },
+    {
+      "name": "pack.name",
+      "type": "GeyserPathPackCodec"
+    }
+  ],
+  "ramInfo": {
+    "free": 37,
+    "max": 989,
+    "total": 226
+  },
+  "systemEncoding": "UTF-8",
+  "systemLocale": "en_US",
+  "userPlatforms": {},
+  "versionInfo": {
+    "architecture": "amd64",
+    "javaName": "OpenJDK 64-Bit Server VM",
+    "javaVendor": "Red Hat, Inc.",
+    "javaVersion": "21.0.6+7-LTS",
+    "mcInfo": {
+      "bedrockProtocols": [
+        818,
+        819,
+        827,
+        844,
+        859,
+        860,
+        898
+      ],
+      "bedrockVersions": [
+        "1.21.90",
+        "1.21.91",
+        "1.21.92",
+        "1.21.93",
+        "1.21.94",
+        "1.21.100",
+        "1.21.101",
+        "1.21.111",
+        "1.21.112",
+        "1.21.113",
+        "1.21.114",
+        "1.21.120",
+        "1.21.121",
+        "1.21.122",
+        "1.21.123",
+        "1.21.124",
+        "1.21.130"
+      ],
+      "defaultBedrockProtocol": 898,
+      "javaProtocol": 773,
+      "javaVersions": [
+        "1.21.9"
+      ]
+    },
+    "name": "Geyser",
+    "network": {
+      "dockerCheck": false,
+      "internalIP": "***"
+    },
+    "operatingSystem": "Linux",
+    "operatingSystemVersion": "5.14.0-503.33.1.el9_5.x86_64",
+    "version": "2.9.2-b1004 (git-master-e4c1140)"
+  }
+}
